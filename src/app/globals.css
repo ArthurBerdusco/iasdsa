@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+:root {
+  /* Colors based on the church's identity */
+
+  
+  /* Church brand colors */
+
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+
+  }
+}
+
+body {
+
+}
+
+/* Font utility classes for direct application */
+.font-montserrat {
+  font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.font-nunito {
+  font-family: 'Nunito', system-ui, sans-serif;
+}
