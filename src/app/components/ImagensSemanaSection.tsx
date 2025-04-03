@@ -15,10 +15,14 @@ const images = [
 
 export default function ImagensSemana() {
   return (
-    <div className="bg-white">
+    <div className="bg-blue-950 text-white">
       <div className="max-w-6xl mx-auto py-8 px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-2">Registros da Semana</h2>
+        {/* Header com ícone */}
+        <div className="flex flex-col items-center justify-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-center relative">
+            IMAGENS DA SEMANA
+            <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -mb-2 h-1 w-24 bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
+          </h2>
         </div>
         {images.map((image, index) => (
           <div

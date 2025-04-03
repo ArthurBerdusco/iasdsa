@@ -2,7 +2,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-800 text-white py-8 px-6 mt-12 text-center">
+    <footer className="bg-gray-800 text-white py-8 px-6 mt-12 text-center ">
       <div className="max-w-6xl mx-auto">
         <h3 className="text-2xl font-bold mb-4">Igreja Adventista de Santo Amaro</h3>
         <p className="text-gray-300 mb-2 flex items-center justify-center gap-2">

@@ -16,7 +16,7 @@ import { Element } from "react-scroll";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-200 to-blue-600 text-gray-900">
+    <div className="min-h-screen bg-blue-950 ">
       <NavBar />
       <PorDoSol />
       <HeroSection />

@@ -8,7 +8,7 @@ const PedidoOracao = () => {
   const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc0KWKcA_u8YKXIuNszl7LWMvgOp-T2Uzps-0Wovun69glbyA/viewform";
 
   return (
-    <div className="bg-white">
+    <div className="bg-blue-950">
       <div className="max-w-6xl mx-auto py-8 px-4">
         <div className="relative w-full overflow-hidden rounded-lg shadow-lg">
           {/* Overlay escuro para melhor contraste */}

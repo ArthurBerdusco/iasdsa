@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { FaSun, FaClock, FaChurch, FaCalendarAlt, FaPrayingHands, FaBible } from 'react-icons/fa';
+import { FaSun, FaClock, FaChurch, FaCalendarAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { MapPinned } from 'lucide-react';
 
 const PorDoSol = () => {
   const [horarioPorDoSol, setHorarioPorDoSol] = useState('');
@@ -130,104 +131,96 @@ const PorDoSol = () => {
 
   return (
 
-    <div className='bg-stone-400'>
+    <div className='bg-blue-950'>
 
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={containerVariants}
-      className="max-w-6xl mx-auto py-8 px-4"
-    >
-      {/* Header */}
       <motion.div
-        variants={headerVariants}
-        className="flex flex-col sm:flex-row items-center justify-between mb-6 border-b border-blue-500 pb-4"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="max-w-6xl mx-auto py-8 px-4"
       >
-        <div className="flex items-center gap-3 mb-4 sm:mb-0">
-          <FaChurch className="w-8 h-8 text-yellow-400" />
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Boletim Informativo</h1>
-        </div>
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-sm md:text-base font-medium text-white"
+          variants={headerVariants}
+          className="flex flex-col sm:flex-row items-center justify-between mb-6 border-b border-blue-500 pb-4"
         >
-          <p>{currentDate}</p>
-        </motion.div>
-      </motion.div>
-  
-      {/* Content */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-  
-        {/* Próximo Culto Card */}
-        <motion.div
-          variants={itemVariants}
-          whileHover={{ scale: 1.03 }}
-          className="flex flex-col items-center bg-linear-to-t from-sky-500 to-indigo-500 p-6 rounded-xl shadow-lg"
-        >
-          <motion.div whileHover={{ rotate: 15 }}>
-            <FaCalendarAlt className="w-12 h-12 text-slate-600 mb-2" />
-          </motion.div>
-          <p className="text-lg font-medium text-white">Próximo Culto</p>
-          <p className="text-3xl font-bold mt-2 text-yellow-300">{proximoCulto}</p>
-          <div className="flex items-center gap-2 mt-2 text-white">
-            <FaClock className="w-4 h-4" />
-            <span>9:30 - Escola Sabatina</span>
+          <div className="flex items-center gap-3 mb-4 sm:mb-0">
+            <h1 className="text-2xl md:text-3xl font-bold text-white">Boletim Informativo</h1>
           </div>
-          <div className="flex items-center gap-2 mt-2 text-white">
-            <FaClock className="w-4 h-4" />
-            <span>10:40 - Culto de Adoração</span>
-          </div>
-        </motion.div>
-  
-        {/* Pôr do Sol Card */}
-        <motion.div
-          variants={itemVariants}
-          whileHover={{ scale: 1.03 }}
-          className="flex flex-col items-center bg-linear-to-t from-sky-500 to-indigo-500 p-6 rounded-xl shadow-lg relative overflow-hidden"
-        >
           <motion.div
-            variants={sunriseVariants}
-            animate="pulse"
-            className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-yellow-500 opacity-30"
-          />
-          <motion.div whileHover={{ rotate: 15 }}>
-            <FaSun className="w-12 h-12 text-yellow-400 mb-2" />
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-sm md:text-base font-medium text-white"
+          >
+            <p>{currentDate}</p>
           </motion.div>
-          <p className="text-lg font-medium text-white">Pôr do Sol Hoje</p>
-          <p className="text-3xl font-bold mt-2 text-yellow-300">{horarioPorDoSol}</p>
         </motion.div>
-  
-        {/* Informações Adicionais Card */}
-        <motion.div
-          variants={itemVariants}
-          whileHover={{ scale: 1.03 }}
-          className="flex flex-col items-center bg-linear-to-t from-sky-500 to-indigo-500 p-6 rounded-xl shadow-lg"
-        >
-          <motion.div whileHover={{ rotate: 15 }}>
-            <FaPrayingHands className="w-12 h-12 text-yellow-100 mb-2" />
+
+        {/* Content */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          {/* Próximo Culto Card */}
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ scale: 1.03 }}
+            className="flex flex-col items-center bg-linear-to-t from-sky-500 to-indigo-500 p-6 rounded-xl shadow-lg"
+          >
+            <motion.div whileHover={{ rotate: 15 }}>
+              <FaCalendarAlt className="w-12 h-12 text-slate-600 mb-2" />
+            </motion.div>
+            <p className="text-lg font-medium text-white">Próximo Culto</p>
+            <p className="text-3xl font-bold mt-2 text-yellow-300">{proximoCulto}</p>
+            <div className="flex items-center gap-2 mt-2 text-white">
+              <FaClock className="w-4 h-4" />
+              <span>9:30 - Escola Sabatina</span>
+            </div>
+            <div className="flex items-center gap-2 mt-2 text-white">
+              <FaClock className="w-4 h-4" />
+              <span>10:40 - Culto de Adoração</span>
+            </div>
           </motion.div>
-          <p className="text-lg font-medium text-white">Palavra da Semana</p>
-          <div className="flex items-center gap-2 mt-3 text-center">
-            <FaBible className="w-4 h-4 text-yellow-400 flex-shrink-0" />
-            <p className="font-medium italic text-yellow-200">"O Senhor é o meu pastor, nada me faltará."</p>
-          </div>
-          <p className="text-sm text-white mt-1">Salmos 23:1</p>
-        </motion.div>
-      </div>
-  
-      {/* Footer */}
-      <motion.div
-        variants={itemVariants}
-        className="mt-6 text-center text-white text-sm"
-      >
-        <p>Rua Comendador Elias Zarzur, 86 - Santo Amaro</p>
-        <p>Venha nos visitar e fazer parte da nossa comunidade!</p>
+
+          {/* Pôr do Sol Card */}
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ scale: 1.03 }}
+            className="flex flex-col items-center bg-linear-to-t from-sky-500 to-indigo-500 p-6 rounded-xl shadow-lg relative overflow-hidden"
+          >
+            <motion.div
+              variants={sunriseVariants}
+              animate="pulse"
+              className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-yellow-500 opacity-30"
+            />
+            <motion.div whileHover={{ rotate: 15 }}>
+              <FaSun className="w-12 h-12 text-yellow-400 mb-2" />
+            </motion.div>
+            <p className="text-lg font-medium text-white">Pôr do Sol Hoje</p>
+            <p className="text-3xl font-bold mt-2 text-yellow-300">{horarioPorDoSol}</p>
+          </motion.div>
+
+          {/* Informações Adicionais Card */}
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ scale: 1.03 }}
+            className="flex flex-col items-center bg-linear-to-t from-sky-500 to-indigo-500 p-6 rounded-xl shadow-lg"
+          >
+            <motion.div whileHover={{ rotate: 15 }}>
+              <MapPinned className="w-12 h-12 text-yellow-100 mb-2" />
+            </motion.div>
+            <p className="text-lg font-medium text-white">Nosso Endereço</p>
+            <div className="flex items-center gap-2 mt-3 text-center">
+
+              <p className="font-medium italic text-yellow-200">Rua Comendador Elias Zarzur, 86 - Santo Amaro</p>
+            </div>
+
+          </motion.div>
+        </div>
+
+
       </motion.div>
-    </motion.div>
-  </div>
-  
+    </div>
+
 
   );
 };

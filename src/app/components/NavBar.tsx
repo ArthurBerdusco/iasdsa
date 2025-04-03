@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Link as ScrollLink } from "react-scroll";
 
 export default function NavBar() {
-  const logo = "/images/logo2.jpg";
+  const logo = "/images/logo_2.png";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -14,19 +14,16 @@ export default function NavBar() {
   
   return (
     <nav className="bg-white shadow-md border-gray-200 sticky top-0 z-50">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
             src={logo}
             alt="Logo Igreja Adventista do Sétimo Dia"
-            width={60}
-            height={60}
+            width={150}
+            height={150}
             className="rounded"
             priority
           />
-          <span className="font-montserrat self-center text-xl md:text-2xl font-semibold whitespace-nowrap text-gray-800 select-none">
-            Igreja Adventista Santo Amaro
-          </span>
         </Link>
         
         <button

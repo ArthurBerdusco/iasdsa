@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const BannerDizimo = () => {
   return (
-    <div className="bg-gradient-to-br from-blue-100 to-yellow-200 text-white">
+    <div className="bg-blue-950 text-white">
       <div className="max-w-6xl mx-auto py-8 md:py-6 px-4 md:px-6">
         <div className="relative overflow-hidden rounded-xl shadow-2xl flex flex-col lg:flex-row">
           {/* Conteúdo principal à esquerda */}
@@ -14,19 +14,12 @@ const BannerDizimo = () => {
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">Dízimos e Ofertas</h2>
               </div>
 
-              <div className="bg-blue-800 bg-opacity-50 p-4 rounded-lg mb-6 border-l-4 border-yellow-400">
-                <p className="text-white text-base md:text-lg mb-2">
-                  "Trazei todos os dízimos à casa do tesouro, para que haja mantimento na minha casa; e provai-me nisto, diz o Senhor dos Exércitos."
-                </p>
-                <p className="text-yellow-300 text-base md:text-lg italic">- Malaquias 3:10</p>
-              </div>
-
               <p className="text-blue-100 mb-8 text-base md:text-lg">
                 Contribua para o avanço da obra de Deus por meio de seus dízimos e ofertas. A sua ajuda é importante para manutenção da igreja e pregação do evangelho.
               </p>
 
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
-                <Link href="/doacoes" className="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-3 md:py-4 px-6 rounded-lg shadow-lg transition transform hover:translate-y-[-2px] focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-base md:text-lg w-full sm:w-auto">
+                <Link target='_blank' href="https://giving.7me.app/guest-donation/church/d83b1b17-d0cc-4c9a-ab4d-86c2f26acc43?utm_source=boletim&utm_medium=link&utm_campaign=boletim" className="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-3 md:py-4 px-6 rounded-lg shadow-lg transition transform hover:translate-y-[-2px] focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-base md:text-lg w-full sm:w-auto">
                   <span>Clique para Dizimar</span>
                   <ExternalLink className="h-4 w-4 md:h-5 md:w-5 ml-2 flex-shrink-0" />
                 </Link>
@@ -89,12 +82,6 @@ const BannerDizimo = () => {
                 </li>
               </ul>
 
-              <div className="mt-8 text-center">
-                <Link href="https://7me.org.br/" target="_blank" className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium">
-                  <span>Visitar o site oficial</span>
-                  <ExternalLink className="h-4 w-4 ml-1" />
-                </Link>
-              </div>
             </div>
           </div>
         </div>
