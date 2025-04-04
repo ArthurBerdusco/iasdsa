@@ -121,12 +121,6 @@ const Anuncios = () => {
                         </Link>
                       </div>
                     )}
-
-                    {anuncio.id === 5 && anuncio.linkWhatsapp && anuncio.linkForms && (
-                      <div className="text-sm text-gray-500 text-center pt-2">
-                        <p>Escolha uma das opções acima para se inscrever</p>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>

@@ -54,9 +54,10 @@ export default function HeroBanner() {
             alt={cultoSabado.titulo}
             fill
             priority
-            className="object-cover object-center rounded-2xl"
+            className="object-contain sm:object-cover object-center rounded-2xl sm:rounded-2x1"
           />
         </div>
+
 
         {/* Information Section Below the Banner */}
         <div className="py-6">
@@ -64,7 +65,7 @@ export default function HeroBanner() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 sm:p-6 border border-white/20 shadow-lg flex flex-col items-center text-center">
               <div className="bg-yellow-400/20 p-3 sm:p-4 rounded-xl mb-3">
-                <CalendarDays size={24}  className="text-yellow-400" />
+                <CalendarDays size={24} className="text-yellow-400" />
               </div>
               <p className="text-gray-300 text-xs sm:text-sm uppercase tracking-wider">Data</p>
               <p className="text-white font-medium text-lg sm:text-xl mt-1">{cultoSabado.data}</p>

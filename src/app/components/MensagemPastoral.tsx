@@ -47,16 +47,22 @@ const MensagemPastoral = () => {
               <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-6">
                 Conexão
               </h3>
-              
+
               {/* Texto da mensagem */}
               <div className="bg-white/10 p-6 rounded-xl border-l-4 border-blue-500 mb-8 flex-grow">
-                <p className="text-gray-100 text-lg leading-relaxed">
-                  Jesus ensinou diversas vezes por meio de perguntas, em sua maioria contundentes e desafiadoras.
-                  Em um diálogo com pessoas que aparentemente criam no Messias, em João 8:46 essa pergunta é feita
-                  e desde então ecoa através do tempo.
+
+                <div className='text-gray-100 text-lg leading-relaxed'>
+
+                </div>
+
+                <p>
+                  A palavra conexão vem do latim connexione, que significa: “ato de ligar”. Ela é utilizada em contextos diversos como vínculo pessoal, tecnologia, filosofia e até física. Mas em todos esses contextos ela sempre aponta para uma ligação entre diferentes que completa, transforma ou aprimora.
+                </p>
+                <p className='mt-4'>
+                  Na Bíblia a conexão é parte essencial do relacionamento. Jesus em um de seus discursos mais famosos, conta a parábola da Videira Verdadeira, cujo segredo para produzir frutos era a conexão entre a videira, os ramos e até o agricultor.
                 </p>
               </div>
-              
+
               {/* Informações do pastor e botão */}
               <div className="flex flex-wrap items-center justify-between gap-6 mt-auto pt-4 border-t border-blue-700/30">
                 {/* Informações do pastor */}
@@ -76,9 +82,9 @@ const MensagemPastoral = () => {
                     <p className="text-sm text-blue-200">02 de Abril, 2025</p>
                   </div>
                 </div>
-                
+
                 {/* Botão "Ler Mais" */}
-                <Link 
+                <Link
                   href="https://sites.google.com/view/mensagempastoral/in%C3%ADcio"
                   target="_blank"
                   className="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-medium rounded-lg shadow-lg transition-all duration-300 group"
