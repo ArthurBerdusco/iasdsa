@@ -8,31 +8,28 @@ const ProgramacaoCultos = () => {
     { 
       id: 1, 
       titulo: 'Culto de Sábado', 
-      data: '05/04/2025', 
       hora: '10h40', 
       descricao: 'Culto de Adoração',
       icone: <Image alt='Logo Igreja Adventista' src={'/images/iasd-logo.png'} width={48} height={48} />,
-      corBg: 'from-blue-950/40 to-blue-100/30',
+      corBg: 'from-blue-100/40 to-yellow-200/40',
       corBorda: 'blue-500/30'
     },
     { 
       id: 2, 
       titulo: 'Culto de Domingo', 
-      data: '06/04/2025', 
       hora: '10h00', 
       descricao: 'Culto da Família',
       icone: <Sunrise size={48} className='text-blue-500' />,
-      corBg: 'from-blue-100/40 to-blue-100/30',
+      corBg: 'from-blue-100/40 to-blue-100/20',
       corBorda: 'white-500/30'
     },
     { 
       id: 3, 
       titulo: 'Culto de Quarta', 
-      data: '09/04/2025', 
       hora: '20h00', 
       descricao: 'Culto de Oração',
       icone: <FaPrayingHands size={48} className='text-yellow-500' />,
-      corBg: 'from-blue-100/20 to-yellow-300/30',
+      corBg: 'from-blue-950/40 to-blue-100/30',
       corBorda: 'yellow-500/30'
     },
   ];
@@ -69,10 +66,6 @@ const ProgramacaoCultos = () => {
                 {/* Detalhes do culto em um estilo de tabela */}
                 <div className="bg-white/10 rounded-lg p-4 w-full backdrop-blur-md">
                   <div className="flex flex-col space-y-3">
-                    <div className="flex justify-between items-center pb-2 border-b border-white/10">
-                      <span className="text-white/70 font-medium">Data:</span>
-                      <span className="font-semibold text-white">{culto.data}</span>
-                    </div>
                     <div className="flex justify-between items-center">
                       <span className="text-white/70 font-medium">Horário:</span>
                       <span className="font-semibold text-white">{culto.hora}</span>
