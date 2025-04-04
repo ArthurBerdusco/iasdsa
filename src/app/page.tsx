@@ -8,7 +8,6 @@ import PedidoOracao from "./components/PedidoOracao";
 import DizimoSection from "./components/DizimoSection";
 import Footer from "./components/Footer";
 import NavBar from "./components/NavBar";
-import PorDoSol from "./components/PorDoSol";
 import ImagensSemana from "./components/ImagensSemanaSection";
 import RedesSociais from "./components/RedesSociais";
 import MensagemPastoral from "./components/MensagemPastoral";
