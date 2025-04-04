@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sun, Sunrise, Calendar } from 'lucide-react';
+import { Sunrise } from 'lucide-react';
 import { FaPrayingHands } from 'react-icons/fa';
 import Image from 'next/image';
 
@@ -38,12 +38,12 @@ const ProgramacaoCultos = () => {
   ];
 
   return (
-    <div className="bg-blue-950 text-white py-16 px-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="bg-blue-950 text-white px-4">
+      <div className="max-w-6xl mx-auto py-12 px-4">
         {/* Header com ícone */}
         <div className="flex flex-col items-center justify-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-center relative">
-            Programação dos Cultos
+            PROGRAMAÇÃO DOS CULTOS
             <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -mb-2 h-1 w-24 bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
           </h2>
         </div>

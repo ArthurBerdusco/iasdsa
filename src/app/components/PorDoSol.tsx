@@ -3,15 +3,13 @@
 import { useState, useEffect } from 'react';
 import { FaSun, FaClock, FaChurch, FaCalendarAlt } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { MapPinned } from 'lucide-react';
 
 const PorDoSol = () => {
   const [horarioPorDoSol, setHorarioPorDoSol] = useState('');
   const [proximoCulto, setProximoCulto] = useState('');
-  const [currentDate, setCurrentDate] = useState('');
+
 
   useEffect(() => {
-    // Tabela de horários do pôr do sol para abril
     const horariosPorDoSolAbril = {
       1: '18:04:00',
       2: '18:03:00',
@@ -48,14 +46,6 @@ const PorDoSol = () => {
     // Pegar a data atual
     const today = new Date();
 
-    // Formatar a data para exibição
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-    setCurrentDate(today.toLocaleDateString("pt-BR", options));
 
     // Obter o dia do mês
     const dia = today.getDate();
@@ -116,18 +106,6 @@ const PorDoSol = () => {
     }
   };
 
-  const headerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: 'spring',
-        stiffness: 100,
-        delay: 0.1
-      }
-    }
-  };
 
   return (
 
@@ -139,23 +117,6 @@ const PorDoSol = () => {
         variants={containerVariants}
         className="max-w-6xl mx-auto py-8 px-4"
       >
-        {/* Header */}
-        <motion.div
-          variants={headerVariants}
-          className="flex flex-col sm:flex-row items-center justify-between mb-6 border-b border-blue-500 pb-4"
-        >
-          <div className="flex items-center gap-3 mb-4 sm:mb-0">
-            <h1 className="text-2xl md:text-3xl font-bold text-white">Boletim Informativo</h1>
-          </div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-sm md:text-base font-medium text-white"
-          >
-            <p>{currentDate}</p>
-          </motion.div>
-        </motion.div>
 
         {/* Content */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -199,22 +160,6 @@ const PorDoSol = () => {
             <p className="text-3xl font-bold mt-2 text-yellow-300">{horarioPorDoSol}</p>
           </motion.div>
 
-          {/* Informações Adicionais Card */}
-          <motion.div
-            variants={itemVariants}
-            whileHover={{ scale: 1.03 }}
-            className="flex flex-col items-center bg-linear-to-t from-sky-500 to-indigo-500 p-6 rounded-xl shadow-lg"
-          >
-            <motion.div whileHover={{ rotate: 15 }}>
-              <MapPinned className="w-12 h-12 text-yellow-100 mb-2" />
-            </motion.div>
-            <p className="text-lg font-medium text-white">Nosso Endereço</p>
-            <div className="flex items-center gap-2 mt-3 text-center">
-
-              <p className="font-medium italic text-yellow-200">Rua Comendador Elias Zarzur, 86 - Santo Amaro</p>
-            </div>
-
-          </motion.div>
         </div>
 
 

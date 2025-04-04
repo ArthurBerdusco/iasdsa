@@ -18,8 +18,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-blue-950 ">
       <NavBar />
-      <PorDoSol />
+
       <HeroSection />
+
+      {/* <PorDoSol /> */}
       
       <Element name="mensagem">
         <MensagemPastoral />

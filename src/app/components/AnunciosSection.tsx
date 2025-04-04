@@ -53,12 +53,12 @@ const Anuncios = () => {
         {/* Header com ícone */}
         <div className="flex flex-col items-center justify-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-center relative">
-          Anúncios
+          ANÚNCIOS
             <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -mb-2 h-1 w-24 bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
           </h2>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-24">
           {anuncios.map((anuncio) => (
             <div key={anuncio.id} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 ">
               <div className="flex flex-col md:flex-row">
