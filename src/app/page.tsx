@@ -18,30 +18,34 @@ export default function Home() {
     <div className="min-h-screen bg-blue-950 ">
       <NavBar />
 
-      <HeroSection />
+
 
       {/* <PorDoSol /> */}
-      
+
+      <Element name="cultos">
+        <HeroSection />
+      </Element>
+
       <Element name="mensagem">
         <MensagemPastoral />
       </Element>
-      
+
       <Element name="programacao">
         <CultosSection />
       </Element>
-      
+
       <Element name="anuncios">
         <AnunciosSection />
       </Element>
-      
+
       <Element name="oracao">
         <PedidoOracao />
       </Element>
-      
+
       <Element name="dizimo">
         <DizimoSection />
       </Element>
-      
+
       <ImagensSemana />
       <RedesSociais />
       <Footer />

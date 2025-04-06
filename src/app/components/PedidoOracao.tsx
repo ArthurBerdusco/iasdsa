@@ -9,36 +9,35 @@ const PedidoOracao = () => {
 
   return (
     <div className="bg-blue-950">
-      <div className="max-w-6xl mx-auto py-8 px-4">
-        <div className="relative w-full overflow-hidden rounded-lg shadow-lg">
-          {/* Overlay escuro para melhor contraste */}
-          <div className="absolute inset-0 bg-black/40 z-10"></div>
+      <div className="max-w-6xl mx-auto sm:py-8 px-2 sm:px-4">
+        <div className="bg-black relative w-full overflow-hidden rounded-lg shadow-lg">
+          {/* Overlay para melhor contraste */}
+          <div className="absolute inset-0 bg-black/30 z-10"></div>
 
-          {/* Imagem do banner (garantindo que apareça inteira) */}
-          <div className="bg-black/100 relative w-full h-auto aspect-[16/6]">
+          {/* Imagem do banner com altura responsiva */}
+          <div className="relative w-full">
             <Image
               src="/images/lugar-oracao.png"
               alt="Lugar de Oração - Igreja Adventista de Santo Amaro"
-              width={1600} // Ajuste conforme necessário
-              height={600} // Ajuste conforme necessário
-              className="w-full h-full object-contain"
+              width={1600}
+              height={1600}
+              className="w-full object-contain h-[80vh]"
               priority
             />
+
           </div>
 
-          {/* Conteúdo */}
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center">
+          {/* Conteúdo responsivo */}
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-2 sm:px-4 text-center">
             <Link
               href={formUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 px-6 py-3 text-lg font-semibold text-white bg-yellow-500 rounded-full shadow-md transition-all hover:bg-yellow-700 hover:shadow-lg"
-            >
-              <span>Deixar Pedido / Agradecimento</span>
-              <ExternalLink size={20} />
+              className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 md:py-4 px-6 rounded-lg shadow-lg transition transform hover:translate-y-[-2px] focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-base md:text-lg w-full sm:w-auto">
+              <span>Pedido de Oração / Agradecimento</span>
+              <ExternalLink size={16} className="sm:inline" />
             </Link>
           </div>
-
         </div>
       </div>
     </div>

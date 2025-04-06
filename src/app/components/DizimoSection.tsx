@@ -5,7 +5,7 @@ import Link from 'next/link';
 const BannerDizimo = () => {
   return (
     <div className="bg-blue-950 text-white">
-      <div className="max-w-6xl mx-auto py-8 md:py-6 px-4 md:px-6">
+      <div className="max-w-6xl mx-auto py-12 px-4">
         <div className="relative overflow-hidden rounded-xl shadow-2xl flex flex-col lg:flex-row">
           {/* Conteúdo principal à esquerda */}
           <div className="relative flex-1 flex flex-col justify-center p-6 md:p-10 lg:p-16 z-10 bg-gradient-to-br from-stone-400 to-stone-500">
@@ -19,7 +19,10 @@ const BannerDizimo = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
-                <Link target='_blank' href="https://giving.7me.app/guest-donation/church/d83b1b17-d0cc-4c9a-ab4d-86c2f26acc43?utm_source=boletim&utm_medium=link&utm_campaign=boletim" className="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-3 md:py-4 px-6 rounded-lg shadow-lg transition transform hover:translate-y-[-2px] focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-base md:text-lg w-full sm:w-auto">
+                <Link
+                  target='_blank'
+                  href="https://giving.7me.app/guest-donation/church/d83b1b17-d0cc-4c9a-ab4d-86c2f26acc43?utm_source=boletim&utm_medium=link&utm_campaign=boletim"
+                  className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 md:py-4 px-6 rounded-lg shadow-lg transition transform hover:translate-y-[-2px] focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-base md:text-lg w-full sm:w-auto">
                   <span>Clique para Dizimar</span>
                   <ExternalLink className="h-4 w-4 md:h-5 md:w-5 ml-2 flex-shrink-0" />
                 </Link>

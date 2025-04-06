@@ -14,7 +14,7 @@ interface SocialCardProps {
 const RedesSociais = () => {
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
     const [latestSermon] = useState({
-        id: "FrX4zFJkxhU",
+        id: "q7C4sr9AOfE",
         title: "Último Culto"
     });
 
@@ -30,18 +30,18 @@ const RedesSociais = () => {
 
     return (
         <section className="bg-blue-950 text-white">
-            <div className="max-w-6xl mx-auto px-4">
+            <div className="max-w-6xl mx-auto py-12 px-4">
                 {/* Header com ícone */}
                 <div className="flex flex-col items-center justify-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold text-center relative">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center relative pb-4">
                         CONECTE-SE CONOSCO
-                        <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -mb-2 h-1 w-24 bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
+                        <span className="absolute bottom-0 left-0 right-0 h-1 w-full bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
                     </h2>
                 </div>
 
                 {/* Social Media Cards */}
-                <div className="max-w-6xl mx-auto py-8 px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div className="max-w-6xl mx-auto py-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
                         <SocialCard
                             icon={<FaFacebook className="text-white text-2xl" />}
                             platform="Facebook"
@@ -68,7 +68,7 @@ const RedesSociais = () => {
 
 
                 {/* Latest Sermon Section */}
-                <div className="max-w-6xl mx-auto py-8 px-4">
+                <div className="max-w-6xl mx-auto py-8">
                     <div className="bg-white rounded-xl shadow-xl overflow-hidden">
                         <div className="p-6 border-b border-gray-100">
                             <div className="flex items-center justify-between">

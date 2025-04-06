@@ -19,9 +19,9 @@ export default function ImagensSemana() {
       <div className="max-w-6xl mx-auto py-8 px-4">
         {/* Header com ícone */}
         <div className="flex flex-col items-center justify-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-center relative">
+          <h2 className="text-3xl md:text-4xl font-bold text-center relative pb-4">
             IMAGENS DA SEMANA
-            <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -mb-2 h-1 w-24 bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
+            <span className="absolute bottom-0 left-0 right-0 h-1 w-full bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
           </h2>
         </div>
         {images.map((image, index) => (
@@ -46,7 +46,7 @@ export default function ImagensSemana() {
                   href={image.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-blue-400 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg backdrop-blur-sm transition-all w-fit"
+                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg backdrop-blur-sm transition-all w-fit"
                 >
                   Ver mais <ExternalLink size={16} />
                 </Link>
