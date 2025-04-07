@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 const MensagemPastoral = () => {
   return (
-    <section className="bg-blue-950 text-white py-16">
+    <section className="bg-blue-950 text-white">
       <div className="max-w-6xl mx-auto py-12 px-4">
         {/* Header com ícone */}
         <div className="mb-12 text-center">
@@ -23,7 +23,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-2/5 relative">
               <div className="relative h-64 lg:h-full min-h-[320px]">
                 <Image
-                  src="/images/mensagem-pastoral.png"
+                  src="/images/2025/4_ABR/Semana_1_3_9/mensagem-pastoral.png"
                   alt="Mensagem Pastoral"
                   fill
                   className="object-cover"
@@ -70,7 +70,7 @@ const MensagemPastoral = () => {
                   <div className="w-14 h-14 rounded-full border-2 border-blue-400 p-0.5 shadow-lg">
                     <div className="relative w-full h-full rounded-full overflow-hidden">
                       <Image
-                        src="/images/pastor.jpg"
+                        src="/images/pastores/mauro-dias.jpg"
                         alt="Pastor Mauro Dias"
                         fill
                         className="object-cover"

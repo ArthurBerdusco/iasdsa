@@ -2,22 +2,93 @@
 
 import 'swiper/css';
 import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import Image from 'next/image';
-import { CalendarDays, Clock } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { CalendarDays, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
 
-const cultoSabado = {
-  id: 1,
-  titulo: 'PRÓXIMO SÁBADO 5/4 - CULTO DE ADORAÇÃO',
-  data: '05/04/2025',
-  hora: '10h40',
-  orador: 'Pr. Mauro Dias',
-  imagem: '/images/culto-sabado.png',
-  oradorImagem: '/images/pastor.jpg'
+// Define types for our data
+interface CultoProps {
+  id: number;
+  titulo: string;
+  diaSemana: string;
+  data: string;
+  hora: string;
+  orador: string;
+  imagem: string;
+  oradorImagem: string;
+  corDestaque: 'primary' | 'secondary' | 'accent';
+}
+
+// Theme colors for easier maintenance
+const themeColors = {
+  primary: {
+    bg: 'bg-blue-500',
+    bgLight: 'bg-blue-500/15',
+    text: 'text-blue-500',
+    border: 'border-blue-500',
+  },
+  secondary: {
+    bg: 'bg-blue-500',
+    bgLight: 'bg-blue-500/15',
+    text: 'text-blue-500',
+    border: 'border-blue-500',
+  },
+  accent: {
+    bg: 'bg-blue-500',
+    bgLight: 'bg-blue-500/15',
+    text: 'text-blue-500',
+    border: 'border-blue-500',
+  },
 };
 
-export default function HeroBanner() {
-  const [currentDate, setCurrentDate] = useState('');
+// Mock data for the three worship services
+const cultosData: CultoProps[] = [
+  {
+    id: 1,
+    titulo: 'CULTO DE ADORAÇÃO',
+    diaSemana: 'SÁBADO',
+    data: '05/04/2025',
+    hora: '10h40',
+    orador: 'Pr. Mauro Dias',
+    imagem: '/images/2025/4_ABR/Semana_1_3_9/culto-sabado.png',
+    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    corDestaque: 'primary',
+  },
+  {
+    id: 2,
+    titulo: 'CULTO DE CELEBRAÇÃO',
+    diaSemana: 'DOMINGO',
+    data: '06/04/2025',
+    hora: '10h00',
+    orador: 'Pr. Mauro Dias',
+    imagem: '/images/2025/4_ABR/Semana_1_3_9/mensagem-pastoral.png',
+    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    corDestaque: 'secondary',
+  },
+  {
+    id: 3,
+    titulo: 'CULTO DE ORAÇÃO',
+    diaSemana: 'QUARTA',
+    data: '09/04/2025',
+    hora: '20h00',
+    orador: 'Pr. Mauro Dias',
+    imagem: '/images/2025/4_ABR/Semana_1_3_9/culto-sabado.png',
+    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    corDestaque: 'accent',
+  }
+];
+
+export default function CultosSwiper() {
+  const [currentDate, setCurrentDate] = useState<string>('');
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const navigationPrevRef = useRef<HTMLButtonElement>(null);
+  const navigationNextRef = useRef<HTMLButtonElement>(null);
+  const swiperRef = useRef<SwiperType | null>(null);
+
 
   useEffect(() => {
     const today = new Date();
@@ -31,78 +102,150 @@ export default function HeroBanner() {
   }, []);
 
   return (
-    <div className="relative w-full bg-blue-950">
-      <div className="max-w-6xl mx-auto py-8 px-4">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-6 border-b border-blue-500 pb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-white text-center sm:text-left">
-            BOLETIM INFORMATIVO
-          </h1>
-          <p className="text-sm md:text-base font-medium text-white mt-2 sm:mt-0">{currentDate}</p>
-        </div>
+    <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
+      {/* Subtle background element */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-gradient-to-br from-blue-500/5 to-purple-500/5 blur-3xl"></div>
+      </div>
 
-        {/* Title with animated underline */}
-        <h1 className="text-2xl sm:text-4xl md:text-4xl font-bold text-white mb-6 relative text-center sm:text-left">
-          {cultoSabado.titulo}
-          <span className="absolute left-1/2 sm:left-0 transform -translate-x-1/2 sm:translate-x-0 -bottom-2 w-24 h-1 bg-yellow-400 rounded"></span>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-8 border-b border-blue-500/30 pb-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-white">
+          BOLETIM INFORMATIVO
         </h1>
+        <p className="text-sm md:text-base text-white/80 mt-2 sm:mt-0">{currentDate}</p>
+      </div>
 
-        {/* Full Banner Image Section */}
-        <div className="relative w-full h-[40vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh] overflow-hidden rounded-lg">
-          <Image
-            src={cultoSabado.imagem}
-            alt={cultoSabado.titulo}
-            fill
-            priority
-            className="object-contain sm:object-cover object-center rounded-2xl sm:rounded-2x1"
-          />
+      {/* Title with subtle underline */}
+      <div className="mb-12 text-center">
+          <h2 className="text-3xl text-white md:text-4xl font-bold relative inline-block pb-4">
+          PRÓXIMOS CULTOS
+            <span className="absolute bottom-0 left-0 right-0 h-1 w-full bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
+          </h2>
         </div>
 
+      {/* Swiper Component */}
+      <div className="relative pb-12">
+        <Swiper
+          modules={[Navigation, Pagination, Autoplay]}
+          spaceBetween={0}
+          slidesPerView={1}
+          centeredSlides={true}
+          loop={true}
+          autoplay={{
+            delay: 8000,
+            disableOnInteraction: false,
+          }}
+          pagination={{
+            clickable: true,
+            dynamicBullets: true,
+          }}
+          navigation={{
+            prevEl: navigationPrevRef.current,
+            nextEl: navigationNextRef.current,
+          }}
+          onBeforeInit={(swiper) => {
+            swiperRef.current = swiper;
+          
+            if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
+              swiper.params.navigation.prevEl = navigationPrevRef.current;
+              swiper.params.navigation.nextEl = navigationNextRef.current;
+            }
+          }}
+          
+          
 
-        {/* Information Section Below the Banner */}
-        <div className="py-6">
-          {/* Event Details Card */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-            <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 sm:p-6 border border-white/20 shadow-lg flex flex-col items-center text-center">
-              <div className="bg-yellow-400/20 p-3 sm:p-4 rounded-xl mb-3">
-                <CalendarDays size={24} className="text-yellow-400" />
-              </div>
-              <p className="text-gray-300 text-xs sm:text-sm uppercase tracking-wider">Data</p>
-              <p className="text-white font-medium text-lg sm:text-xl mt-1">{cultoSabado.data}</p>
-            </div>
+          onSlideChange={(swiper) => {
+            setActiveIndex(swiper.realIndex);
+          }}
+          className="cultos-swiper rounded-2xl overflow-hidden shadow-xl"
+        >
+          {cultosData.map((culto) => {
+            const colorClasses = themeColors[culto.corDestaque];
 
-            <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 sm:p-6 border border-white/20 shadow-lg flex flex-col items-center text-center">
-              <div className="bg-blue-400/20 p-3 sm:p-4 rounded-xl mb-3">
-                <Clock size={24} className="text-blue-400" />
-              </div>
-              <p className="text-gray-300 text-xs sm:text-sm uppercase tracking-wider">Horário</p>
-              <p className="text-white font-medium text-lg sm:text-xl mt-1">{cultoSabado.hora}</p>
-            </div>
+            return (
+              <SwiperSlide key={culto.id}>
+                <div className="bg-blue-900/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10">
+                  {/* Card Header */}
+                  <div className="bg-white/10 p-4 md:p-6 flex flex-col gap-4 md:flex-row md:justify-between md:items-center border-b border-white/10">
+                    {/* Dia da semana + Título */}
+                    <div className="flex flex-col">
+                      <span className={`text-xl md:text-2xl font-black tracking-wider ${colorClasses.text}`}>
+                        {culto.diaSemana}
+                      </span>
+                      <h3 className="text-white text-base md:text-lg font-semibold opacity-80 mt-1">
+                        {culto.titulo}
+                      </h3>
+                    </div>
 
-            <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 sm:p-6 border border-white/20 shadow-lg flex flex-col items-center text-center">
-              {/* Imagem do orador em formato circular */}
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 mb-3 sm:mb-4 rounded-full overflow-hidden border-2 border-green-400">
-                {cultoSabado.oradorImagem ? (
-                  <Image
-                    src={cultoSabado.oradorImagem}
-                    alt={cultoSabado.orador}
-                    fill
-                    style={{ objectFit: 'cover' }}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-green-400/20 flex items-center justify-center">
-                    <span className="text-green-400 text-lg sm:text-2xl font-bold">
-                      {cultoSabado.orador.split(' ').map(name => name[0]).join('')}
-                    </span>
+                    {/* Data e Hora */}
+                    <div className="flex flex-wrap gap-3 mt-2 md:mt-0">
+                      <div className={`flex items-center ${colorClasses.bgLight} px-3 py-1.5 rounded-lg`}>
+                        <CalendarDays size={16} className={`${colorClasses.text} mr-2`} />
+                        <span className="text-white font-medium">{culto.data}</span>
+                      </div>
+                      <div className={`flex items-center ${colorClasses.bgLight} px-3 py-1.5 rounded-lg`}>
+                        <Clock size={16} className={`${colorClasses.text} mr-2`} />
+                        <span className="text-white font-medium">{culto.hora}</span>
+                      </div>
+                    </div>
                   </div>
-                )}
-              </div>
-              <p className="text-gray-300 text-xs sm:text-sm uppercase tracking-wider">Orador</p>
-              <p className="text-white font-medium text-lg sm:text-xl mt-1">{cultoSabado.orador}</p>
-            </div>
-          </div>
+
+                  {/* Banner Image */}
+                  <div className="relative w-full h-[50vh] sm:h-[60vh] overflow-hidden">
+                    <Image
+                      src={culto.imagem}
+                      alt={culto.titulo}
+                      fill
+                      priority
+                      className="object-contain object-center transition-transform duration-700 hover:scale-105"
+                    />
+
+                    {/* Subtle gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/90 via-blue-950/30 to-transparent"></div>
+
+                    {/* Speaker info overlay with improved design */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
+                      <div className="flex items-center transparent p-3 rounded-lg inline-flex">
+                        <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-white/70 shadow-lg">
+                          <Image
+                            src={culto.oradorImagem}
+                            alt={culto.orador}
+                            fill
+                            style={{ objectFit: 'cover' }}
+                          />
+                        </div>
+                        <div className="ml-3">
+                          <p className="text-xs text-white/70 uppercase tracking-wider">Orador</p>
+                          <p className="text-white font-semibold text-lg">{culto.orador}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+
+        {/* Custom Navigation Buttons - Improved */}
+        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 z-10 flex justify-between px-2 md:px-6 pointer-events-none">
+          <button
+            ref={navigationPrevRef}
+            className="w-12 h-12 rounded-full bg-black/30 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/50 transition-all focus:outline-none pointer-events-auto shadow-lg"
+            aria-label="Anterior"
+          >
+            <ChevronLeft size={22} />
+          </button>
+          <button
+            ref={navigationNextRef}
+            className="w-12 h-12 rounded-full bg-black/30 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/50 transition-all focus:outline-none pointer-events-auto shadow-lg"
+            aria-label="Próximo"
+          >
+            <ChevronRight size={22} />
+          </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

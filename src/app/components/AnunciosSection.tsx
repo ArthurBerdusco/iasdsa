@@ -9,7 +9,7 @@ const Anuncios = () => {
       id: 1,
       titulo: "CAMPAL 2025 - Vagas Limitadas!",
       texto: "Garanta sua vaga para o maior encontro do ano em Caraguatatuba! Inscrições com valor especial apenas no dia 07/04. Alimentação, hospedagem e transporte inclusos. Corra, pois as vagas são limitadas!",
-      imagem: "/images/campal.jpg",
+      imagem: "/images/anuncios/campal.jpg",
       icone: <Calendar className="h-5 w-5 mr-1" />,
       linkWhatsapp: 'http://wa.me/+5511985587107',
       data: "19 a 22 de junho"
@@ -18,7 +18,7 @@ const Anuncios = () => {
       id: 2,
       titulo: "Pão Caseiro Integral - Desbravadores",
       texto: "Ajude a comunidade e saboreie um delicioso pão caseiro integral! Faça seu pedido e contribua com os Desbravadores Borba Gato.",
-      imagem: "/images/pao-desbravadores.png",
+      imagem: "/images/anuncios/pao-desbravadores.png",
       icone: <GiBread className="h-5 w-5 mr-1" />,
       linkWhatsapp: 'https://wa.me/+5511984554580',
       data: "Solicitação"
@@ -27,7 +27,7 @@ const Anuncios = () => {
       id: 3,
       titulo: "Lasanha Solidária - Clube de Aventureiros",
       texto: "Garanta já a sua lasanha! Escolha entre os sabores queijo e vegetariana. A entrega será no dia 06/04. Entre em contato para reservar a sua!",
-      imagem: "/images/lasanha.png",
+      imagem: "/images/anuncios/lasanha.png",
       icone: <GiMeal className="h-5 w-5 mr-1" />,
       linkWhatsapp: 'http://wa.me/+5511951736602',
       data: "Entrega: 06/04"
@@ -36,7 +36,7 @@ const Anuncios = () => {
       id: 4,
       titulo: "Aulas de Instrumentos Musicais",
       texto: "Desperte o artista que há em você! Aprenda a tocar piano, violão e outros instrumentos musicais. Entre em contato para mais informações.",
-      imagem: "/images/musica.png",
+      imagem: "/images/anuncios/musica.png",
       icone: <Calendar className="h-5 w-5 mr-1" />,
       linkForms: "https://docs.google.com/forms/d/e/1FAIpQLSfCCgmzJBPckAzU8ZcwrZ8VsU7MIomRutKah6zBfgQwkkIf6Q/viewform"
     },
@@ -44,7 +44,7 @@ const Anuncios = () => {
       id: 5,
       titulo: "Congresso Mulheres Corajosas",
       texto: "Participe do Congresso Mulheres em Missão - Corajosas! Um dia de inspiração, conexão e transformação. As 100 primeiras inscritas concorrem a uma inscrição 100% gratuita!",
-      imagem: "/images/anuncio-mm.jpg",
+      imagem: "/images/anuncios/anuncio-mm.jpg",
       icone: <Calendar className="h-5 w-5 mr-1" />,
       linkWhatsapp: 'http://wa.me/+551135450845',
       linkForms: "https://forms.gle/5biDrwL8nvuPDgEH6",
