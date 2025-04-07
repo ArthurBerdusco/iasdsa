@@ -73,10 +73,10 @@ const cultosData: CultoProps[] = [
     id: 3,
     titulo: 'CULTO DE ORAÇÃO',
     diaSemana: 'QUARTA',
-    data: '09/04/2025',
+    data: '02/04/2025',
     hora: '20h00',
     orador: 'Pr. Mauro Dias',
-    imagem: '/images/2025/4_ABR/Semana_1_3_9/culto-sabado.png',
+    imagem: '/images/2025/4_ABR/Semana_1_3_9/culto-oracao.jpg',
     oradorImagem: '/images/pastores/mauro-dias.jpg',
     corDestaque: 'accent',
   }
