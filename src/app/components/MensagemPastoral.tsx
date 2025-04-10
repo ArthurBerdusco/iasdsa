@@ -23,7 +23,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-2/5 relative">
               <div className="relative h-64 lg:h-full min-h-[320px]">
                 <Image
-                  src="/images/2025/4_ABR/Semana_1_3_9/mensagem-pastoral.png"
+                  src="/images/2025/4_ABR/Semana_2_10_16/mensagem-pastoral.jpg"
                   alt="Mensagem Pastoral"
                   fill
                   className="object-cover"
@@ -45,7 +45,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-3/5 p-6 lg:p-8 flex flex-col">
               {/* Título da mensagem */}
               <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-6">
-                Conexão
+                Marcas de Cristo
               </h3>
 
               {/* Texto da mensagem */}
@@ -56,13 +56,13 @@ const MensagemPastoral = () => {
                 </div>
 
                 <p>
-                  A palavra conexão vem do latim connexione, que significa: “ato de ligar”. Ela é utilizada em contextos diversos como vínculo pessoal, tecnologia, filosofia e até física. Mas em todos esses contextos ela sempre aponta para uma ligação entre diferentes que completa, transforma ou aprimora.
+                  Cicatrizes e rugas são parte da história de cada um. Essas marcas nos lembram de que a vida é feita de momentos diversos, principalmente desafios. Embora a sociedade muitas vezes valorize uma aparência "impecável" e livre de marcas, é importante reconhecer que essas características são inerentes à experiência humana e podem ser vistas como símbolos de nossa jornada.
                 </p>
                 <p className='mt-4'>
-                  Na Bíblia a conexão é parte essencial do relacionamento. Jesus em um de seus discursos mais famosos, conta a parábola da Videira Verdadeira, cujo segredo para produzir frutos era a conexão entre a videira, os ramos e até o agricultor.
+                  Em última análise, essas marcas são lembretes visíveis do que vivemos e sentimos.
                 </p>
                 <p className='mt-4'>
-                Eu sou a videira; vocês são os ramos. Se alguém permanecer em mim e eu nele, esse dará muito fruto; pois sem mim vocês não podem fazer nada. João 15:5
+                  A palavra "marcas" nos remete imediatamente ao nome ou à identidade visual de uma organização, elementos que carregam consigo seus valores, promessas e propriedade. O simples fato de vermos o nome ou o logotipo de uma empresa já nos transmite impressões de sucesso, qualidade, status ou inovação.
                 </p>
               </div>
 
@@ -82,7 +82,7 @@ const MensagemPastoral = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-white">Pastor Mauro Dias</p>
-                    <p className="text-sm text-blue-200">02 de Abril, 2025</p>
+                    <p className="text-sm text-blue-200">10 de Abril, 2025</p>
                   </div>
                 </div>
 
