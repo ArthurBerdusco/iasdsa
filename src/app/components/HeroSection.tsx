@@ -49,35 +49,35 @@ const themeColors = {
 const cultosData: CultoProps[] = [
   {
     id: 1,
-    titulo: 'CULTO DE ADORAÇÃO',
+    titulo: 'CULTO DE ADORAÇÃO - MARCAS DE CRISTO',
     diaSemana: 'SÁBADO',
-    data: '05/04/2025',
+    data: '12/04/2025',
     hora: '10h40',
-    orador: 'Pr. Mauro Dias',
-    imagem: '/images/2025/4_ABR/Semana_1_3_9/culto-sabado.png',
-    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    orador: 'Pr. Stevan Scheffel',
+    imagem: '/images/2025/4_ABR/Semana_2_10_16/culto-sabado.jpeg',
+    oradorImagem: '/images/pastores/stevan-scheffel.jpg',
     corDestaque: 'primary',
   },
   {
     id: 2,
-    titulo: 'CULTO DE CELEBRAÇÃO',
+    titulo: 'CULTO EVANGELÍSTICO - MARCAS DE CRISTO',
     diaSemana: 'DOMINGO',
-    data: '06/04/2025',
+    data: '13/04/2025',
     hora: '10h00',
-    orador: 'Pr. Mauro Dias',
-    imagem: '/images/2025/4_ABR/Semana_1_3_9/mensagem-pastoral.png',
-    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    orador: 'Pr. Stevan Scheffel',
+    imagem: '/images/2025/4_ABR/Semana_2_10_16/culto-domingo.jpeg',
+    oradorImagem: '/images/pastores/stevan-scheffel.jpg',
     corDestaque: 'secondary',
   },
   {
     id: 3,
     titulo: 'CULTO DE ORAÇÃO',
     diaSemana: 'QUARTA',
-    data: '02/04/2025',
+    data: '16/04/2025',
     hora: '20h00',
-    orador: 'Pr. Mauro Dias',
+    orador: 'Pr. Stevan Scheffel',
     imagem: '/images/2025/4_ABR/Semana_1_3_9/culto-oracao.jpg',
-    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    oradorImagem: '/images/pastores/stevan-scheffel.jpg',
     corDestaque: 'accent',
   }
 ];
@@ -202,7 +202,7 @@ export default function CultosSwiper() {
                     />
 
                     {/* Subtle gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/90 via-blue-950/30 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-blue-950/10 to-transparent"></div>
 
                     {/* Speaker info overlay with improved design */}
                     <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">

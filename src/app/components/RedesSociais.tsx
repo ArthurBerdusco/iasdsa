@@ -1,6 +1,6 @@
 'use client'
 
-import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaYoutube, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { useState, useEffect, ReactNode } from "react";
 
 interface SocialCardProps {
@@ -11,22 +11,51 @@ interface SocialCardProps {
     color: string;
 }
 
+interface SermonType {
+    id: string;
+    title: string;
+    day: string;
+    time: string;
+    description: string;
+}
+
 const RedesSociais = () => {
+    const [selectedSermon, setSelectedSermon] = useState(0);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-    const [latestSermon] = useState({
-        id: "q7C4sr9AOfE",
-        title: "Último Culto"
-    });
+    
+    const sermons: SermonType[] = [
+        {
+            id: "q7C4sr9AOfE",
+            title: "Culto de Sábado",
+            day: "5/4/2025",
+            time: "10h40",
+            description: "Culto de Adoração"
+        },
+        {
+            id: "0uvvp7PSoUE", // Substitua por IDs reais
+            title: "Culto de Domingo",
+            day: "6/4/2025",
+            time: "10h00",
+            description: "Culto Evangelístico"
+        },
+        {
+            id: "xhAFsXL5Gkk", // Substitua por IDs reais
+            title: "Culto de Quarta",
+            day: "9/4/2025",
+            time: "20h00",
+            description: "Culto de Oração"
+        }
+    ];
 
     useEffect(() => {
-        // You could fetch the latest sermon from an API here
-        // This is just a placeholder for now
+        // Reset video loaded state when changing sermons
+        setIsVideoLoaded(false);
         const timer = setTimeout(() => {
             setIsVideoLoaded(true);
-        }, 1000);
+        }, 500);
 
         return () => clearTimeout(timer);
-    }, []);
+    }, [selectedSermon]);
 
     return (
         <section className="bg-blue-950 text-white">
@@ -41,7 +70,7 @@ const RedesSociais = () => {
 
                 {/* Social Media Cards */}
                 <div className="max-w-6xl mx-auto py-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
                         <SocialCard
                             icon={<FaFacebook className="text-white text-2xl" />}
                             platform="Facebook"
@@ -66,31 +95,46 @@ const RedesSociais = () => {
                     </div>
                 </div>
 
-
-                {/* Latest Sermon Section */}
+                {/* Sermons Section - Refactored */}
                 <div className="max-w-6xl mx-auto py-8">
                     <div className="bg-white rounded-xl shadow-xl overflow-hidden">
+                        {/* Header com navegação dos cultos */}
                         <div className="p-6 border-b border-gray-100">
-                            <div className="flex items-center justify-between">
-                                <div>
+                            <div className="flex flex-col space-y-4">
+                                <div className="flex items-center justify-between">
                                     <h3 className="text-2xl font-semibold text-gray-800">
-                                        Último Culto
+                                        Nossos Cultos
                                     </h3>
-                                    <p className="text-gray-500">
-                                        Assista ao nosso culto mais recente
-                                    </p>
+                                    <a
+                                        href="https://www.youtube.com/@AdventistasSantoAmaro/streams"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                                    >
+                                        Ver Todos
+                                    </a>
                                 </div>
-                                <a
-                                    href={`https://www.youtube.com/watch?v=${latestSermon.id}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                                >
-                                    Ver no YouTube
-                                </a>
+                                
+                                {/* Tabs para navegação entre cultos */}
+                                <div className="flex flex-wrap gap-2">
+                                    {sermons.map((sermon, index) => (
+                                        <button
+                                            key={index}
+                                            onClick={() => setSelectedSermon(index)}
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                                                selectedSermon === index
+                                                    ? "bg-blue-600 text-white"
+                                                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                                            }`}
+                                        >
+                                            {sermon.title}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
 
+                        {/* Video player */}
                         <div className="relative aspect-video w-full h-max bg-gray-100">
                             {!isVideoLoaded && (
                                 <div className="absolute inset-0 flex items-center justify-center">
@@ -99,8 +143,8 @@ const RedesSociais = () => {
                             )}
                             <iframe
                                 className="w-full h-full"
-                                src={`https://www.youtube.com/embed/${latestSermon.id}?si=eWsKJvBXdI1ZL3Ol`}
-                                title={latestSermon.title}
+                                src={`https://www.youtube.com/embed/${sermons[selectedSermon].id}?si=eWsKJvBXdI1ZL3Ol`}
+                                title={sermons[selectedSermon].title}
                                 frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 referrerPolicy="strict-origin-when-cross-origin"
@@ -109,16 +153,46 @@ const RedesSociais = () => {
                             ></iframe>
                         </div>
 
+                        {/* Sermon info and CTA */}
                         <div className="p-6 bg-gray-50">
-                            <a
-                                href="https://www.youtube.com/@AdventistasSantoAmaro/streams"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 transition text-white font-medium rounded-lg shadow-sm"
-                            >
-                                <FaYoutube className="mr-2" />
-                                Ver Todos os Cultos
-                            </a>
+                            <div className="mb-4">
+                                <h4 className="text-xl font-semibold text-gray-800 mb-2">
+                                    {sermons[selectedSermon].title}
+                                </h4>
+                                <p className="text-gray-600 mb-3">
+                                    {sermons[selectedSermon].description}
+                                </p>
+                                <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                                    <div className="flex items-center">
+                                        <FaCalendarAlt className="mr-2 text-blue-600" />
+                                        {sermons[selectedSermon].day}
+                                    </div>
+                                    <div className="flex items-center">
+                                        <FaClock className="mr-2 text-blue-600" />
+                                        {sermons[selectedSermon].time}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div className="flex flex-col sm:flex-row gap-3">
+                                <a
+                                    href={`https://www.youtube.com/watch?v=${sermons[selectedSermon].id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 inline-flex items-center justify-center py-3 px-4 bg-blue-600 hover:bg-blue-700 transition text-white font-medium rounded-lg shadow-sm"
+                                >
+                                    <FaYoutube className="mr-2" />
+                                    Ver no YouTube
+                                </a>
+                                <a
+                                    href="https://www.youtube.com/@AdventistasSantoAmaro/streams"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 inline-flex items-center justify-center py-3 px-4 bg-white border border-gray-300 hover:bg-gray-50 transition text-gray-700 font-medium rounded-lg shadow-sm"
+                                >
+                                    Ver Outros Cultos
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

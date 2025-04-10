@@ -61,6 +61,9 @@ const MensagemPastoral = () => {
                 <p className='mt-4'>
                   Na Bíblia a conexão é parte essencial do relacionamento. Jesus em um de seus discursos mais famosos, conta a parábola da Videira Verdadeira, cujo segredo para produzir frutos era a conexão entre a videira, os ramos e até o agricultor.
                 </p>
+                <p className='mt-4'>
+                Eu sou a videira; vocês são os ramos. Se alguém permanecer em mim e eu nele, esse dará muito fruto; pois sem mim vocês não podem fazer nada. João 15:5
+                </p>
               </div>
 
               {/* Informações do pastor e botão */}
