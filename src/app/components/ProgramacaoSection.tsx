@@ -19,7 +19,7 @@ const ProgramacaoCultos = () => {
       id: 2,
       titulo: 'Culto de Domingo',
       hora: '10h00',
-      descricao: 'Culto da Família',
+      descricao: 'Culto Evangelístico',
       icone: <Sunrise size={48} className='text-sky-400' />,
       corBg: 'bg-white/10',
       corIcone: 'bg-blue-800/50',

@@ -23,7 +23,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-2/5 relative">
               <div className="relative h-64 lg:h-full min-h-[320px]">
                 <Image
-                  src="/images/2025/4_ABR/Semana_2_10_16/mensagem-pastoral.jpg"
+                  src="/images/2025/4_ABR/Semana_3_17_23/mensagem-pastoral.jpeg"
                   alt="Mensagem Pastoral"
                   fill
                   className="object-cover"
@@ -45,7 +45,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-3/5 p-6 lg:p-8 flex flex-col">
               {/* Título da mensagem */}
               <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-6">
-                Marcas de Cristo
+                O curto espaço entre “hosana” e “crucifica-O”
               </h3>
 
               {/* Texto da mensagem */}
@@ -56,13 +56,7 @@ const MensagemPastoral = () => {
                 </div>
 
                 <p>
-                  Cicatrizes e rugas são parte da história de cada um. Essas marcas nos lembram de que a vida é feita de momentos diversos, principalmente desafios. Embora a sociedade muitas vezes valorize uma aparência "impecável" e livre de marcas, é importante reconhecer que essas características são inerentes à experiência humana e podem ser vistas como símbolos de nossa jornada.
-                </p>
-                <p className='mt-4'>
-                  Em última análise, essas marcas são lembretes visíveis do que vivemos e sentimos.
-                </p>
-                <p className='mt-4'>
-                  A palavra "marcas" nos remete imediatamente ao nome ou à identidade visual de uma organização, elementos que carregam consigo seus valores, promessas e propriedade. O simples fato de vermos o nome ou o logotipo de uma empresa já nos transmite impressões de sucesso, qualidade, status ou inovação.
+                  Anualmente os cristãos se mobilizam para de alguma forma participar de cultos e manifestações religiosas na época da páscoa. A reflexão nesse período normalmente se concentra na semana e nos eventos que sucederam a crucifixão de Jesus. Duas palavras de ordem marcam o início e o fim desta semana, hosana e crucifica-O.
                 </p>
               </div>
 
@@ -82,7 +76,7 @@ const MensagemPastoral = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-white">Pastor Mauro Dias</p>
-                    <p className="text-sm text-blue-200">10 de Abril, 2025</p>
+                    <p className="text-sm text-blue-200">17 de Abril, 2025</p>
                   </div>
                 </div>
 

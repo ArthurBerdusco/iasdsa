@@ -25,23 +25,23 @@ const RedesSociais = () => {
     
     const sermons: SermonType[] = [
         {
-            id: "q7C4sr9AOfE",
+            id: "l3aI2Qnwqf4",
             title: "Culto de Sábado",
-            day: "5/4/2025",
+            day: "12/4/2025",
             time: "10h40",
             description: "Culto de Adoração"
         },
         {
-            id: "0uvvp7PSoUE", // Substitua por IDs reais
+            id: "_tjEr_yFfbg", // Substitua por IDs reais
             title: "Culto de Domingo",
-            day: "6/4/2025",
+            day: "13/4/2025",
             time: "10h00",
             description: "Culto Evangelístico"
         },
         {
-            id: "xhAFsXL5Gkk", // Substitua por IDs reais
+            id: "KBQTzk2igq4", // Substitua por IDs reais
             title: "Culto de Quarta",
-            day: "9/4/2025",
+            day: "16/4/2025",
             time: "20h00",
             description: "Culto de Oração"
         }
@@ -103,7 +103,7 @@ const RedesSociais = () => {
                             <div className="flex flex-col space-y-4">
                                 <div className="flex items-center justify-between">
                                     <h3 className="text-2xl font-semibold text-gray-800">
-                                        Nossos Cultos
+                                        Cultos da semana passada
                                     </h3>
                                     <a
                                         href="https://www.youtube.com/@AdventistasSantoAmaro/streams"

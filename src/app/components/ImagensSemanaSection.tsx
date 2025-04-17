@@ -15,18 +15,31 @@ interface ImageData {
 // Dados de exemplo - em produção seriam obtidos de uma API ou CMS
 const sampleImages: ImageData[] = [
   {
-    src: "/images/2025/4_ABR/Semana_1_3_9/role.jpg",
-    title: "Rolê Jovem Adventista - Centro de SP",
-    date: "30/3/2025",
-    description: "Um dia especial explorando a história, cultura e arquitetura do centro de São Paulo! Visitas em marcos icônicos e trabalho missionário de entrega de livros e conexão!"
+    src: "/images/2025/4_ABR/Semana_3_17_23/cine-jasa.jpeg",
+    title: "Cine JASA",
+    date: "14/4/2025",
+    description: "Cine JASA - filme 'A Forja: O poder da transformação'."
   },
   {
-    src: "/images/2025/4_ABR/Semana_1_3_9/culto JA.jpeg",
-    title: "Culto JA",
-    date: "29/3/2025",
-    description: "Culto JA - Encontro transformador com Jesus e a mulher do poço, mensagem com Lucas Feres."
+    src: "/images/2025/4_ABR/Semana_3_17_23/livro3.jfif",
+    title: "Dia de Missão",
+    date: "14/4/2025",
+    description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
   },
-];
+  {
+    src: "/images/2025/4_ABR/Semana_3_17_23/livro2.jfif",
+    title: "Dia de Missão",
+    date: "14/4/2025",
+    description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
+  },
+  {
+    src: "/images/2025/4_ABR/Semana_3_17_23/livro1.jfif",
+    title: "Dia de Missão",
+    date: "14/4/2025",
+    description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
+  }
+]
+
 
 export default function ImagensSemana() {
   const [images, setImages] = useState<ImageData[]>(sampleImages);

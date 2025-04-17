@@ -1,11 +1,17 @@
 import React from 'react';
 import { MessageCircle, Calendar, FormInput } from 'lucide-react';
-import { GiBread, GiMeal } from 'react-icons/gi';
+import { GiBread } from 'react-icons/gi';
 import Link from 'next/link';
 
 const Anuncios = () => {
   const anuncios = [
-
+    {
+      id: 5,
+      titulo: "Culto JASA",
+      texto: "Venha participar do culto jovem com o tema 'Conhecimento Desperdiçado'. O orador será o jovem Lucas Feres. Esperamos você no sábado, 26/04, às 16h30!",
+      imagem: "/images/anuncios/culto-jasa.jpg",
+      data: "26/04 às 16h30"
+    },
     {
       id: 1,
       titulo: "Pão Caseiro Integral - Desbravadores",
