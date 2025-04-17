@@ -21,19 +21,19 @@ const sampleImages: ImageData[] = [
     description: "Cine JASA - filme 'A Forja: O poder da transformação'."
   },
   {
-    src: "/images/2025/4_ABR/Semana_3_17_23/livro3.jfif",
+    src: "/images/2025/4_ABR/Semana_3_17_23/livro3.jpg",
     title: "Dia de Missão",
     date: "14/4/2025",
     description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
   },
   {
-    src: "/images/2025/4_ABR/Semana_3_17_23/livro2.jfif",
+    src: "/images/2025/4_ABR/Semana_3_17_23/livro2.jpg",
     title: "Dia de Missão",
     date: "14/4/2025",
     description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
   },
   {
-    src: "/images/2025/4_ABR/Semana_3_17_23/livro1.jfif",
+    src: "/images/2025/4_ABR/Semana_3_17_23/livro1.jpg",
     title: "Dia de Missão",
     date: "14/4/2025",
     description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
