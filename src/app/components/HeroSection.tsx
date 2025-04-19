@@ -64,7 +64,7 @@ const cultosData: CultoProps[] = [
     diaSemana: 'DOMINGO',
     data: '20/04/2025',
     hora: '10h00',
-    orador: 'Pr. Filipe Souza',
+    orador: 'Filipe Souza',
     imagem: '/images/2025/4_ABR/Semana_3_17_23/culto-domingo.jpeg',
     oradorImagem: '/images/pastores/filipe-souza.jpeg',
     corDestaque: 'secondary',
