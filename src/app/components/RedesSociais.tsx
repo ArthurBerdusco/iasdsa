@@ -25,23 +25,23 @@ const RedesSociais = () => {
     
     const sermons: SermonType[] = [
         {
-            id: "l3aI2Qnwqf4",
+            id: "fNZrQKzBguM",
             title: "Culto de Sábado",
-            day: "12/4/2025",
+            day: "19/4/2025",
             time: "10h40",
             description: "Culto de Adoração"
         },
         {
-            id: "_tjEr_yFfbg", // Substitua por IDs reais
+            id: "SJxCI9-PLrk", 
             title: "Culto de Domingo",
-            day: "13/4/2025",
+            day: "20/4/2025",
             time: "10h00",
             description: "Culto Evangelístico"
         },
         {
-            id: "KBQTzk2igq4", // Substitua por IDs reais
+            id: "ojcEJ6oOvHw", 
             title: "Culto de Quarta",
-            day: "16/4/2025",
+            day: "23/4/2025",
             time: "20h00",
             description: "Culto de Oração"
         }

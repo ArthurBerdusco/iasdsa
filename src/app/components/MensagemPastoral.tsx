@@ -23,7 +23,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-2/5 relative">
               <div className="relative h-64 lg:h-full min-h-[320px]">
                 <Image
-                  src="/images/2025/4_ABR/Semana_3_17_23/mensagem-pastoral.jpeg"
+                  src="/images/2025/4_ABR/Semana_4_24_30/mensagem-pastoral.jpeg"
                   alt="Mensagem Pastoral"
                   fill
                   className="object-cover"
@@ -45,7 +45,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-3/5 p-6 lg:p-8 flex flex-col">
               {/* Título da mensagem */}
               <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-6">
-                O curto espaço entre “hosana” e “crucifica-O”
+                Identidade Reconhecida
               </h3>
 
               {/* Texto da mensagem */}
@@ -55,8 +55,11 @@ const MensagemPastoral = () => {
 
                 </div>
 
+                <p className='mb-5'>
+                  O conceito de Identidade pode ser explorado inicialmente através da filosofia. Para o filósofo inglês John Locke, por exemplo, identidade é a qualidade de ser idêntico a si mesmo e diferente dos outros. Em essência é responder a grande questão existencial: Quem sou eu? No contexto religioso a pergunta pode ser modificada para: Quem sou eu em Cristo?
+                </p>
                 <p>
-                  Anualmente os cristãos se mobilizam para de alguma forma participar de cultos e manifestações religiosas na época da páscoa. A reflexão nesse período normalmente se concentra na semana e nos eventos que sucederam a crucifixão de Jesus. Duas palavras de ordem marcam o início e o fim desta semana, hosana e crucifica-O.
+                  Do ponto de vista psicológico, "quem sou eu?" é uma pergunta que só pode ser respondida através de uma investigação profunda e contínua do próprio mundo interno, da história pessoal e das dinâmicas psíquicas inconscientes. Não há uma identidade fixa e estática, mas sim um processo constante de construção e descoberta.
                 </p>
               </div>
 
@@ -76,7 +79,7 @@ const MensagemPastoral = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-white">Pastor Mauro Dias</p>
-                    <p className="text-sm text-blue-200">17 de Abril, 2025</p>
+                    <p className="text-sm text-blue-200">24 de Abril, 2025</p>
                   </div>
                 </div>
 

@@ -15,6 +15,12 @@ interface ImageData {
 // Dados de exemplo - em produção seriam obtidos de uma API ou CMS
 const sampleImages: ImageData[] = [
   {
+    src: "/images/2025/4_ABR/Semana_4_24_30/claudio-culto-oracao.jpg",
+    title: "Testemunho do Claudio no culto de oração dia 23/4/2025",
+    date: "23/4/2025",
+    description: "Cine JASA - filme 'A Forja: O poder da transformação'."
+  },
+  {
     src: "/images/2025/4_ABR/Semana_3_17_23/cine-jasa.jpeg",
     title: "Cine JASA",
     date: "14/4/2025",
@@ -26,18 +32,7 @@ const sampleImages: ImageData[] = [
     date: "14/4/2025",
     description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
   },
-  {
-    src: "/images/2025/4_ABR/Semana_3_17_23/livro2.jpg",
-    title: "Dia de Missão",
-    date: "14/4/2025",
-    description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
-  },
-  {
-    src: "/images/2025/4_ABR/Semana_3_17_23/livro1.jpg",
-    title: "Dia de Missão",
-    date: "14/4/2025",
-    description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
-  }
+
 ]
 
 

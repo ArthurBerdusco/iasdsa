@@ -13,6 +13,24 @@ const Anuncios = () => {
       data: "26/04 às 16h30"
     },
     {
+      id: 6,
+      titulo: "Encontro de Solteiros Adultos 2025",
+      texto: "Participe do Encontro de Solteiros Adultos no dia 04/05, das 9h às 12h, no Auditório da AP. Almoço garantido! Clique e entre no grupo.",
+      imagem: "/images/anuncios/encontro-solteiros-adultos.jpg",
+      linkWhatsapp: "https://chat.whatsapp.com/B5cgisv4Pr3JLft-FtdZAt",
+      data: "04/05 das 9h às 12h"
+    },
+    {
+      id: 8,
+      titulo: "Escola 117 - Curso de Liderança JA",
+      texto: "Participe da Escola 117, curso gratuito de liderança para jovens a partir de 16 anos. Início 25/04 na IASD Santo Amaro. Preencha o formulário e garanta sua vaga!",
+      imagem: "/images/anuncios/escola-117.jpeg",
+      linkForms: "https://forms.gle/Yk1StAq1Fhr7bKah9", // coloquei um exemplo, depois você ajusta o link do formulário se tiver
+      linkWhatsapp: "https://wa.me/+5511979814179",
+      data: "Início: 25/04/2025 às 19h30"
+    },
+    
+    {
       id: 1,
       titulo: "Pão Caseiro Integral - Desbravadores",
       texto: "Ajude a comunidade e saboreie um delicioso pão caseiro integral! Faça seu pedido e contribua com os Desbravadores Borba Gato.",
@@ -30,6 +48,14 @@ const Anuncios = () => {
       linkForms: "https://docs.google.com/forms/d/e/1FAIpQLSfCCgmzJBPckAzU8ZcwrZ8VsU7MIomRutKah6zBfgQwkkIf6Q/viewform",
       data: "Inscrições Abertas",
     },
+    {
+      id: 7,
+      titulo: "Encontro de Casais",
+      texto: "Reserve sua vaga para o Encontro de Casais no Resort Terras Altas, de 03 a 05/10/2025. Vagas limitadas! Entre no grupo para saber mais.",
+      imagem: "/images/anuncios/encontro-de-casais.jpg",
+      linkWhatsapp: "https://chat.whatsapp.com/Ka3KPa5ysVaFMo0etbhyYT",
+      data: "03 a 05/10/2025"
+    },  
     {
       id: 3,
       titulo: "CAMPAL 2025 - Vagas Limitadas!",
