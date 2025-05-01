@@ -9,6 +9,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
+import SectionHeader from './SectionHeader';
 
 // Define types for our data
 interface CultoProps {
@@ -49,46 +50,35 @@ const themeColors = {
 const cultosData: CultoProps[] = [
   {
     id: 1,
-    titulo: 'CULTO DE ADORAÇÃO - IDENTIDADE RECONHECIDA',
+    titulo: 'CULTO DE ADORAÇÃO',
     diaSemana: 'SÁBADO',
-    data: '26/04/2025',
+    data: '03/05/2025',
     hora: '10h40',
-    orador: 'Pr. Mauro Dias',
-    imagem: '/images/2025/4_ABR/Semana_4_24_30/culto-sabado.jpeg',
-    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    orador: 'Paulo Tadeu',
+    imagem: '/images/2025/5_MAI/Semana_1_1_7/culto-sabado.jpeg',
+    oradorImagem: '/images/pastores/sem-imagem.jpg',
     corDestaque: 'primary',
   },
   {
     id: 2,
     titulo: 'CULTO EVANGELÍSTICO',
     diaSemana: 'DOMINGO',
-    data: '27/04/2025',
+    data: '04/05/2025',
     hora: '10h00',
-    orador: 'Pr. Mauro Dias',
-    imagem: '/images/2025/4_ABR/Semana_4_24_30/culto-domingo.jpeg',
-    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    orador: 'Henrique Esteves',
+    imagem: '/images/2025/5_MAI/Semana_1_1_7/culto-domingo.jpeg',
+    oradorImagem: '/images/pastores/sem-imagem.jpg',
     corDestaque: 'secondary',
   },
   {
     id: 3,
     titulo: 'CULTO DE ORAÇÃO',
     diaSemana: 'QUARTA',
-    data: '30/04/2025',
+    data: '07/05/2025',
     hora: '20h00',
-    orador: 'Gean',
+    orador: 'Pr. Mauro Dias',
     imagem: '/images/2025/4_ABR/Semana_1_3_9/culto-oracao.jpg',
-    oradorImagem: '/images/pastores/sem-imagem.jpg',
-    corDestaque: 'accent',
-  },
-  {
-    id: 4,
-    titulo: 'CULTO JOVEM - JASA',
-    diaSemana: 'SÁBADO(26) À TARDE',
-    data: '26/04/2025',
-    hora: '16:30',
-    orador: 'Lucas Feres',
-    imagem: '/images/2025/4_ABR/Semana_4_24_30/culto-jasa.jpg',
-    oradorImagem: '/images/pastores/lucas-feres.jpeg',
+    oradorImagem: '/images/pastores/mauro-dias.jpg',
     corDestaque: 'accent',
   }
 ];
@@ -128,12 +118,7 @@ export default function CultosSwiper() {
       </div>
 
       {/* Title with subtle underline */}
-      <div className="mb-12 text-center">
-          <h2 className="text-3xl text-white md:text-4xl font-bold relative inline-block pb-4">
-          PRÓXIMOS CULTOS
-            <span className="absolute bottom-0 left-0 right-0 h-1 w-full bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
-          </h2>
-        </div>
+      <SectionHeader title='PRÓXIMOS CULTOS'/>
 
       {/* Swiper Component */}
       <div className="relative pb-12">
@@ -157,14 +142,12 @@ export default function CultosSwiper() {
           }}
           onBeforeInit={(swiper) => {
             swiperRef.current = swiper;
-          
+
             if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
               swiper.params.navigation.prevEl = navigationPrevRef.current;
               swiper.params.navigation.nextEl = navigationNextRef.current;
             }
           }}
-          
-          
 
           onSlideChange={(swiper) => {
             setActiveIndex(swiper.realIndex);

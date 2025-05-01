@@ -2,6 +2,7 @@ import React from 'react';
 import { Sunrise } from 'lucide-react';
 import { FaPrayingHands } from 'react-icons/fa';
 import Image from 'next/image';
+import SectionHeader from './SectionHeader';
 
 const ProgramacaoCultos = () => {
   const cultos = [
@@ -41,12 +42,7 @@ const ProgramacaoCultos = () => {
     <div className="bg-blue-950 text-white px-4">
       <div className="max-w-6xl mx-auto py-12 px-4">
         {/* Header com ícone */}
-        <div className="flex flex-col items-center justify-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-center relative pb-4">
-            PROGRAMAÇÃO DOS CULTOS
-            <span className="absolute bottom-0 left-0 right-0 h-1 w-full bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
-          </h2>
-        </div>
+        <SectionHeader title='PROGRAMAÇÃO DOS CULTOS'/>
 
         {/* Grid responsivo para os cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

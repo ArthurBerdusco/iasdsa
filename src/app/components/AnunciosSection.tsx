@@ -2,16 +2,10 @@ import React from 'react';
 import { MessageCircle, Calendar, FormInput } from 'lucide-react';
 import { GiBread } from 'react-icons/gi';
 import Link from 'next/link';
+import SectionHeader from './SectionHeader';
 
 const Anuncios = () => {
   const anuncios = [
-    {
-      id: 5,
-      titulo: "Culto JASA",
-      texto: "Venha participar do culto jovem com o tema 'Conhecimento Desperdiçado'. O orador será o jovem Lucas Feres. Esperamos você no sábado, 26/04, às 16h30!",
-      imagem: "/images/anuncios/culto-jasa.jpg",
-      data: "26/04 às 16h30"
-    },
     {
       id: 6,
       titulo: "Encontro de Solteiros Adultos 2025",
@@ -21,15 +15,23 @@ const Anuncios = () => {
       data: "04/05 das 9h às 12h"
     },
     {
+      id: 9,
+      titulo: "Escola de Culinária",
+      texto: "Participe de uma aula especial de culinária com Giovanna Pitlovanciv! Dia 17/05 às 17h. Apenas R$ 10. Vagas limitadas!",
+      imagem: "/images/anuncios/culinaria-2.jpg",
+      linkWhatsapp: "https://wa.me/5511946003096",
+      data: "17/05 às 17h",
+    },    
+    {
       id: 8,
       titulo: "Escola 117 - Curso de Liderança JA",
-      texto: "Participe da Escola 117, curso gratuito de liderança para jovens a partir de 16 anos. Início 25/04 na IASD Santo Amaro. Preencha o formulário e garanta sua vaga!",
+      texto:
+        "Participe da Escola 117, curso gratuito de liderança para jovens a partir de 16 anos.\n\n📍 Local: IASD Santo Amaro\n🗓️ Datas das aulas:\n✅ 25/04\n✅ 02/05\n✅ 09/05\n✅ 16/05\n✅ 23/05\n✅ 30/05\n✅ 06/06\n✅ 13/06\n✅ 27/06",
       imagem: "/images/anuncios/escola-117.jpeg",
-      linkForms: "https://forms.gle/9ZDu2yYWdEBW2Uy99", // coloquei um exemplo, depois você ajusta o link do formulário se tiver
+      linkForms: "https://forms.gle/9ZDu2yYWdEBW2Uy99",
       linkWhatsapp: "https://wa.me/+5511979814179",
       data: "Início: 25/04/2025 às 19h30"
-    },
-    
+    },  
     {
       id: 1,
       titulo: "Pão Caseiro Integral - Desbravadores",
@@ -83,12 +85,7 @@ const Anuncios = () => {
       <div className="max-w-6xl mx-auto py-12 px-4">
 
         {/* Header */}
-        <div className="flex flex-col items-center justify-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-center relative">
-            ANÚNCIOS
-            <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 -mb-2 h-1 w-24 bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
-          </h2>
-        </div>
+        <SectionHeader title='ANÚNCIOS'/>
 
         <div className="space-y-16">
           {anuncios.map((anuncio) => (
@@ -111,7 +108,7 @@ const Anuncios = () => {
                       <span className="text-sm font-semibold">{anuncio.data}</span>
                     </div>
                     <h3 className="text-2xl text-black font-bold mb-3">{anuncio.titulo}</h3>
-                    <p className="text-gray-600 mb-6">{anuncio.texto}</p>
+                    <p className="text-gray-600 mb-6 whitespace-pre-line">{anuncio.texto}</p>
                   </div>
 
                   <div className="flex flex-col gap-3">

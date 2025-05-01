@@ -3,18 +3,14 @@
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import SectionHeader from './SectionHeader';
 
 const MensagemPastoral = () => {
   return (
     <section className="bg-blue-950 text-white">
       <div className="max-w-6xl mx-auto py-12 px-4">
         {/* Header com ícone */}
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold relative inline-block pb-4">
-            MENSAGEM PASTORAL
-            <span className="absolute bottom-0 left-0 right-0 h-1 w-full bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
-          </h2>
-        </div>
+        <SectionHeader title='MENSAGEM PASTORAL'/>
 
         {/* Container principal com flexbox */}
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">

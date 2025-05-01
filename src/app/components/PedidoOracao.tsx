@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import SectionHeader from './SectionHeader';
 
 const PedidoOracao = () => {
   const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc0KWKcA_u8YKXIuNszl7LWMvgOp-T2Uzps-0Wovun69glbyA/viewform";
@@ -10,6 +11,7 @@ const PedidoOracao = () => {
   return (
     <div className="bg-blue-950">
       <div className="max-w-6xl mx-auto sm:py-8 px-2 sm:px-4">
+        <SectionHeader title='PEDIDO DE ORAÇÃO' />
         <div className="bg-black relative w-full overflow-hidden rounded-lg shadow-lg">
           {/* Overlay para melhor contraste */}
           <div className="absolute inset-0 bg-black/30 z-10"></div>

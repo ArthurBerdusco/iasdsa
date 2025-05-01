@@ -2,6 +2,7 @@
 
 import { FaFacebook, FaInstagram, FaYoutube, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { useState, useEffect, ReactNode } from "react";
+import SectionHeader from "./SectionHeader";
 
 interface SocialCardProps {
     icon: ReactNode;
@@ -22,26 +23,26 @@ interface SermonType {
 const RedesSociais = () => {
     const [selectedSermon, setSelectedSermon] = useState(0);
     const [isVideoLoaded, setIsVideoLoaded] = useState(false);
-    
+
     const sermons: SermonType[] = [
         {
-            id: "fNZrQKzBguM",
+            id: "VNwwsX4n4as",
             title: "Culto de Sábado",
-            day: "19/4/2025",
+            day: "26/04/2025",
             time: "10h40",
             description: "Culto de Adoração"
         },
         {
-            id: "SJxCI9-PLrk", 
+            id: "JydY93PqoyE",
             title: "Culto de Domingo",
-            day: "20/4/2025",
+            day: "27/04/2025",
             time: "10h00",
             description: "Culto Evangelístico"
         },
         {
-            id: "ojcEJ6oOvHw", 
+            id: "IMUSeoIAWL8",
             title: "Culto de Quarta",
-            day: "23/4/2025",
+            day: "30/04/2025",
             time: "20h00",
             description: "Culto de Oração"
         }
@@ -61,12 +62,7 @@ const RedesSociais = () => {
         <section className="bg-blue-950 text-white">
             <div className="max-w-6xl mx-auto py-12 px-4">
                 {/* Header com ícone */}
-                <div className="flex flex-col items-center justify-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold text-center relative pb-4">
-                        CONECTE-SE CONOSCO
-                        <span className="absolute bottom-0 left-0 right-0 h-1 w-full bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
-                    </h2>
-                </div>
+                <SectionHeader title='REDES SOCIAIS'/>
 
                 {/* Social Media Cards */}
                 <div className="max-w-6xl mx-auto py-8">
@@ -114,18 +110,17 @@ const RedesSociais = () => {
                                         Ver Todos
                                     </a>
                                 </div>
-                                
+
                                 {/* Tabs para navegação entre cultos */}
                                 <div className="flex flex-wrap gap-2">
                                     {sermons.map((sermon, index) => (
                                         <button
                                             key={index}
                                             onClick={() => setSelectedSermon(index)}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                                                selectedSermon === index
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${selectedSermon === index
                                                     ? "bg-blue-600 text-white"
                                                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                                            }`}
+                                                }`}
                                         >
                                             {sermon.title}
                                         </button>
@@ -173,7 +168,7 @@ const RedesSociais = () => {
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div className="flex flex-col sm:flex-row gap-3">
                                 <a
                                     href={`https://www.youtube.com/watch?v=${sermons[selectedSermon].id}`}

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
+import SectionHeader from "./SectionHeader";
 
 // Interface para dados de imagem
 interface ImageData {
@@ -15,28 +16,27 @@ interface ImageData {
 // Dados de exemplo - em produção seriam obtidos de uma API ou CMS
 const sampleImages: ImageData[] = [
   {
-    src: "/images/2025/4_ABR/Semana_4_24_30/claudio-culto-oracao.jpg",
-    title: "Testemunho do Claudio no culto de oração dia 23/4/2025",
-    date: "23/4/2025",
-    description: "Cine JASA - filme 'A Forja: O poder da transformação'."
+    src: "/images/2025/5_MAI/Semana_1_1_7/oracao-culto-sabado.jpeg",
+    title: "Culto sábado - Identidade Reconhecida - Pastor Mauro Dias",
+    date: "26/04/2025",
+    description: "Momento de oração no culto sábado"
   },
   {
-    src: "/images/2025/4_ABR/Semana_3_17_23/cine-jasa.jpeg",
-    title: "Cine JASA",
-    date: "14/4/2025",
-    description: "Cine JASA - filme 'A Forja: O poder da transformação'."
+    src: "/images/2025/5_MAI/Semana_1_1_7/culto-jasa.jpeg",
+    title: "Culto JASA - Conhecimento Desperdiçado - Lucas Feres",
+    date: "26/04/2025",
+    description: "Momento de Louvores do culto Jovem Adventista"
   },
   {
-    src: "/images/2025/4_ABR/Semana_3_17_23/livro3.jpg",
-    title: "Dia de Missão",
-    date: "14/4/2025",
-    description: "Entrega do livro 'A Chave da Virada' em Santo Amaro com muita união e alegria."
+    src: "/images/2025/5_MAI/Semana_1_1_7/trilha.jpeg",
+    title: "Trilha do Movimento",
+    date: "27/04/2025",
+    description: "Dia de trilha com o grupo 'Movimento', foto dos Jovens Adventistas de Santo Amaro"
   },
 
 ]
 
-
-export default function ImagensSemana() {
+export default function FotosDaSemana() {
   const [images, setImages] = useState<ImageData[]>(sampleImages);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -57,28 +57,28 @@ export default function ImagensSemana() {
   // Funções de navegação
   const handlePrevious = useCallback(() => {
     if (isAnimating) return;
-    
+
     setIsAnimating(true);
     setCurrentIndex(prev => (prev === 0 ? images.length - 1 : prev - 1));
-    
+
     setTimeout(() => setIsAnimating(false), 500);
   }, [currentIndex, images.length, isAnimating]);
 
   const handleNext = useCallback(() => {
     if (isAnimating) return;
-    
+
     setIsAnimating(true);
     setCurrentIndex(prev => (prev === images.length - 1 ? 0 : prev + 1));
-    
+
     setTimeout(() => setIsAnimating(false), 500);
   }, [currentIndex, images.length, isAnimating]);
 
   const goToSlide = useCallback((index: number) => {
     if (isAnimating || index === currentIndex) return;
-    
+
     setIsAnimating(true);
     setCurrentIndex(index);
-    
+
     setTimeout(() => setIsAnimating(false), 500);
   }, [currentIndex, isAnimating]);
 
@@ -93,10 +93,10 @@ export default function ImagensSemana() {
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
+
     const distance = touchStart - touchEnd;
     const isSignificantSwipe = Math.abs(distance) > 50;
-    
+
     if (isSignificantSwipe) {
       if (distance > 0) {
         handleNext();
@@ -104,7 +104,7 @@ export default function ImagensSemana() {
         handlePrevious();
       }
     }
-    
+
     setTouchStart(0);
     setTouchEnd(0);
   };
@@ -125,14 +125,9 @@ export default function ImagensSemana() {
 
   return (
     <section className="bg-blue-950 text-white py-12 px-4">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto py-12 px-4">
         {/* Cabeçalho com animação sutil */}
-        <div className="flex flex-col items-center justify-center mb-12">
-                    <h2 className="text-3xl md:text-4xl font-bold text-center relative pb-4">
-                        IMAGENS DA SEMANA
-                        <span className="absolute bottom-0 left-0 right-0 h-1 w-full bg-gradient-to-r from-yellow-500 to-blue-500 rounded-full"></span>
-                    </h2>
-                </div>
+        <SectionHeader title='FOTOS DA SEMANA'/>
 
         {/* Galeria principal - IMAGEM SEPARADA DO PAINEL DE INFORMAÇÕES */}
         <div className="relative overflow-hidden rounded-t-xl shadow-xl bg-black/10 backdrop-blur-sm"
@@ -151,7 +146,7 @@ export default function ImagensSemana() {
               className="object-contain"
               style={{ backgroundColor: "#0c1b34" }} // Cor de fundo sutil que combina com o tema
             />
-          
+
             {/* Navegação por setas */}
             <button
               onClick={handlePrevious}
@@ -161,7 +156,7 @@ export default function ImagensSemana() {
             >
               <ChevronLeft size={20} />
             </button>
-            
+
             <button
               onClick={handleNext}
               className="absolute top-1/2 -translate-y-1/2 right-2 p-2 sm:p-3 rounded-full bg-black/40 hover:bg-black/60 text-white backdrop-blur-sm transition hover:scale-110 focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -172,7 +167,7 @@ export default function ImagensSemana() {
             </button>
           </div>
         </div>
-        
+
         {/* Painel de informações SEPARADO da imagem */}
         <div className="bg-black/70 backdrop-blur-md px-4 sm:px-6 py-2 rounded-b-xl shadow-xl border-t border-gray-800">
           <div className="flex items-center space-x-2 text-blue-300 mb-1">
@@ -194,11 +189,10 @@ export default function ImagensSemana() {
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`mx-1 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all ${
-                currentIndex === index 
-                  ? "bg-blue-500 scale-110" 
+              className={`mx-1 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all ${currentIndex === index
+                  ? "bg-blue-500 scale-110"
                   : "bg-white/30 hover:bg-white/50"
-              }`}
+                }`}
               aria-label={`Ir para imagem ${index + 1}`}
               aria-current={currentIndex === index ? "true" : "false"}
             />
@@ -211,11 +205,10 @@ export default function ImagensSemana() {
             <div
               key={index}
               onClick={() => goToSlide(index)}
-              className={`cursor-pointer transition duration-300 rounded-md overflow-hidden ${
-                currentIndex === index 
-                  ? "ring-2 ring-blue-500 scale-105 shadow-lg" 
+              className={`cursor-pointer transition duration-300 rounded-md overflow-hidden ${currentIndex === index
+                  ? "ring-2 ring-blue-500 scale-105 shadow-lg"
                   : "opacity-70 hover:opacity-100 hover:scale-105"
-              }`}
+                }`}
               aria-label={`Selecionar ${image.title}`}
             >
               <div className="relative w-28 h-20">

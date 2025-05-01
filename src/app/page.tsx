@@ -8,7 +8,7 @@ import PedidoOracao from "./components/PedidoOracao";
 import DizimoSection from "./components/DizimoSection";
 import Footer from "./components/Footer";
 import NavBar from "./components/NavBar";
-import ImagensSemana from "./components/ImagensSemanaSection";
+import FotosDaSemana from "./components/FotosDaSemana";
 import RedesSociais from "./components/RedesSociais";
 import MensagemPastoral from "./components/MensagemPastoral";
 import { Element } from "react-scroll";
@@ -26,9 +26,9 @@ export default function Home() {
         <HeroSection />
       </Element>
 
-      <Element name="mensagem">
+      {/* <Element name="mensagem">
         <MensagemPastoral />
-      </Element>
+      </Element> */}
 
       <Element name="programacao">
         <CultosSection />
@@ -42,11 +42,14 @@ export default function Home() {
         <PedidoOracao />
       </Element>
 
+
+      <Element name="fotos">
+        <FotosDaSemana />
+      </Element>
+
       <Element name="dizimo">
         <DizimoSection />
       </Element>
-
-      <ImagensSemana />
       <RedesSociais />
       <Footer />
     </div>
