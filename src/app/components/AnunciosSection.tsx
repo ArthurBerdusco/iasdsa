@@ -14,14 +14,14 @@ const Anuncios = () => {
       linkWhatsapp: "https://chat.whatsapp.com/EWsjhv9mvGmKlJDpFFbeC4",
       data: "04/05 das 9h às 12h"
     },
-    {
-      id: 9,
-      titulo: "Escola de Culinária",
-      texto: "Participe de uma aula especial de culinária com Giovanna Pitlovanciv! Dia 17/05 às 17h. Apenas R$ 10. Vagas limitadas!",
-      imagem: "/images/anuncios/culinaria-2.jpg",
-      linkWhatsapp: "https://wa.me/5511946003096",
-      data: "17/05 às 17h",
-    },
+    // {
+    //   id: 9,
+    //   titulo: "Escola de Culinária",
+    //   texto: "Participe de uma aula especial de culinária com Giovanna Pitlovanciv! Dia 17/05 às 17h. Apenas R$ 10. Vagas limitadas!",
+    //   imagem: "/images/anuncios/culinaria-2.jpg",
+    //   linkWhatsapp: "https://wa.me/5511946003096",
+    //   data: "17/05 às 17h",
+    // },
     {
       id: 10,
       titulo: "3º Encontro Mãe Cuida, Mãe Nutri",
