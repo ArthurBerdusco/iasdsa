@@ -21,7 +21,17 @@ const Anuncios = () => {
       imagem: "/images/anuncios/culinaria-2.jpg",
       linkWhatsapp: "https://wa.me/5511946003096",
       data: "17/05 às 17h",
-    },    
+    },
+    {
+      id: 10,
+      titulo: "3º Encontro Mãe Cuida, Mãe Nutri",
+      texto: "Participe do 3º Encontro 'Mãe Cuida, Mãe Nutri'\n\nTemas:\n• Alimentação infantil\n• Saúde mental\n• Inclusão\n• Infância digital\n\n📅 Dia 17/05 (Sábado)\n⏰ Das 14h30 às 18h\n📍 Santo Amaro\n\nEvento 100% gratuito!",
+      imagem: "/images/anuncios/mae-cuida-mae-nutri.jpeg",
+      linkForms: "https://docs.google.com/forms/d/e/1FAIpQLSeXU4foaUgD649N6vitlcPDHCBO2ahVIZmGHIdQVa9x9RfdxA/viewform",
+      linkWhatsapp: "https://wa.me/5511984443948",
+      linkInstagram: "https://www.instagram.com/maecuidamaenutri",
+      data: "17/05 das 14h30 às 18h"
+    },
     {
       id: 8,
       titulo: "Escola 117 - Curso de Liderança JA",
@@ -31,7 +41,7 @@ const Anuncios = () => {
       linkForms: "https://forms.gle/9ZDu2yYWdEBW2Uy99",
       linkWhatsapp: "https://wa.me/+5511979814179",
       data: "Início: 25/04/2025 às 19h30"
-    },  
+    },
     {
       id: 1,
       titulo: "Pão Caseiro Integral - Desbravadores",
@@ -57,7 +67,7 @@ const Anuncios = () => {
       imagem: "/images/anuncios/encontro-de-casais.jpg",
       linkWhatsapp: "https://chat.whatsapp.com/EWsjhv9mvGmKlJDpFFbeC4",
       data: "03 a 05/10/2025"
-    },  
+    },
     {
       id: 3,
       titulo: "CAMPAL 2025 - Vagas Limitadas!",
@@ -85,7 +95,7 @@ const Anuncios = () => {
       <div className="max-w-6xl mx-auto py-12 px-4">
 
         {/* Header */}
-        <SectionHeader title='ANÚNCIOS'/>
+        <SectionHeader title='ANÚNCIOS' />
 
         <div className="space-y-16">
           {anuncios.map((anuncio) => (
@@ -111,22 +121,8 @@ const Anuncios = () => {
                     <p className="text-gray-600 mb-6 whitespace-pre-line">{anuncio.texto}</p>
                   </div>
 
-                  <div className="flex flex-col gap-3">
-                    {anuncio.linkWhatsapp && (
-                      <div>
-                        <span className="text-sm text-gray-500 block mb-1">Deseja mais informações? Entre em contato:</span>
-                        <Link
-                          href={anuncio.linkWhatsapp}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex w-full items-center justify-center bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-300 text-sm md:text-base"
-                        >
-                          <MessageCircle className="h-5 w-5 mr-2" />
-                          Enviar mensagem no WhatsApp
-                        </Link>
 
-                      </div>
-                    )}
+                  <div className="flex flex-col gap-3">
 
                     {anuncio.linkForms && (
                       <div>
@@ -144,6 +140,47 @@ const Anuncios = () => {
                         </Link>
                       </div>
                     )}
+
+                    {anuncio.linkWhatsapp && (
+                      <div>
+                        <span className="text-sm text-gray-500 block mb-1">Deseja mais informações? Entre em contato:</span>
+                        <Link
+                          href={anuncio.linkWhatsapp}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex w-full items-center justify-center bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-300 text-sm md:text-base"
+                        >
+                          <MessageCircle className="h-5 w-5 mr-2" />
+                          Enviar mensagem no WhatsApp
+                        </Link>
+
+                      </div>
+                    )}
+
+                    {anuncio.linkInstagram && (
+                      <div>
+                        <span className="text-sm text-gray-500 block mb-1">
+                          Siga e inscreva-se pelo Instagram
+                        </span>
+                        <Link
+                          href={anuncio.linkInstagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex w-full items-center justify-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:brightness-110 text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 text-sm md:text-base"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mr-2"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zM12 7a5 5 0 1 1 0 10a5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7zm5.75-.88a.88.88 0 1 1-1.75 0a.88.88 0 0 1 1.75 0z" />
+                          </svg>
+                          Acessar perfil no Instagram
+                        </Link>
+                      </div>
+                    )}
+
                   </div>
                 </div>
               </div>
