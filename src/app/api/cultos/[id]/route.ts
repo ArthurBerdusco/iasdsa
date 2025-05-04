@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@neondatabase/serverless";
+import { neon } from '@neondatabase/serverless';
 import { writeFile } from "fs/promises";
 import { join } from "path";
 import { v4 as uuidv4 } from "uuid";
 import * as fs from "fs/promises";
-
-// Get database connection string from environment variable
-const connectionString = process.env.DATABASE_URL;
-
-// Initialize database client
-const client = createClient(connectionString as string);
 
 export async function GET(
   request: NextRequest,
@@ -18,32 +12,26 @@ export async function GET(
   const id = params.id;
   
   try {
-    // Connect to the database
-    await client.connect();
+    // Connect to the database using neon
+    const sql = neon(process.env.DATABASE_URL as string);
     
     // Query culto by ID
-    const result = await client.query(
-      "SELECT * FROM cultos WHERE id = $1",
-      [id]
-    );
+    const rows = await sql`SELECT * FROM cultos WHERE id = ${id}`;
     
-    if (result.rows.length === 0) {
+    if (rows.length === 0) {
       return NextResponse.json(
         { error: "Culto não encontrado" },
         { status: 404 }
       );
     }
     
-    return NextResponse.json(result.rows[0]);
+    return NextResponse.json(rows[0]);
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json(
       { error: "Falha ao buscar culto" },
       { status: 500 }
     );
-  } finally {
-    // Always disconnect from the database
-    await client.end();
   }
 }
 
@@ -73,19 +61,20 @@ export async function PUT(
     const bannerImage = formData.get("bannerImage") as File | null;
     const oradorImage = formData.get("oradorImage") as File | null;
     
-    // Connect to database to get current culto data
-    await client.connect();
-    const currentCulto = await client.query(
-      "SELECT * FROM cultos WHERE id = $1",
-      [id]
-    );
+    // Connect to database using neon
+    const sql = neon(process.env.DATABASE_URL as string);
     
-    if (currentCulto.rows.length === 0) {
+    // Get current culto data
+    const currentCultos = await sql`SELECT * FROM cultos WHERE id = ${id}`;
+    
+    if (currentCultos.length === 0) {
       return NextResponse.json(
         { error: "Culto não encontrado" },
         { status: 404 }
       );
     }
+    
+    const currentCulto = currentCultos[0];
     
     // Handle banner image upload if provided
     if (bannerImage) {
@@ -117,9 +106,9 @@ export async function PUT(
       await writeFile(join(uploadDir, filename), buffer);
       
       // Try to delete the old image file if it's not a default
-      if (currentCulto.rows[0].imagem && !currentCulto.rows[0].imagem.includes("default")) {
+      if (currentCulto.imagem && !currentCulto.imagem.includes("default")) {
         try {
-          const oldImagePath = join(process.cwd(), "public", currentCulto.rows[0].imagem);
+          const oldImagePath = join(process.cwd(), "public", currentCulto.imagem);
           await fs.unlink(oldImagePath);
         } catch (error) {
           // Just log the error, don't fail the update
@@ -149,11 +138,11 @@ export async function PUT(
       
       // Try to delete the old image file if it's not a default
       if (
-        currentCulto.rows[0].oradorImagem && 
-        !currentCulto.rows[0].oradorImagem.includes("sem-imagem")
+        currentCulto.oradorImagem && 
+        !currentCulto.oradorImagem.includes("sem-imagem")
       ) {
         try {
-          const oldImagePath = join(process.cwd(), "public", currentCulto.rows[0].oradorImagem);
+          const oldImagePath = join(process.cwd(), "public", currentCulto.oradorImagem);
           await fs.unlink(oldImagePath);
         } catch (error) {
           // Just log the error, don't fail the update
@@ -165,25 +154,28 @@ export async function PUT(
       oradorImagemPath = `/images/pastores/${filename}`;
     }
     
-    // Update culto in database
-    const result = await client.query(
-      `UPDATE cultos 
-       SET titulo = $1, diaSemana = $2, data = $3, hora = $4, 
-           orador = $5, imagem = $6, oradorImagem = $7, corDestaque = $8
-       WHERE id = $9
-       RETURNING *`,
-      [titulo, diaSemana, data, hora, orador, imagemPath, oradorImagemPath, corDestaque, id]
-    );
+    // Update culto in database using neon
+    const updatedCulto = await sql`
+      UPDATE cultos 
+      SET titulo = ${titulo}, 
+          diaSemana = ${diaSemana}, 
+          data = ${data}, 
+          hora = ${hora}, 
+          orador = ${orador}, 
+          imagem = ${imagemPath}, 
+          oradorImagem = ${oradorImagemPath}, 
+          corDestaque = ${corDestaque}
+      WHERE id = ${id}
+      RETURNING *
+    `;
     
-    return NextResponse.json(result.rows[0]);
+    return NextResponse.json(updatedCulto[0]);
   } catch (error) {
     console.error("Error updating culto:", error);
     return NextResponse.json(
       { error: "Falha ao atualizar culto" },
       { status: 500 }
     );
-  } finally {
-    await client.end();
   }
 }
 
@@ -194,29 +186,28 @@ export async function DELETE(
   const id = params.id;
   
   try {
-    // Connect to database
-    await client.connect();
+    // Connect to database using neon
+    const sql = neon(process.env.DATABASE_URL as string);
     
     // Get current culto data to access image paths
-    const currentCulto = await client.query(
-      "SELECT * FROM cultos WHERE id = $1",
-      [id]
-    );
+    const currentCultos = await sql`SELECT * FROM cultos WHERE id = ${id}`;
     
-    if (currentCulto.rows.length === 0) {
+    if (currentCultos.length === 0) {
       return NextResponse.json(
         { error: "Culto não encontrado" },
         { status: 404 }
       );
     }
     
+    const currentCulto = currentCultos[0];
+    
     // Try to delete the banner image file if it's not a default
     if (
-      currentCulto.rows[0].imagem && 
-      !currentCulto.rows[0].imagem.includes("default")
+      currentCulto.imagem && 
+      !currentCulto.imagem.includes("default")
     ) {
       try {
-        const imagePath = join(process.cwd(), "public", currentCulto.rows[0].imagem);
+        const imagePath = join(process.cwd(), "public", currentCulto.imagem);
         await fs.unlink(imagePath);
       } catch (error) {
         // Just log the error, don't fail the delete
@@ -226,11 +217,11 @@ export async function DELETE(
     
     // Try to delete the orador image file if it's not a default
     if (
-      currentCulto.rows[0].oradorImagem && 
-      !currentCulto.rows[0].oradorImagem.includes("sem-imagem")
+      currentCulto.oradorImagem && 
+      !currentCulto.oradorImagem.includes("sem-imagem")
     ) {
       try {
-        const imagePath = join(process.cwd(), "public", currentCulto.rows[0].oradorImagem);
+        const imagePath = join(process.cwd(), "public", currentCulto.oradorImagem);
         await fs.unlink(imagePath);
       } catch (error) {
         // Just log the error, don't fail the delete
@@ -238,11 +229,8 @@ export async function DELETE(
       }
     }
     
-    // Delete culto from database
-    await client.query(
-      "DELETE FROM cultos WHERE id = $1",
-      [id]
-    );
+    // Delete culto from database using neon
+    await sql`DELETE FROM cultos WHERE id = ${id}`;
     
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -251,8 +239,6 @@ export async function DELETE(
       { error: "Falha ao excluir culto" },
       { status: 500 }
     );
-  } finally {
-    await client.end();
   }
 }
 
