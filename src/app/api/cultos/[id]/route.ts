@@ -9,12 +9,10 @@ export async function GET(
     request: NextRequest,
     { params }: { params: { id: string } }
   ) {
-    const id = params.id;
-    
     try {
       const sql = neon(process.env.DATABASE_URL as string);
       
-      const rows = await sql`SELECT * FROM cultos WHERE id = ${id}`;
+      const rows = await sql`SELECT * FROM cultos WHERE id = ${params.id}`;
       
       if (rows.length === 0) {
         return NextResponse.json({ error: "Culto não encontrado" }, { status: 404 });
