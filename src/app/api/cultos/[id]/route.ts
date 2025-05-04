@@ -6,34 +6,32 @@ import { v4 as uuidv4 } from "uuid";
 import * as fs from "fs/promises";
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = params.id;
-  
-  try {
-    // Connect to the database using neon
-    const sql = neon(process.env.DATABASE_URL as string);
+    request: NextRequest,
+    context: { params: { id: string } }
+  ) {
+    const id = context.params.id;
     
-    // Query culto by ID
-    const rows = await sql`SELECT * FROM cultos WHERE id = ${id}`;
-    
-    if (rows.length === 0) {
+    try {
+      const sql = neon(process.env.DATABASE_URL as string);
+      
+      const rows = await sql`SELECT * FROM cultos WHERE id = ${id}`;
+      
+      if (rows.length === 0) {
+        return NextResponse.json(
+          { error: "Culto não encontrado" },
+          { status: 404 }
+        );
+      }
+      
+      return NextResponse.json(rows[0]);
+    } catch (error) {
+      console.error("Database error:", error);
       return NextResponse.json(
-        { error: "Culto não encontrado" },
-        { status: 404 }
+        { error: "Falha ao buscar culto" },
+        { status: 500 }
       );
     }
-    
-    return NextResponse.json(rows[0]);
-  } catch (error) {
-    console.error("Database error:", error);
-    return NextResponse.json(
-      { error: "Falha ao buscar culto" },
-      { status: 500 }
-    );
   }
-}
 
 export async function PUT(
   request: NextRequest,
