@@ -5,25 +5,35 @@ import { join } from "path";
 import { v4 as uuidv4 } from "uuid";
 import * as fs from "fs/promises";
 
+// Define the proper types for route params according to Next.js 15
+type RouteParams = {
+    params: {
+        id: string;
+    };
+    searchParams: { [key: string]: string | string[] | undefined };
+};
+
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
-  ) {
+    context: RouteParams
+) {
+    const id = context.params.id;
+
     try {
-      const sql = neon(process.env.DATABASE_URL as string);
-      
-      const rows = await sql`SELECT * FROM cultos WHERE id = ${params.id}`;
-      
-      if (rows.length === 0) {
-        return NextResponse.json({ error: "Culto não encontrado" }, { status: 404 });
-      }
-      
-      return NextResponse.json(rows[0]);
+        const sql = neon(process.env.DATABASE_URL as string);
+
+        const rows = await sql`SELECT * FROM cultos WHERE id = ${id}`;
+
+        if (rows.length === 0) {
+            return NextResponse.json({ error: "Culto não encontrado" }, { status: 404 });
+        }
+
+        return NextResponse.json(rows[0]);
     } catch (error) {
-      console.error("Database error:", error);
-      return NextResponse.json({ error: "Falha ao buscar culto" }, { status: 500 });
+        console.error("Database error:", error);
+        return NextResponse.json({ error: "Falha ao buscar culto" }, { status: 500 });
     }
-  }
+}
 
 export async function PUT(
     request: NextRequest,
