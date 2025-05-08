@@ -26,9 +26,9 @@ export default function Home() {
         <HeroSection />
       </Element>
 
-      {/* <Element name="mensagem">
+      <Element name="mensagem">
         <MensagemPastoral />
-      </Element> */}
+      </Element>
 
       <Element name="programacao">
         <CultosSection />

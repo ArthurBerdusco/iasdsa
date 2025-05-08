@@ -6,14 +6,7 @@ import SectionHeader from './SectionHeader';
 
 const Anuncios = () => {
   const anuncios = [
-    {
-      id: 6,
-      titulo: "Encontro de Solteiros Adultos 2025",
-      texto: "Participe do Encontro de Solteiros Adultos no dia 04/05, das 9h às 12h, no Auditório da AP. Almoço garantido! Clique e entre no grupo.",
-      imagem: "/images/anuncios/encontro-solteiros-adultos.jpg",
-      linkWhatsapp: "https://chat.whatsapp.com/EWsjhv9mvGmKlJDpFFbeC4",
-      data: "04/05 das 9h às 12h"
-    },
+
     // {
     //   id: 9,
     //   titulo: "Escola de Culinária",
@@ -61,14 +54,6 @@ const Anuncios = () => {
       data: "Inscrições Abertas",
     },
     {
-      id: 7,
-      titulo: "Encontro de Casais",
-      texto: "Reserve sua vaga para o Encontro de Casais no Resort Terras Altas, de 03 a 05/10/2025. Vagas limitadas! Entre no grupo para saber mais.",
-      imagem: "/images/anuncios/encontro-de-casais.jpg",
-      linkWhatsapp: "https://chat.whatsapp.com/EWsjhv9mvGmKlJDpFFbeC4",
-      data: "03 a 05/10/2025"
-    },
-    {
       id: 3,
       titulo: "CAMPAL 2025 - Vagas Limitadas!",
       texto: "Garanta sua vaga para o maior encontro do ano em Caraguatatuba! Alimentação, hospedagem e transporte inclusos. Corra, pois as vagas são limitadas!",
@@ -76,6 +61,14 @@ const Anuncios = () => {
       icone: <Calendar className="h-5 w-5 mr-1" />,
       linkWhatsapp: 'http://wa.me/+5511985587107',
       data: "19 a 22 de junho"
+    },
+    {
+      id: 7,
+      titulo: "Encontro de Casais",
+      texto: "Reserve sua vaga para o Encontro de Casais no Resort Terras Altas, de 03 a 05/10/2025. Vagas limitadas! Entre no grupo para saber mais.",
+      imagem: "/images/anuncios/encontro-de-casais.jpg",
+      linkWhatsapp: "https://chat.whatsapp.com/EWsjhv9mvGmKlJDpFFbeC4",
+      data: "03 a 05/10/2025"
     },
     {
       id: 4,

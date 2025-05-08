@@ -10,7 +10,7 @@ const MensagemPastoral = () => {
     <section className="bg-blue-950 text-white">
       <div className="max-w-6xl mx-auto py-12 px-4">
         {/* Header com ícone */}
-        <SectionHeader title='MENSAGEM PASTORAL'/>
+        <SectionHeader title='MENSAGEM PASTORAL' />
 
         {/* Container principal com flexbox */}
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">
@@ -19,7 +19,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-2/5 relative">
               <div className="relative h-64 lg:h-full min-h-[320px]">
                 <Image
-                  src="/images/2025/4_ABR/Semana_4_24_30/mensagem-pastoral.jpeg"
+                  src="/images/mensagem-pastoral/arte.jpeg"
                   alt="Mensagem Pastoral"
                   fill
                   className="object-cover"
@@ -41,7 +41,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-3/5 p-6 lg:p-8 flex flex-col">
               {/* Título da mensagem */}
               <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-6">
-                Identidade Reconhecida
+                Multidão Satisfeita
               </h3>
 
               {/* Texto da mensagem */}
@@ -52,10 +52,11 @@ const MensagemPastoral = () => {
                 </div>
 
                 <p className='mb-5'>
-                  O conceito de Identidade pode ser explorado inicialmente através da filosofia. Para o filósofo inglês John Locke, por exemplo, identidade é a qualidade de ser idêntico a si mesmo e diferente dos outros. Em essência é responder a grande questão existencial: Quem sou eu? No contexto religioso a pergunta pode ser modificada para: Quem sou eu em Cristo?
+                  Como conciliar pessoas que pensam de maneiras tão diferentes e culturas tão diversas em relação à salvação em Jesus? Um momento curioso do ministério de Jesus pode dar uma pista de como Ele age em relação a uma multidão diversa.
+
                 </p>
                 <p>
-                  Do ponto de vista psicológico, "quem sou eu?" é uma pergunta que só pode ser respondida através de uma investigação profunda e contínua do próprio mundo interno, da história pessoal e das dinâmicas psíquicas inconscientes. Não há uma identidade fixa e estática, mas sim um processo constante de construção e descoberta.
+                  Somente nos Evangelhos a palavra multidão aparece 78 vezes. Motivados pelos milagres e ensinos de Jesus, números relevantes de pessoas em situações diversas, se apertaram para se aproximar ou apenas se sentaram em grandes auditórios ao ar livre para ouvir o Salvador.
                 </p>
               </div>
 
@@ -75,7 +76,7 @@ const MensagemPastoral = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-white">Pastor Mauro Dias</p>
-                    <p className="text-sm text-blue-200">24 de Abril, 2025</p>
+                    <p className="text-sm text-blue-200">08 de maio, 2025</p>
                   </div>
                 </div>
 
