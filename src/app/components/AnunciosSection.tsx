@@ -38,7 +38,7 @@ const Anuncios = () => {
     {
       id: 11,
       titulo: "Passeio Especial – Ministério dos Idosos",
-      texto: "✨ Um dia para aprender, sorrir e se conectar!\n\n📅 20 de Julho\n🕗 07h às 17h\n📍 MAB & Centro White – UNASP-EC\n\nVenha viver momentos especiais com amigos queridos. Esperamos você com muito carinho!",
+      texto: "O Ministério dos Idosos convida você para um passeio inesquecível!\n\n📅 20 de Julho\n🕗 07h às 17h\n📍 MAB & Centro White – UNASP-EC\n\nVenha viver momentos especiais com amigos queridos. Esperamos você com muito carinho!",
       imagem: "/images/anuncios/passeio-idosos.jpeg",
       linkWhatsapp: "https://wa.me/5511984174734",
       data: "20/07/2025 – 07h às 17h"
