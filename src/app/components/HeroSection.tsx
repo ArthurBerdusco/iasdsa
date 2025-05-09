@@ -76,9 +76,9 @@ const cultosData: CultoProps[] = [
     diaSemana: 'QUARTA',
     data: '14/05/2025',
     hora: '20h00',
-    orador: 'Bárbara Alencar',
+    orador: 'Simone Araújo',
     imagem: '/images/cultos/culto-oracao.jpg',
-    oradorImagem: '/images/pastores/sem-imagem.jpg',
+    oradorImagem: '/images/pastores/simone-araujo.jpeg',
     corDestaque: 'accent',
   }
 ];

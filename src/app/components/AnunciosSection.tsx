@@ -36,14 +36,12 @@ const Anuncios = () => {
       data: "17/05 das 14h30 às 18h"
     },
     {
-      id: 8,
-      titulo: "Escola 117 - Curso de Liderança JA",
-      texto:
-        "Participe da Escola 117, curso gratuito de liderança para jovens a partir de 16 anos.\n\n📍 Local: IASD Santo Amaro\n🗓️ Datas das aulas:\n✅ 25/04\n✅ 02/05\n✅ 09/05\n✅ 16/05\n✅ 23/05\n✅ 30/05\n✅ 06/06\n✅ 13/06\n✅ 27/06",
-      imagem: "/images/anuncios/escola-117.jpeg",
-      linkForms: "https://forms.gle/9ZDu2yYWdEBW2Uy99",
-      linkWhatsapp: "https://wa.me/+5511979814179",
-      data: "Início: 25/04/2025 às 19h30"
+      id: 11,
+      titulo: "Passeio Especial – Ministério dos Idosos",
+      texto: "O Ministério dos Idosos convida você para um passeio inesquecível!\n\n📅 Dia 20 de Julho\n⏰ Das 07h às 17h\n📍 MAB & Centro White – UNASP-EC\n\nSerá um dia repleto de aprendizado, comunhão e momentos especiais! Venha conhecer museus incríveis e fortalecer os laços com amigos queridos.\n\nPrepare-se para viver experiências marcantes em um ambiente acolhedor e cheio de história. Não perca essa oportunidade!",
+      imagem: "/images/anuncios/passeio-idosos.jpeg",
+      linkWhatsapp: "https://wa.me/5511984174734",
+      data: "20/07/2025 – 07h às 17h"
     },
     {
       id: 1,
