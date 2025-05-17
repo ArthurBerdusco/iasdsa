@@ -4,27 +4,11 @@ import { GiBread } from 'react-icons/gi';
 import Link from 'next/link';
 import SectionHeader from './SectionHeader';
 
+
+
 const Anuncios = () => {
   const anuncios = [
 
-    // {
-    //   id: 9,
-    //   titulo: "Escola de Culinária",
-    //   texto: "Participe de uma aula especial de culinária com Giovanna Pitlovanciv! Dia 17/05 às 17h. Apenas R$ 10. Vagas limitadas!",
-    //   imagem: "/images/anuncios/culinaria-2.jpg",
-    //   linkWhatsapp: "https://wa.me/5511946003096",
-    //   data: "17/05 às 17h",
-    // },
-
-    {
-      id: 9,
-      titulo: "Convite Especial – Dia das Mães",
-      texto: "Você e sua família são nossos convidados para um culto especial em celebração ao Dia das Mães.\n\n📅 Domingo, 11 de maio de 2025\n🕙 Às 10h da manhã\n📍 Igreja Adventista do Sétimo Dia – Santo Amaro\n\nTeremos um momento de comunhão com coffee break, homenagens das crianças, lembranças carinhosas e uma mensagem de fé.\n\nVenha celebrar esse dia especial com a gente!",
-      imagem: "/images/anuncios/dia-das-maes.jpeg",
-      data: "11/05/2025 – 10h"
-    }
-
-    ,
     {
       id: 10,
       titulo: "3º Encontro Mãe Cuida, Mãe Nutri",
@@ -42,6 +26,14 @@ const Anuncios = () => {
       imagem: "/images/anuncios/passeio-idosos.jpeg",
       linkWhatsapp: "https://wa.me/5511984174734",
       data: "20/07/2025 – 07h às 17h"
+    },
+    {
+      id: 9,
+      titulo: "Escola de Culinária",
+      texto: "Participe de uma aula especial de culinária com Giovanna Pitlovanciv! Dia 31/05 às 17h30. Apenas R$ 10.",
+      imagem: "/images/anuncios/culinaria.jpg",
+      linkWhatsapp: "https://wa.me/5511946003096",
+      data: "31/05 às 17h30",
     },
     {
       id: 1,
@@ -88,7 +80,6 @@ const Anuncios = () => {
       linkForms: "https://forms.gle/5biDrwL8nvuPDgEH6",
       data: "11 de Outubro"
     },
-
   ];
 
   return (

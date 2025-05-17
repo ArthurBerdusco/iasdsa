@@ -54,9 +54,9 @@ const cultosData: CultoProps[] = [
     diaSemana: 'SÁBADO',
     data: '10/05/2025',
     hora: '10h40',
-    orador: 'Pr. Mauro Dias',
+    orador: 'Pr. Caique Brito',
     imagem: '/images/cultos/culto-sabado.jpeg',
-    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    oradorImagem: '/images/pastores/sem-imagem.jpg',
     corDestaque: 'primary',
   },
   {

@@ -26,26 +26,26 @@ const RedesSociais = () => {
 
     const sermons: SermonType[] = [
         {
-            id: "7P1T5wALXtI",
+            id: "VGPKTNlS4Mk",
             title: "Culto de Sábado",
-            day: "03/05/2025",
+            day: "10/05/2025",
             time: "10h40",
             description: "Culto de Adoração"
         },
         {
-            id: "ncmAA0_uqq4",
+            id: "TyDCcbDcQbM",
             title: "Culto de Domingo",
-            day: "04/05/2025",
+            day: "11/05/2025",
             time: "10h00",
             description: "Culto Evangelístico"
         },
-        {
-            id: "1xAo8e6BRvE",
-            title: "Culto de Quarta",
-            day: "07/05/2025",
-            time: "20h00",
-            description: "Culto de Oração"
-        }
+        // {
+        //     id: "1xAo8e6BRvE",
+        //     title: "Culto de Quarta",
+        //     day: "07/05/2025",
+        //     time: "20h00",
+        //     description: "Culto de Oração"
+        // }
     ];
 
     useEffect(() => {

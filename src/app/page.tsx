@@ -18,17 +18,15 @@ export default function Home() {
     <div className="min-h-screen bg-blue-950 ">
       <NavBar />
 
-
-
       {/* <PorDoSol /> */}
 
       <Element name="cultos">
         <HeroSection />
       </Element>
 
-      <Element name="mensagem">
+      {/* <Element name="mensagem">
         <MensagemPastoral />
-      </Element>
+      </Element> */}
 
       <Element name="programacao">
         <CultosSection />
@@ -43,9 +41,9 @@ export default function Home() {
       </Element>
 
 
-      <Element name="fotos">
+      {/* <Element name="fotos">
         <FotosDaSemana />
-      </Element>
+      </Element> */}
 
       <Element name="dizimo">
         <DizimoSection />
