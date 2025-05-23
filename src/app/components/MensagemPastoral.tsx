@@ -75,11 +75,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-2/5 relative">
               <div className="relative h-64 lg:h-full min-h-[320px]">
                 <Image
-<<<<<<< HEAD
                   src={mensagem.foto}
-=======
-                  src="/images/mensagem-pastoral/arte.jpeg"
->>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
                   alt="Mensagem Pastoral"
                   fill
                   className="object-cover"
@@ -101,11 +97,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-3/5 p-6 lg:p-8 flex flex-col">
               {/* Título da mensagem */}
               <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-6">
-<<<<<<< HEAD
                 {mensagem.titulo}
-=======
-                Multidão Satisfeita
->>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
               </h3>
 
               {/* Texto da mensagem */}
@@ -122,16 +114,6 @@ const MensagemPastoral = () => {
                   ))}
                 </div>
 
-<<<<<<< HEAD
-=======
-                <p className='mb-5'>
-                  Como conciliar pessoas que pensam de maneiras tão diferentes e culturas tão diversas em relação à salvação em Jesus? Um momento curioso do ministério de Jesus pode dar uma pista de como Ele age em relação a uma multidão diversa.
-
-                </p>
-                <p>
-                  Somente nos Evangelhos a palavra multidão aparece 78 vezes. Motivados pelos milagres e ensinos de Jesus, números relevantes de pessoas em situações diversas, se apertaram para se aproximar ou apenas se sentaram em grandes auditórios ao ar livre para ouvir o Salvador.
-                </p>
->>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
               </div>
 
               {/* Informações do pastor e botão */}
@@ -150,11 +132,7 @@ const MensagemPastoral = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-white">Pastor Mauro Dias</p>
-<<<<<<< HEAD
                     <p className="text-sm text-blue-200">{formatDateForDisplay(mensagem.data_publicacao?mensagem.data_publicacao: "2025/05/05")}</p>
-=======
-                    <p className="text-sm text-blue-200">08 de maio, 2025</p>
->>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
                   </div>
                 </div>
 

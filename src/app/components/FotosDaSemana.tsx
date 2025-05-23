@@ -36,11 +36,6 @@ const sampleImages: ImageData[] = [
     date: "04/05/2025",
     description: "Momento de Louvores do grupo Spresart no Culto Conexão"
   },
-<<<<<<< HEAD
-=======
-
-
->>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
 ]
 
 export default function FotosDaSemana() {

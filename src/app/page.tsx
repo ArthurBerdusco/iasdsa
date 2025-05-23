@@ -18,11 +18,6 @@ export default function Home() {
     <div className="min-h-screen bg-blue-950 ">
       <NavBar />
 
-<<<<<<< HEAD
-=======
-      {/* <PorDoSol /> */}
-
->>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
       <Element name="cultos">
         <Cultos />
       </Element>
@@ -42,14 +37,8 @@ export default function Home() {
       <Element name="oracao">
         <PedidoOracao />
       </Element>
-<<<<<<< HEAD
 {/* 
       <Element name="fotos">
-=======
-
-
-      {/* <Element name="fotos">
->>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
         <FotosDaSemana />
       </Element> */}
 

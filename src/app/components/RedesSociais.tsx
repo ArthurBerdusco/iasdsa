@@ -32,32 +32,6 @@ const RedesSociais = () => {
         setLoadedVideos((prev) => ({ ...prev, [id]: true }));
     };
 
-<<<<<<< HEAD
-=======
-    const sermons: SermonType[] = [
-        {
-            id: "VGPKTNlS4Mk",
-            title: "Culto de Sábado",
-            day: "10/05/2025",
-            time: "10h40",
-            description: "Culto de Adoração"
-        },
-        {
-            id: "TyDCcbDcQbM",
-            title: "Culto de Domingo",
-            day: "11/05/2025",
-            time: "10h00",
-            description: "Culto Evangelístico"
-        },
-        // {
-        //     id: "1xAo8e6BRvE",
-        //     title: "Culto de Quarta",
-        //     day: "07/05/2025",
-        //     time: "20h00",
-        //     description: "Culto de Oração"
-        // }
-    ];
->>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
 
     useEffect(() => {
         fetchCultos();
