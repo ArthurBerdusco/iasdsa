@@ -4,13 +4,69 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import SectionHeader from './SectionHeader';
+import { useEffect, useState } from 'react';
+
+interface MensagemPastoral {
+  id: number;
+  titulo: string;
+  mensagem: string;
+  foto: string;
+  data_publicacao?: string;
+}
 
 const MensagemPastoral = () => {
+
+  const [mensagem, setMensagem] = useState<MensagemPastoral>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+
+  useEffect(() => {
+    fetchMensagemPastoral();
+  }, []);
+
+  const fetchMensagemPastoral = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/mensagem-pastoral");
+      if (!response.ok) {
+        throw new Error("Falha ao carregar mensagem pastoral");
+      }
+      const data = await response.json();
+
+      // Pegamos apenas a primeira mensagem, já que é única
+      setMensagem(data.length > 0 ? data[0] : null);
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading || !mensagem) {
+    return (
+      <>Carregando Mensagem Pastoral</>
+    );
+  }
+
+    const formatDateForDisplay = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+
+    // Obter dia, mês e ano e adicionar zeros à esquerda quando necessário
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
+
   return (
     <section className="bg-blue-950 text-white">
       <div className="max-w-6xl mx-auto py-12 px-4">
         {/* Header com ícone */}
-        <SectionHeader title='MENSAGEM PASTORAL'/>
+        <SectionHeader title='MENSAGEM PASTORAL' />
 
         {/* Container principal com flexbox */}
         <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">
@@ -19,7 +75,7 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-2/5 relative">
               <div className="relative h-64 lg:h-full min-h-[320px]">
                 <Image
-                  src="/images/2025/4_ABR/Semana_4_24_30/mensagem-pastoral.jpeg"
+                  src={mensagem.foto}
                   alt="Mensagem Pastoral"
                   fill
                   className="object-cover"
@@ -41,22 +97,23 @@ const MensagemPastoral = () => {
             <div className="w-full lg:w-3/5 p-6 lg:p-8 flex flex-col">
               {/* Título da mensagem */}
               <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-6">
-                Identidade Reconhecida
+                {mensagem.titulo}
               </h3>
 
               {/* Texto da mensagem */}
               <div className="bg-white/10 p-6 rounded-xl border-l-4 border-blue-500 mb-8 flex-grow">
 
-                <div className='text-gray-100 text-lg leading-relaxed'>
+                <div className="space-y-4">
 
+                  {mensagem.mensagem.split('\n').map((paragraph, index) => (
+
+                    <p key={index} className="text-white leading-relaxed">
+                      {paragraph}
+                    </p>
+
+                  ))}
                 </div>
 
-                <p className='mb-5'>
-                  O conceito de Identidade pode ser explorado inicialmente através da filosofia. Para o filósofo inglês John Locke, por exemplo, identidade é a qualidade de ser idêntico a si mesmo e diferente dos outros. Em essência é responder a grande questão existencial: Quem sou eu? No contexto religioso a pergunta pode ser modificada para: Quem sou eu em Cristo?
-                </p>
-                <p>
-                  Do ponto de vista psicológico, "quem sou eu?" é uma pergunta que só pode ser respondida através de uma investigação profunda e contínua do próprio mundo interno, da história pessoal e das dinâmicas psíquicas inconscientes. Não há uma identidade fixa e estática, mas sim um processo constante de construção e descoberta.
-                </p>
               </div>
 
               {/* Informações do pastor e botão */}
@@ -75,7 +132,7 @@ const MensagemPastoral = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-white">Pastor Mauro Dias</p>
-                    <p className="text-sm text-blue-200">24 de Abril, 2025</p>
+                    <p className="text-sm text-blue-200">{formatDateForDisplay(mensagem.data_publicacao?mensagem.data_publicacao: "2025/05/05")}</p>
                   </div>
                 </div>
 

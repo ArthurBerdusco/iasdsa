@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import HeroSection from "./components/HeroSection";
-import CultosSection from "./components/ProgramacaoSection";
+import Cultos from "./components/HeroSection";
+import ProgramacaoCultos from "./components/ProgramacaoSection";
 import AnunciosSection from "./components/AnunciosSection";
 import PedidoOracao from "./components/PedidoOracao";
 import DizimoSection from "./components/DizimoSection";
@@ -18,12 +18,8 @@ export default function Home() {
     <div className="min-h-screen bg-blue-950 ">
       <NavBar />
 
-
-
-      {/* <PorDoSol /> */}
-
       <Element name="cultos">
-        <HeroSection />
+        <Cultos />
       </Element>
 
       {/* <Element name="mensagem">
@@ -31,7 +27,7 @@ export default function Home() {
       </Element> */}
 
       <Element name="programacao">
-        <CultosSection />
+        <ProgramacaoCultos />
       </Element>
 
       <Element name="anuncios">
@@ -41,17 +37,20 @@ export default function Home() {
       <Element name="oracao">
         <PedidoOracao />
       </Element>
-
-
+{/* 
       <Element name="fotos">
         <FotosDaSemana />
-      </Element>
+      </Element> */}
 
       <Element name="dizimo">
         <DizimoSection />
       </Element>
+
       <RedesSociais />
+
       <Footer />
+
+        {/* <PorDoSol /> */}
     </div>
   );
 }

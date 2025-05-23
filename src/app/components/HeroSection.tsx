@@ -11,86 +11,105 @@ import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import SectionHeader from './SectionHeader';
 
-// Define types for our data
-interface CultoProps {
-  id: number;
-  titulo: string;
-  diaSemana: string;
-  data: string;
-  hora: string;
-  orador: string;
-  imagem: string;
-  oradorImagem: string;
-  corDestaque: 'primary' | 'secondary' | 'accent';
-}
-
-// Theme colors for easier maintenance
+// Theme colors for different emphasis colors
 const themeColors = {
   primary: {
-    bg: 'bg-blue-500',
-    bgLight: 'bg-blue-500/15',
-    text: 'text-blue-500',
-    border: 'border-blue-500',
+    text: 'text-blue-400',
+    bgLight: 'bg-blue-900/50',
+    border: 'border-blue-400'
   },
   secondary: {
-    bg: 'bg-blue-500',
-    bgLight: 'bg-blue-500/15',
-    text: 'text-blue-500',
-    border: 'border-blue-500',
+    text: 'text-purple-400',
+    bgLight: 'bg-purple-900/50',
+    border: 'border-purple-400'
   },
-  accent: {
-    bg: 'bg-blue-500',
-    bgLight: 'bg-blue-500/15',
-    text: 'text-blue-500',
-    border: 'border-blue-500',
+  success: {
+    text: 'text-green-400',
+    bgLight: 'bg-green-900/50',
+    border: 'border-green-400'
   },
+  warning: {
+    text: 'text-yellow-400',
+    bgLight: 'bg-yellow-900/50',
+    border: 'border-yellow-400'
+  },
+  danger: {
+    text: 'text-red-400',
+    bgLight: 'bg-red-900/50',
+    border: 'border-red-400'
+  },
+  info: {
+    text: 'text-cyan-400',
+    bgLight: 'bg-cyan-900/50',
+    border: 'border-cyan-400'
+  }
 };
 
-// Mock data for the three worship services
-const cultosData: CultoProps[] = [
-  {
-    id: 1,
-    titulo: 'CULTO DE ADORAÇÃO',
-    diaSemana: 'SÁBADO',
-    data: '03/05/2025',
-    hora: '10h40',
-    orador: 'Paulo Tadeu',
-    imagem: '/images/2025/5_MAI/Semana_1_1_7/culto-sabado.jpeg',
-    oradorImagem: '/images/pastores/sem-imagem.jpg',
-    corDestaque: 'primary',
-  },
-  {
-    id: 2,
-    titulo: 'CULTO EVANGELÍSTICO',
-    diaSemana: 'DOMINGO',
-    data: '04/05/2025',
-    hora: '10h00',
-    orador: 'Henrique Esteves',
-    imagem: '/images/2025/5_MAI/Semana_1_1_7/culto-domingo.jpeg',
-    oradorImagem: '/images/pastores/sem-imagem.jpg',
-    corDestaque: 'secondary',
-  },
-  {
-    id: 3,
-    titulo: 'CULTO DE ORAÇÃO',
-    diaSemana: 'QUARTA',
-    data: '07/05/2025',
-    hora: '20h00',
-    orador: 'Pr. Mauro Dias',
-    imagem: '/images/2025/4_ABR/Semana_1_3_9/culto-oracao.jpg',
-    oradorImagem: '/images/pastores/mauro-dias.jpg',
-    corDestaque: 'accent',
-  }
-];
+// Interface for Culto data
+interface Culto {
+  id: number;
+  titulo: string;
+  diasemana: string;
+  data: string;
+  hora: string;
+  orador: Orador;
+  imagem: string; // Changed from 'arte' to match the component usage
+  corDestaque: string; // Changed from 'cordestaque' to match the component usage
+}
+
+interface Orador {
+  id: number;
+  nome: string;
+  foto: string;
+}
 
 export default function CultosSwiper() {
   const [currentDate, setCurrentDate] = useState<string>('');
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [cultos, setCultos] = useState<Culto[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigationPrevRef = useRef<HTMLButtonElement>(null);
   const navigationNextRef = useRef<HTMLButtonElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
+  // Fetch cultos data
+  useEffect(() => {
+    const fetchCultos = async () => {
+      try {
+        const response = await fetch('/api/cultos');
+        if (!response.ok) {
+          throw new Error('Failed to fetch cultos');
+        }
+        const data = await response.json();
 
+        // Transform the API data to match our component requirements
+        const formattedCultos = data.map((culto: any) => ({
+          id: culto.id,
+          titulo: culto.titulo,
+          diasemana: culto.diasemana,
+          data: culto.data,
+          hora: culto.hora,
+          imagem: culto.arte, // Map 'arte' from API to 'imagem' used in component
+          corDestaque: culto.cordestaque, // Map 'cordestaque' from API to 'corDestaque' used in component
+          orador: {
+            id: culto.orador.id,
+            nome: culto.orador.nome,
+            foto: culto.orador.foto
+          }
+        }));
+
+        setCultos(formattedCultos);
+      } catch (error) {
+        console.error('Error fetching cultos:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCultos();
+  }, []);
+
+  // Set the current date on component mount
   useEffect(() => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = {
@@ -101,6 +120,54 @@ export default function CultosSwiper() {
     };
     setCurrentDate(today.toLocaleDateString("pt-BR", options));
   }, []);
+
+  const formatDateForDisplay = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+
+    // Obter dia, mês e ano e adicionar zeros à esquerda quando necessário
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
+  // If loading, show a loading state
+  if (isLoading) {
+    return (
+      <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 border-b border-blue-500/30 pb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            BOLETIM INFORMATIVO
+          </h1>
+          <p className="text-sm md:text-base text-white/80 mt-2 sm:mt-0">{currentDate}</p>
+        </div>
+        <SectionHeader title='PRÓXIMOS CULTOS' />
+        <div className="h-[60vh] flex items-center justify-center">
+          <div className="animate-pulse text-white">Carregando cultos...</div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no cultos data, show a message
+  if (cultos.length === 0) {
+    return (
+      <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 border-b border-blue-500/30 pb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-white">
+            BOLETIM INFORMATIVO
+          </h1>
+          <p className="text-sm md:text-base text-white/80 mt-2 sm:mt-0">{currentDate}</p>
+        </div>
+        <SectionHeader title='PRÓXIMOS CULTOS' />
+        <div className="h-[40vh] flex items-center justify-center">
+          <p className="text-white/70 text-center">Nenhum culto programado no momento.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
@@ -118,7 +185,7 @@ export default function CultosSwiper() {
       </div>
 
       {/* Title with subtle underline */}
-      <SectionHeader title='PRÓXIMOS CULTOS'/>
+      <SectionHeader title='PRÓXIMOS CULTOS' />
 
       {/* Swiper Component */}
       <div className="relative pb-12">
@@ -154,8 +221,9 @@ export default function CultosSwiper() {
           }}
           className="cultos-swiper rounded-2xl overflow-hidden shadow-xl"
         >
-          {cultosData.map((culto) => {
-            const colorClasses = themeColors[culto.corDestaque];
+          {cultos.map((culto) => {
+            // Default to primary if the color doesn't exist in our theme
+            const colorClasses = themeColors[culto.corDestaque as keyof typeof themeColors] || themeColors.primary;
 
             return (
               <SwiperSlide key={culto.id}>
@@ -165,7 +233,7 @@ export default function CultosSwiper() {
                     {/* Dia da semana + Título */}
                     <div className="flex flex-col">
                       <span className={`text-xl md:text-2xl font-black tracking-wider ${colorClasses.text}`}>
-                        {culto.diaSemana}
+                        {culto.diasemana}
                       </span>
                       <h3 className="text-white text-base md:text-lg font-semibold opacity-80 mt-1">
                         {culto.titulo}
@@ -176,7 +244,7 @@ export default function CultosSwiper() {
                     <div className="flex flex-wrap gap-3 mt-2 md:mt-0">
                       <div className={`flex items-center ${colorClasses.bgLight} px-3 py-1.5 rounded-lg`}>
                         <CalendarDays size={16} className={`${colorClasses.text} mr-2`} />
-                        <span className="text-white font-medium">{culto.data}</span>
+                        <span className="text-white font-medium">{formatDateForDisplay(culto.data)}</span>
                       </div>
                       <div className={`flex items-center ${colorClasses.bgLight} px-3 py-1.5 rounded-lg`}>
                         <Clock size={16} className={`${colorClasses.text} mr-2`} />
@@ -203,15 +271,15 @@ export default function CultosSwiper() {
                       <div className="flex items-center transparent p-3 rounded-lg inline-flex">
                         <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-white/70 shadow-lg">
                           <Image
-                            src={culto.oradorImagem}
-                            alt={culto.orador}
+                            src={culto.orador.foto}
+                            alt={culto.orador.nome}
                             fill
                             style={{ objectFit: 'cover' }}
                           />
                         </div>
                         <div className="ml-3">
                           <p className="text-xs text-white/70 uppercase tracking-wider">Orador</p>
-                          <p className="text-white font-semibold text-lg">{culto.orador}</p>
+                          <p className="text-white font-semibold text-lg">{culto.orador.nome}</p>
                         </div>
                       </div>
                     </div>

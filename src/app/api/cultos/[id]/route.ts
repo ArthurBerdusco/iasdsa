@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from '@neondatabase/serverless';
-import { writeFile } from "fs/promises";
+import { unlink, writeFile } from "fs/promises";
 import { join } from "path";
 import { v4 as uuidv4 } from "uuid";
-import * as fs from "fs/promises";
+import { existsSync } from "fs";
 
 // Define the proper types for route params according to Next.js 15
 type RouteParams = {
@@ -39,143 +39,82 @@ export async function PUT(
     request: NextRequest,
     { params }: { params: { id: string } }
 ) {
-    const id = params.id;
-
     try {
-        // Parse form data from request
+        const id = params.id;
         const formData = await request.formData();
 
-        // Extract basic culto data
+        // Extrair dados
         const titulo = formData.get("titulo") as string;
-        const diaSemana = formData.get("diaSemana") as string;
+        const diasemana = formData.get("diasemana") as string;
         const data = formData.get("data") as string;
         const hora = formData.get("hora") as string;
-        const orador = formData.get("orador") as string;
-        const corDestaque = formData.get("corDestaque") as string;
+        const cordestaque = formData.get("cordestaque") as string;
+        const oradorId = parseInt(formData.get("oradorId") as string);
+        const arte = formData.get("arte") as File;
 
-        // Get current image paths
-        let imagemPath = formData.get("imagem") as string;
-        let oradorImagemPath = formData.get("oradorImagem") as string;
-
-        // Get file upload data
-        const bannerImage = formData.get("bannerImage") as File | null;
-        const oradorImage = formData.get("oradorImage") as File | null;
-
-        // Connect to database using neon
-        const sql = neon(process.env.DATABASE_URL as string);
-
-        // Get current culto data
-        const currentCultos = await sql`SELECT * FROM cultos WHERE id = ${id}`;
-
-        if (currentCultos.length === 0) {
-            return NextResponse.json(
-                { error: "Culto não encontrado" },
-                { status: 404 }
-            );
+        if (isNaN(oradorId) || oradorId <= 0) {
+            return NextResponse.json({ error: "ID do orador inválido" }, { status: 400 });
         }
 
-        const currentCulto = currentCultos[0];
+        const sql = neon(process.env.DATABASE_URL as string);
 
-        // Handle banner image upload if provided
-        if (bannerImage) {
-            const bannerBytes = await bannerImage.arrayBuffer();
-            const buffer = Buffer.from(bannerBytes);
+        // Verificar se culto existe
+        const existingCulto = await sql`SELECT arte FROM cultos WHERE id = ${id}`;
+        if (existingCulto.length === 0) {
+            return NextResponse.json({ error: "Culto não encontrado" }, { status: 404 });
+        }
 
-            // Create year/month folder structure
+        let imagemPath = existingCulto[0].arte; // Preserva a imagem atual por padrão
+
+        // Upload nova imagem, se houver
+        if (arte && arte.size > 0) {
+            // Deletar imagem antiga
+            if (imagemPath && !imagemPath.includes("default")) {
+                const oldImagePath = join(process.cwd(), "public", imagemPath);
+                if (existsSync(oldImagePath)) {
+                    await unlink(oldImagePath);
+                }
+            }
+
+            // Salvar nova imagem
+            const arteBytes = await arte.arrayBuffer();
+            const buffer = Buffer.from(arteBytes);
+
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth() + 1;
             const monthName = getMonthName(month);
+            const weekRange = getWeekRange(today.getDate());
 
-            // Calculate week range
-            const dayOfMonth = today.getDate();
-            const weekRange = getWeekRange(dayOfMonth);
-
-            // Create folder path
             const folderPath = `/images/${year}/${month}_${monthName}/Semana_${weekRange}`;
-
-            // Ensure directory exists
             const uploadDir = join(process.cwd(), "public", folderPath);
             await ensureDir(uploadDir);
 
-            // Generate unique filename
-            const extension = bannerImage.name.split(".").pop();
-            const filename = `culto-${diaSemana.toLowerCase()}-${uuidv4().slice(0, 6)}.${extension}`;
-
-            // Save file
+            const extension = arte.name.split(".").pop();
+            const filename = `culto-${diasemana.toLowerCase()}-${uuidv4().slice(0, 6)}.${extension}`;
             await writeFile(join(uploadDir, filename), buffer);
 
-            // Try to delete the old image file if it's not a default
-            if (currentCulto.imagem && !currentCulto.imagem.includes("default")) {
-                try {
-                    const oldImagePath = join(process.cwd(), "public", currentCulto.imagem);
-                    await fs.unlink(oldImagePath);
-                } catch (error) {
-                    // Just log the error, don't fail the update
-                    console.error("Could not delete old banner image:", error);
-                }
-            }
-
-            // Update image path for database
             imagemPath = `${folderPath}/${filename}`;
         }
 
-        // Handle orador image upload if provided
-        if (oradorImage) {
-            const oradorBytes = await oradorImage.arrayBuffer();
-            const buffer = Buffer.from(oradorBytes);
-
-            // Create pastores folder if it doesn't exist
-            const uploadDir = join(process.cwd(), "public", "/images/pastores");
-            await ensureDir(uploadDir);
-
-            // Generate unique filename
-            const extension = oradorImage.name.split(".").pop();
-            const filename = `${orador.toLowerCase().replace(/\s+/g, "-")}-${uuidv4().slice(0, 6)}.${extension}`;
-
-            // Save file
-            await writeFile(join(uploadDir, filename), buffer);
-
-            // Try to delete the old image file if it's not a default
-            if (
-                currentCulto.oradorImagem &&
-                !currentCulto.oradorImagem.includes("sem-imagem")
-            ) {
-                try {
-                    const oldImagePath = join(process.cwd(), "public", currentCulto.oradorImagem);
-                    await fs.unlink(oldImagePath);
-                } catch (error) {
-                    // Just log the error, don't fail the update
-                    console.error("Could not delete old orador image:", error);
-                }
-            }
-
-            // Update orador image path for database
-            oradorImagemPath = `/images/pastores/${filename}`;
-        }
-
-        // Update culto in database using neon
+        // Atualizar culto
         const updatedCulto = await sql`
-      UPDATE cultos 
-      SET titulo = ${titulo}, 
-          diaSemana = ${diaSemana}, 
-          data = ${data}, 
-          hora = ${hora}, 
-          orador = ${orador}, 
-          imagem = ${imagemPath}, 
-          oradorImagem = ${oradorImagemPath}, 
-          corDestaque = ${corDestaque}
-      WHERE id = ${id}
-      RETURNING *
-    `;
+            UPDATE cultos
+            SET titulo = ${titulo},
+                diasemana = ${diasemana},
+                data = ${data},
+                hora = ${hora},
+                orador_id = ${oradorId},
+                arte = ${imagemPath},
+                cordestaque = ${cordestaque}
+            WHERE id = ${id}
+            RETURNING *
+        `;
 
         return NextResponse.json(updatedCulto[0]);
     } catch (error) {
-        console.error("Error updating culto:", error);
-        return NextResponse.json(
-            { error: "Falha ao atualizar culto" },
-            { status: 500 }
-        );
+        console.error("Erro ao atualizar culto:", error);
+        return NextResponse.json({ error: "Falha ao atualizar culto" }, { status: 500 });
     }
 }
 
@@ -208,7 +147,7 @@ export async function DELETE(
         ) {
             try {
                 const imagePath = join(process.cwd(), "public", currentCulto.imagem);
-                await fs.unlink(imagePath);
+                await unlink(imagePath);
             } catch (error) {
                 // Just log the error, don't fail the delete
                 console.error("Could not delete banner image:", error);
@@ -222,7 +161,7 @@ export async function DELETE(
         ) {
             try {
                 const imagePath = join(process.cwd(), "public", currentCulto.oradorImagem);
-                await fs.unlink(imagePath);
+                await unlink(imagePath);
             } catch (error) {
                 // Just log the error, don't fail the delete
                 console.error("Could not delete orador image:", error);
