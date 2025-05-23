@@ -45,6 +45,7 @@ const themeColors = {
   }
 };
 
+<<<<<<< HEAD
 // Interface for Culto data
 interface Culto {
   id: number;
@@ -62,6 +63,44 @@ interface Orador {
   nome: string;
   foto: string;
 }
+=======
+// Mock data for the three worship services
+const cultosData: CultoProps[] = [
+  {
+    id: 1,
+    titulo: 'CULTO DE ADORAÇÃO',
+    diaSemana: 'SÁBADO',
+    data: '17/05/2025',
+    hora: '10h40',
+    orador: 'Pr. Caique Brito',
+    imagem: '/images/cultos/culto-sabado.jpeg',
+    oradorImagem: '/images/pastores/sem-imagem.jpg',
+    corDestaque: 'primary',
+  },
+  {
+    id: 2,
+    titulo: 'CULTO EVANGELÍSTICO',
+    diaSemana: 'DOMINGO',
+    data: '18/05/2025',
+    hora: '10h00',
+    orador: 'Pr. Anselmo Masson',
+    imagem: '/images/cultos/culto-domingo.jpeg',
+    oradorImagem: '/images/pastores/anselmo-masson.jpg',
+    corDestaque: 'secondary',
+  },
+  {
+    id: 3,
+    titulo: 'CULTO DE ORAÇÃO',
+    diaSemana: 'QUARTA',
+    data: '21/05/2025',
+    hora: '20h00',
+    orador: 'Pr. Mauro Dias',
+    imagem: '/images/cultos/culto-oracao.jpg',
+    oradorImagem: '/images/pastores/mauro-dias.jpg',
+    corDestaque: 'accent',
+  }
+];
+>>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
 
 export default function CultosSwiper() {
   const [currentDate, setCurrentDate] = useState<string>('');

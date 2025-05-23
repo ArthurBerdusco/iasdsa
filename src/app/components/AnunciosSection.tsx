@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageCircle, Calendar, FormInput, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
+<<<<<<< HEAD
 // Tipos
 export enum TipoLink {
   WHATSAPP = 'whatsapp',
@@ -49,6 +50,85 @@ const AnuncioLinks = ({ anuncio, variant = "card" }) => {
 
   const isDestaque = variant === "destaque";
   const buttonClasses = isDestaque ? "py-3 text-sm md:text-base" : "py-2 text-xs md:text-sm";
+=======
+
+
+const Anuncios = () => {
+  const anuncios = [
+
+    {
+      id: 10,
+      titulo: "3º Encontro Mãe Cuida, Mãe Nutri",
+      texto: "Participe do 3º Encontro 'Mãe Cuida, Mãe Nutri'\n\nTemas:\n• Alimentação infantil\n• Saúde mental\n• Inclusão\n• Infância digital\n\n📅 Dia 17/05 (Sábado)\n⏰ Das 14h30 às 18h\n📍 Santo Amaro\n\nEvento 100% gratuito!",
+      imagem: "/images/anuncios/mae-cuida-mae-nutri.jpeg",
+      linkForms: "https://docs.google.com/forms/d/e/1FAIpQLSeXU4foaUgD649N6vitlcPDHCBO2ahVIZmGHIdQVa9x9RfdxA/viewform",
+      linkWhatsapp: "https://wa.me/5511984443948",
+      linkInstagram: "https://www.instagram.com/maecuidamaenutri",
+      data: "17/05 das 14h30 às 18h"
+    },
+    {
+      id: 11,
+      titulo: "Passeio Especial – Ministério dos Idosos",
+      texto: "O Ministério dos Idosos convida você para um passeio inesquecível!\n\n📅 20 de Julho\n🕗 07h às 17h\n📍 MAB & Centro White – UNASP-EC\n\nVenha viver momentos especiais com amigos queridos. Esperamos você com muito carinho!",
+      imagem: "/images/anuncios/passeio-idosos.jpeg",
+      linkWhatsapp: "https://wa.me/5511984174734",
+      data: "20/07/2025 – 07h às 17h"
+    },
+    {
+      id: 9,
+      titulo: "Escola de Culinária",
+      texto: "Participe de uma aula especial de culinária com Giovanna Pitlovanciv! Dia 31/05 às 17h30. Apenas R$ 10.",
+      imagem: "/images/anuncios/culinaria.jpg",
+      linkWhatsapp: "https://wa.me/5511946003096",
+      data: "31/05 às 17h30",
+    },
+    {
+      id: 1,
+      titulo: "Pão Caseiro Integral - Desbravadores",
+      texto: "Ajude a comunidade e saboreie um delicioso pão caseiro integral! Faça seu pedido e contribua com os Desbravadores Borba Gato.",
+      imagem: "/images/anuncios/pao-desbravadores.png",
+      icone: <GiBread className="h-5 w-5 mr-1" />,
+      linkWhatsapp: 'https://wa.me/+5511984554580',
+      data: "Solicitação pelo WhatsApp"
+    },
+    {
+      id: 2,
+      titulo: "Aulas de Instrumentos Musicais",
+      texto: "Desperte o artista que há em você! Aprenda a tocar piano, violão e outros instrumentos musicais. Entre em contato para mais informações.",
+      imagem: "/images/anuncios/musica.png",
+      icone: <Calendar className="h-5 w-5 mr-1" />,
+      linkForms: "https://docs.google.com/forms/d/e/1FAIpQLSfCCgmzJBPckAzU8ZcwrZ8VsU7MIomRutKah6zBfgQwkkIf6Q/viewform",
+      data: "Inscrições Abertas",
+    },
+    {
+      id: 3,
+      titulo: "CAMPAL 2025 - Vagas Limitadas!",
+      texto: "Garanta sua vaga para o maior encontro do ano em Caraguatatuba! Alimentação, hospedagem e transporte inclusos. Corra, pois as vagas são limitadas!",
+      imagem: "/images/anuncios/campal.jpg",
+      icone: <Calendar className="h-5 w-5 mr-1" />,
+      linkWhatsapp: 'http://wa.me/+5511985587107',
+      data: "19 a 22 de junho"
+    },
+    {
+      id: 7,
+      titulo: "Encontro de Casais",
+      texto: "Reserve sua vaga para o Encontro de Casais no Resort Terras Altas, de 03 a 05/10/2025. Vagas limitadas! Entre no grupo para saber mais.",
+      imagem: "/images/anuncios/encontro-de-casais.jpg",
+      linkWhatsapp: "https://chat.whatsapp.com/EWsjhv9mvGmKlJDpFFbeC4",
+      data: "03 a 05/10/2025"
+    },
+    {
+      id: 4,
+      titulo: "Congresso Mulheres Corajosas",
+      texto: "Participe do Congresso Mulheres em Missão - Corajosas! Um dia de inspiração, conexão e transformação. As 100 primeiras inscritas concorrem a uma inscrição 100% gratuita!",
+      imagem: "/images/anuncios/anuncio-mm.jpg",
+      icone: <Calendar className="h-5 w-5 mr-1" />,
+      linkWhatsapp: 'http://wa.me/+551135450845',
+      linkForms: "https://forms.gle/5biDrwL8nvuPDgEH6",
+      data: "11 de Outubro"
+    },
+  ];
+>>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
 
   return (
     <div className={`space-y-2 ${isDestaque ? "flex flex-col gap-3" : "mt-auto"}`}>

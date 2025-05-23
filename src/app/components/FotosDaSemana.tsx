@@ -25,23 +25,22 @@ interface Foto {
 // Dados de exemplo - em produção seriam obtidos de uma API ou CMS
 const sampleImages: ImageData[] = [
   {
-    src: "/images/2025/5_MAI/Semana_1_1_7/oracao-culto-sabado.jpeg",
-    title: "Culto sábado - Identidade Reconhecida - Pastor Mauro Dias",
-    date: "26/04/2025",
-    description: "Momento de oração no culto sábado"
+    src: "/images/fotos-semana/culto-sabado.png",
+    title: "Culto sábado - Aporta Aberta - Paulo Tadeu",
+    date: "03/05/2025",
+    description: "Momento de pregação"
   },
   {
-    src: "/images/2025/5_MAI/Semana_1_1_7/culto-jasa.jpeg",
-    title: "Culto JASA - Conhecimento Desperdiçado - Lucas Feres",
-    date: "26/04/2025",
-    description: "Momento de Louvores do culto Jovem Adventista"
+    src: "/images/fotos-semana/spresart-culto-conexao.png",
+    title: "Culto Conexão - Grupo Spresart",
+    date: "04/05/2025",
+    description: "Momento de Louvores do grupo Spresart no Culto Conexão"
   },
-  {
-    src: "/images/2025/5_MAI/Semana_1_1_7/trilha.jpeg",
-    title: "Trilha do Movimento",
-    date: "27/04/2025",
-    description: "Dia de trilha com o grupo 'Movimento', foto dos Jovens Adventistas de Santo Amaro"
-  },
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> a0b93319166dc52a8b42c4447252f7baa5ac2136
 ]
 
 export default function FotosDaSemana() {
