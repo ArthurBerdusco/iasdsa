@@ -4,39 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 import SectionHeader from "./SectionHeader";
-
-// Interface para dados de imagem
-interface ImageData {
-  src: string;
-  title: string;
-  date: string;
-  description: string;
-}
-
-// Interface for Foto data
-interface Foto {
-  id: number;
-  titulo: string;
-  data: string;
-  descricao: string;
-  foto: string;
-}
-
-// Dados de exemplo - em produção seriam obtidos de uma API ou CMS
-const sampleImages: ImageData[] = [
-  {
-    src: "/images/fotos-semana/culto-sabado.png",
-    title: "Culto sábado - Aporta Aberta - Paulo Tadeu",
-    date: "03/05/2025",
-    description: "Momento de pregação"
-  },
-  {
-    src: "/images/fotos-semana/spresart-culto-conexao.png",
-    title: "Culto Conexão - Grupo Spresart",
-    date: "04/05/2025",
-    description: "Momento de Louvores do grupo Spresart no Culto Conexão"
-  },
-]
+import { Foto } from "@/types/fotos";
+import { formatDateForDisplay } from "@/utils/formatoData";
 
 export default function FotosDaSemana() {
   const [fotos, setFotos] = useState<Foto[]>([]);
@@ -71,7 +40,7 @@ export default function FotosDaSemana() {
   // Only set up auto-sliding when there's more than one photo
   useEffect(() => {
     if (fotos.length <= 1) return; // Don't auto-slide if we have 0 or 1 photos
-    
+
     const interval = setInterval(() => {
       if (!isAnimating) {
         handleNext();
@@ -142,7 +111,7 @@ export default function FotosDaSemana() {
   // Navegação por teclado
   useEffect(() => {
     if (fotos.length <= 1) return; // Don't handle keyboard events if we have 0 or 1 photos
-    
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
         handlePrevious();
@@ -155,17 +124,6 @@ export default function FotosDaSemana() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleNext, handlePrevious, fotos.length]);
 
-    const formatDateForDisplay = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-
-    // Obter dia, mês e ano e adicionar zeros à esquerda quando necessário
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
 
   // If loading, show a loading state
   if (isLoading) {
@@ -291,11 +249,10 @@ export default function FotosDaSemana() {
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`mx-1 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all ${
-                  safeIndex === index
+                className={`mx-1 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all ${safeIndex === index
                     ? "bg-blue-500 scale-110"
                     : "bg-white/30 hover:bg-white/50"
-                }`}
+                  }`}
                 aria-label={`Ir para imagem ${index + 1}`}
                 aria-current={safeIndex === index ? "true" : "false"}
               />
@@ -310,11 +267,10 @@ export default function FotosDaSemana() {
               <div
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`cursor-pointer transition duration-300 rounded-md overflow-hidden ${
-                  safeIndex === index
+                className={`cursor-pointer transition duration-300 rounded-md overflow-hidden ${safeIndex === index
                     ? "ring-2 ring-blue-500 scale-105 shadow-lg"
                     : "opacity-70 hover:opacity-100 hover:scale-105"
-                }`}
+                  }`}
                 aria-label={`Selecionar ${image.titulo}`}
               >
                 <div className="relative w-28 h-20">

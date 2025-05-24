@@ -3,18 +3,8 @@
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Orador } from "@/types/oradores";
 
-interface Orador {
-  id: number;
-  nome: string;
-  foto: string;
-}
-
-interface OradorForm {
-  id: number;
-  nome: string;
-  foto: string;
-}
 
 export default function OradoresAdmin() {
 
@@ -181,7 +171,7 @@ export default function OradoresAdmin() {
 
 
     const editOrador = (orador: Orador) => {
-      const oradorForm: OradorForm = {
+      const oradorForm: Orador = {
         id: orador.id,
         nome: orador.nome,
         foto: orador.foto,

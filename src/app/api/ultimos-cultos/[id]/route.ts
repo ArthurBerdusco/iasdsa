@@ -1,32 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from '@neondatabase/serverless';
-
-interface Params {
-  params: {
-    id: string;
-  };
-}
+import { RouteParams } from "@/types/routeParams";
 
 // Função para buscar um culto específico
-export async function GET(request: NextRequest, { params }: Params) {
+export async function GET(
+  request: NextRequest,
+  { params }: RouteParams
+) {
   try {
-    const id = params.id;
-    
+    const { id } = await params;
+
     // Connect to the database using neon
     const sql = neon(process.env.DATABASE_URL as string);
-    
+
     // Query specific culto by ID
     const culto = await sql`
       SELECT * FROM cultos_recentes WHERE id = ${id}
     `;
-    
+
     if (culto.length === 0) {
       return NextResponse.json(
         { error: "Culto não encontrado" },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json(culto[0]);
   } catch (error) {
     console.error("Database error:", error);
@@ -38,16 +36,19 @@ export async function GET(request: NextRequest, { params }: Params) {
 }
 
 // Função para atualizar um culto específico
-export async function PUT(request: NextRequest, { params }: Params) {
+export async function PUT(
+  request: NextRequest,
+  { params }: RouteParams
+) {
   try {
-    const id = params.id;
-    
+    const { id } = await params;
+
     // Parse JSON data from request
     const data = await request.json();
-    
+
     // Extract culto data
     const { data: dataCulto, hora, titulo, descricao, linkYoutube } = data;
-    
+
     // Validate required fields
     if (!dataCulto || !hora || !titulo || !linkYoutube) {
       return NextResponse.json(
@@ -55,10 +56,10 @@ export async function PUT(request: NextRequest, { params }: Params) {
         { status: 400 }
       );
     }
-    
+
     // Connect to database using neon
     const sql = neon(process.env.DATABASE_URL as string);
-    
+
     // Update culto in database
     const updatedCulto = await sql`
       UPDATE cultos_recentes
@@ -71,14 +72,14 @@ export async function PUT(request: NextRequest, { params }: Params) {
       WHERE id = ${id}
       RETURNING *
     `;
-    
+
     if (updatedCulto.length === 0) {
       return NextResponse.json(
         { error: "Culto não encontrado" },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json(updatedCulto[0]);
   } catch (error) {
     console.error("Error updating culto:", error);
@@ -90,30 +91,33 @@ export async function PUT(request: NextRequest, { params }: Params) {
 }
 
 // Função para excluir um culto específico
-export async function DELETE(request: NextRequest, { params }: Params) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: RouteParams
+) {
   try {
-    const id = params.id;
-    
+    const { id } = await params;
+
     // Connect to database using neon
     const sql = neon(process.env.DATABASE_URL as string);
-    
+
     // Check if culto exists
     const existingCulto = await sql`
       SELECT id FROM cultos_recentes WHERE id = ${id}
     `;
-    
+
     if (existingCulto.length === 0) {
       return NextResponse.json(
         { error: "Culto não encontrado" },
         { status: 404 }
       );
     }
-    
+
     // Delete culto from database
     await sql`
       DELETE FROM cultos_recentes WHERE id = ${id}
     `;
-    
+
     return NextResponse.json(
       { message: "Culto excluído com sucesso" },
       { status: 200 }

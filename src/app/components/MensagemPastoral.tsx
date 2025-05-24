@@ -5,18 +5,12 @@ import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import SectionHeader from './SectionHeader';
 import { useEffect, useState } from 'react';
-
-interface MensagemPastoral {
-  id: number;
-  titulo: string;
-  mensagem: string;
-  foto: string;
-  data_publicacao?: string;
-}
+import { MensagemPastor } from '@/types/mensagemPastoral';
+import { formatDateForDisplay } from '@/utils/formatoData';
 
 const MensagemPastoral = () => {
 
-  const [mensagem, setMensagem] = useState<MensagemPastoral>();
+  const [mensagem, setMensagem] = useState<MensagemPastor>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
 
@@ -48,19 +42,6 @@ const MensagemPastoral = () => {
       <>Carregando Mensagem Pastoral</>
     );
   }
-
-    const formatDateForDisplay = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-
-    // Obter dia, mês e ano e adicionar zeros à esquerda quando necessário
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
-
 
   return (
     <section className="bg-blue-950 text-white">
@@ -132,7 +113,7 @@ const MensagemPastoral = () => {
                   </div>
                   <div>
                     <p className="font-semibold text-white">Pastor Mauro Dias</p>
-                    <p className="text-sm text-blue-200">{formatDateForDisplay(mensagem.data_publicacao?mensagem.data_publicacao: "2025/05/05")}</p>
+                    <p className="text-sm text-blue-200">{formatDateForDisplay(mensagem.data_publicacao ? mensagem.data_publicacao : "2025/05/05")}</p>
                   </div>
                 </div>
 

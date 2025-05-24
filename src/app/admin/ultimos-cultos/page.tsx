@@ -2,21 +2,14 @@
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
+import { CultoYoutube } from "@/types/ultimosCultos";
+import { formatDateForDisplay, formatDateForInput } from "@/utils/formatoData";
 
-// Interface para dados de Culto
-interface Culto {
-  id: number;
-  data: string;
-  hora: string;
-  titulo: string;
-  descricao: string;
-  linkyoutube: string;
-  iframe: string;
-}
+
 
 export default function UltimosCultosAdmin() {
   const router = useRouter();
-  const [cultos, setCultos] = useState<Culto[]>([]);
+  const [cultos, setCultos] = useState<CultoYoutube[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -25,7 +18,7 @@ export default function UltimosCultosAdmin() {
   const [isLoadingYouTubeData, setIsLoadingYouTubeData] = useState(false);
 
   // Estado do formulário
-  const [currentCulto, setCurrentCulto] = useState<Culto>({
+  const [currentCulto, setCurrentCulto] = useState<CultoYoutube>({
     id: 0,
     data: "",
     hora: "",
@@ -239,7 +232,7 @@ export default function UltimosCultosAdmin() {
     }
   };
 
-  const editCulto = (culto: Culto) => {
+  const editCulto = (culto: CultoYoutube) => {
     setCurrentCulto(culto);
     setIsEditing(true);
     setIsCreating(false);
@@ -276,13 +269,6 @@ export default function UltimosCultosAdmin() {
     } else {
       setErrorMessage("Por favor, insira um link do YouTube válido");
     }
-  };
-
-  // Format date for input fields (YYYY-MM-DD)
-  const formatDateForInput = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
   };
 
   return (
@@ -512,7 +498,7 @@ export default function UltimosCultosAdmin() {
                   cultos.map((culto) => (
                     <tr key={culto.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{culto.id}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDateForInput(culto.data)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatDateForDisplay(culto.data)}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{culto.hora}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{culto.titulo}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">

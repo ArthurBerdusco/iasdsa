@@ -3,15 +3,8 @@
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-
-// Interface for Foto data
-interface Foto {
-  id: number;
-  titulo: string;
-  data: string;
-  descricao: string;
-  foto: string;
-}
+import { Foto } from "@/types/fotos";
+import { formatDateForInput } from "@/utils/formatoData";
 
 export default function FotosRecentesAdmin() {
   const router = useRouter();
@@ -196,13 +189,6 @@ export default function FotosRecentesAdmin() {
     setIsCreating(false);
     setIsEditing(false);
     resetForm();
-  };
-
-  // Format date for input fields (YYYY-MM-DD)
-  const formatDateForInput = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
   };
 
   return (

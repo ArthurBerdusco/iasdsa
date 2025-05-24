@@ -2,18 +2,11 @@
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import Image from "next/image";
-
-// Interface para dados da Mensagem Pastoral
-interface MensagemPastoral {
-  id: number;
-  titulo: string;
-  mensagem: string;
-  foto: string;
-  data_publicacao?: string;
-}
+import { MensagemPastor } from "@/types/mensagemPastoral";
+import { formatDateForDisplay } from "@/utils/formatoData";
 
 export default function MensagemPastoralAdmin() {
-  const [mensagem, setMensagem] = useState<MensagemPastoral | null>(null);
+  const [mensagem, setMensagem] = useState<MensagemPastor | null>(null);
   const [foto, setFoto] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -21,7 +14,7 @@ export default function MensagemPastoralAdmin() {
   const [successMessage, setSuccessMessage] = useState("");
 
   // Estado do formulário
-  const [currentMensagem, setCurrentMensagem] = useState<MensagemPastoral>({
+  const [currentMensagem, setCurrentMensagem] = useState<MensagemPastor>({
     id: 0,
     titulo: "",
     foto: "",
@@ -163,18 +156,6 @@ export default function MensagemPastoralAdmin() {
   const cancelForm = () => {
     setIsFormOpen(false);
     resetForm();
-  };
-
-  const formatDateForDisplay = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-
-    // Obter dia, mês e ano e adicionar zeros à esquerda quando necessário
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
   };
 
   return (

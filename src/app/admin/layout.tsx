@@ -1,11 +1,16 @@
 'use client'
 
 // Layout.jsx - Componente de layout principal que organiza a estrutura do painel
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import { SideNav } from '../components/AdminSideNav';
 import { TopNav } from '../components/AdminTopNav';
 
-export default function RootLayout({ children }) {
+type RootLayoutProps = {
+  children: ReactNode;
+};
+
+
+export default function RootLayout({ children }: RootLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -2,47 +2,8 @@
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import Image from "next/image";
-
-// Definição dos tipos para os anúncios
-export enum TipoLink {
-  WHATSAPP = 'whatsapp',
-  FORMS = 'forms',
-  INSTAGRAM = 'instagram',
-  FACEBOOK = 'facebook',
-  WEBSITE = 'website',
-}
-
-export interface AnuncioLink {
-  id: number;
-  tipo_link: TipoLink;
-  url: string;
-  textoBotao?: string;
-}
-
-export interface Anuncio {
-  id: number;
-  titulo: string;
-  texto: string;
-  arte: string;
-  dataEvento: string;
-  dataPublicacao: Date;
-  dataExpiracao?: Date;
-  ativo: boolean;
-  destaque: boolean;
-  links: AnuncioLink[];
-}
-
-// Tipo para o formulário de anúncio
-interface AnuncioForm {
-  id: number;
-  titulo: string;
-  texto: string;
-  arte: string;
-  dataEvento: string;
-  ativo: boolean;
-  destaque: boolean;
-  links: AnuncioLink[];
-}
+import { Anuncio, AnuncioLink, TipoLink } from "@/types/anuncios";
+import { formatDateForDisplay } from "@/utils/formatoData";
 
 export default function AnunciosAdmin() {
   const [anuncios, setAnuncios] = useState<Anuncio[]>([]);
@@ -55,7 +16,7 @@ export default function AnunciosAdmin() {
   const [linksList, setLinksList] = useState<AnuncioLink[]>([]);
 
   // Estado inicial para um novo anúncio
-  const emptyAnuncio: AnuncioForm = {
+  const emptyAnuncio: Anuncio = {
     id: 0,
     titulo: "",
     texto: "",
@@ -67,7 +28,7 @@ export default function AnunciosAdmin() {
   };
 
   // Form state
-  const [currentAnuncio, setCurrentAnuncio] = useState<AnuncioForm>(emptyAnuncio);
+  const [currentAnuncio, setCurrentAnuncio] = useState<Anuncio>(emptyAnuncio);
 
   // Estado para um novo link
   const [newLink, setNewLink] = useState<Partial<AnuncioLink>>({
@@ -259,7 +220,7 @@ export default function AnunciosAdmin() {
   };
 
   const editAnuncio = (anuncio: Anuncio) => {
-    const anuncioForm: AnuncioForm = {
+    const anuncioForm: Anuncio = {
       id: anuncio.id,
       titulo: anuncio.titulo,
       texto: anuncio.texto,
@@ -303,27 +264,6 @@ export default function AnunciosAdmin() {
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
-
-  // Format date for input fields (YYYY-MM-DD)
-  const formatDateForInput = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
-  };
-
-  // Formata a data para exibição visual no formato brasileiro (DD/MM/YYYY)
-  const formatDateForDisplay = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-
-    // Obter dia, mês e ano e adicionar zeros à esquerda quando necessário
-    const day = String(date.getDate() + 1).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
-
 
   // Renderiza um link para exibição com design melhorado
   const renderLink = (link: AnuncioLink) => {

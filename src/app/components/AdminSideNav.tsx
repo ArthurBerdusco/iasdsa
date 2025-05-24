@@ -18,16 +18,32 @@ import {
   Youtube,
   SquareArrowOutUpRight
 } from 'lucide-react';
-import { BsYoutube } from 'react-icons/bs';
 
-export function SideNav({ collapsed, setCollapsed, isMobile, isOpen, setIsOpen }) {
+import { Dispatch, SetStateAction } from 'react';
+
+interface SideNavProps {
+  collapsed: boolean;
+  setCollapsed: Dispatch<SetStateAction<boolean>>;
+  isMobile: boolean;
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+
+
+export function SideNav({ collapsed, setCollapsed, isMobile, isOpen, setIsOpen }: SideNavProps) {
   const pathname = usePathname();
-  const sideNavRef = useRef(null);
+  const sideNavRef = useRef<HTMLDivElement | null>(null);
 
   // Fechar o menu ao clicar fora em dispositivos móveis
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isMobile && isOpen && sideNavRef.current && !sideNavRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isMobile &&
+        isOpen &&
+        sideNavRef.current &&
+        !sideNavRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };

@@ -1,5 +1,5 @@
 'use client'
-// TopNav.jsx - Barra de navegação superior responsiva
+// TopNav.tsx - Barra de navegação superior responsiva
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -10,18 +10,28 @@ import {
     X,
 } from 'lucide-react';
 
-export function TopNav({ toggleSidebar }) {
-    const router = useRouter();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [showUserMenu, setShowUserMenu] = useState(false);
-    const [searchResults, setSearchResults] = useState([]);
-    const [showResults, setShowResults] = useState(false);
+interface SearchItem {
+    name: string;
+    href: string;
+    type: string;
+}
 
-    const searchRef = useRef(null);
-    const userMenuRef = useRef(null);
+interface TopNavProps {
+    toggleSidebar: () => void;
+}
+
+export function TopNav({ toggleSidebar }: TopNavProps) {
+    const router = useRouter();
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
+    const [searchResults, setSearchResults] = useState<SearchItem[]>([]);
+    const [showResults, setShowResults] = useState<boolean>(false);
+
+    const searchRef = useRef<HTMLDivElement>(null);
+    const userMenuRef = useRef<HTMLDivElement>(null);
 
     // Dados de exemplo para pesquisa
-    const searchData = [
+    const searchData: SearchItem[] = [
         { name: 'Dashboard', href: '/admin', type: 'página' },
         { name: 'Cultos', href: '/admin/cultos', type: 'página' },
         { name: 'Oradores', href: '/admin/oradores', type: 'página' },
@@ -32,7 +42,7 @@ export function TopNav({ toggleSidebar }) {
     ];
 
     // Função de busca
-    const handleSearch = () => {
+    const handleSearch = (): void => {
         if (searchTerm.trim() === '') {
             setSearchResults([]);
             setShowResults(false);
@@ -55,14 +65,14 @@ export function TopNav({ toggleSidebar }) {
     };
 
     // Executa a busca quando pressionar Enter
-    const handleKeyPress = (e) => {
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
         if (e.key === 'Enter') {
             handleSearch();
         }
     };
 
     // Navegar para o item selecionado
-    const navigateToResult = (href) => {
+    const navigateToResult = (href: string): void => {
         router.push(href);
         setSearchTerm('');
         setShowResults(false);
@@ -70,11 +80,11 @@ export function TopNav({ toggleSidebar }) {
 
     // Fecha menus ao clicar fora
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
+        const handleClickOutside = (event: MouseEvent): void => {
+            if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
                 setShowResults(false);
             }
-            if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
                 setShowUserMenu(false);
             }
         };
@@ -97,6 +107,15 @@ export function TopNav({ toggleSidebar }) {
         }
     }, [searchTerm]);
 
+    const clearSearch = (): void => {
+        setSearchTerm('');
+        setShowResults(false);
+    };
+
+    const toggleUserMenu = (): void => {
+        setShowUserMenu(!showUserMenu);
+    };
+
     return (
         <header className="bg-white shadow-sm fixed top-0 right-0 left-0 z-30 h-16">
             <div className="h-full px-4 max-w-7xl mx-auto flex items-center justify-between">
@@ -106,6 +125,7 @@ export function TopNav({ toggleSidebar }) {
                         onClick={toggleSidebar}
                         className="p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                         aria-label="Toggle sidebar"
+                        type="button"
                     >
                         <Menu className="w-5 h-5" />
                     </button>
@@ -120,16 +140,15 @@ export function TopNav({ toggleSidebar }) {
                                 placeholder="Buscar..."
                                 className="flex-grow pl-4 py-2 text-sm bg-white focus:outline-none"
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                                 onKeyPress={handleKeyPress}
                             />
                             {searchTerm && (
                                 <button
-                                    onClick={() => {
-                                        setSearchTerm('');
-                                        setShowResults(false);
-                                    }}
+                                    onClick={clearSearch}
                                     className="px-2 focus:outline-none"
+                                    type="button"
+                                    aria-label="Limpar busca"
                                 >
                                     <X className="w-4 h-4 text-gray-500" />
                                 </button>
@@ -137,6 +156,8 @@ export function TopNav({ toggleSidebar }) {
                             <button
                                 onClick={handleSearch}
                                 className="bg-gray-100 p-2 hover:bg-gray-200 transition"
+                                type="button"
+                                aria-label="Buscar"
                             >
                                 <Search className="w-4 h-4 text-gray-600" />
                             </button>
@@ -146,11 +167,12 @@ export function TopNav({ toggleSidebar }) {
                         {showResults && searchResults.length > 0 && (
                             <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 z-40">
                                 <ul className="max-h-64 overflow-y-auto py-1">
-                                    {searchResults.map((result, index) => (
-                                        <li key={index}>
+                                    {searchResults.map((result: SearchItem, index: number) => (
+                                        <li key={`${result.href}-${index}`}>
                                             <button
                                                 className="w-full text-left"
                                                 onClick={() => navigateToResult(result.href)}
+                                                type="button"
                                             >
                                                 <div className="px-4 py-2 hover:bg-gray-50 flex items-center">
                                                     <span className="w-6 h-6 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center mr-2">
@@ -173,9 +195,10 @@ export function TopNav({ toggleSidebar }) {
                 {/* Right side - User menu */}
                 <div className="flex items-center" ref={userMenuRef}>
                     <button
-                        onClick={() => setShowUserMenu(!showUserMenu)}
+                        onClick={toggleUserMenu}
                         className="flex items-center p-2 text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md"
                         aria-label="User menu"
+                        type="button"
                     >
                         <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center">
                             <User className="w-4 h-4" />
@@ -217,6 +240,5 @@ export function TopNav({ toggleSidebar }) {
                 </div>
             </div>
         </header>
-
     );
 }

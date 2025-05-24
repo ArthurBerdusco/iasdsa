@@ -3,6 +3,8 @@
 import { FaFacebook, FaInstagram, FaYoutube, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { useState, useEffect, ReactNode } from "react";
 import SectionHeader from "./SectionHeader";
+import { CultoYoutube } from "@/types/ultimosCultos";
+import { formatDateForDisplay } from "@/utils/formatoData";
 
 interface SocialCardProps {
     icon: ReactNode;
@@ -12,19 +14,8 @@ interface SocialCardProps {
     color: string;
 }
 
-// Interface para dados de Culto
-interface Culto {
-    id: number;
-    data: string;
-    hora: string;
-    titulo: string;
-    descricao: string;
-    linkyoutube: string;
-    iframe: string;
-}
-
 const RedesSociais = () => {
-    const [cultos, setCultos] = useState<Culto[]>([]);
+    const [cultos, setCultos] = useState<CultoYoutube[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [loadedVideos, setLoadedVideos] = useState<Record<number, boolean>>({});
 
@@ -52,20 +43,6 @@ const RedesSociais = () => {
             setIsLoading(false);
         }
     };
-
-    // Formata a data para exibição visual no formato brasileiro (DD/MM/YYYY)
-    const formatDateForDisplay = (dateString: string) => {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-
-        // Obter dia, mês e ano e adicionar zeros à esquerda quando necessário
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
-        const year = date.getFullYear();
-
-        return `${day}/${month}/${year}`;
-    };
-
 
     if (isLoading) {
         return (

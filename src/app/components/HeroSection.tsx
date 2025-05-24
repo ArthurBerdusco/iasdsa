@@ -10,6 +10,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import SectionHeader from './SectionHeader';
+import { Culto } from '@/types/cultos';
+import { formatDateForDisplay } from '@/utils/formatoData';
 
 // Theme colors for different emphasis colors
 const themeColors = {
@@ -45,24 +47,6 @@ const themeColors = {
   }
 };
 
-// Interface for Culto data
-interface Culto {
-  id: number;
-  titulo: string;
-  diasemana: string;
-  data: string;
-  hora: string;
-  orador: Orador;
-  imagem: string; // Changed from 'arte' to match the component usage
-  corDestaque: string; // Changed from 'cordestaque' to match the component usage
-}
-
-interface Orador {
-  id: number;
-  nome: string;
-  foto: string;
-}
-
 export default function CultosSwiper() {
   const [currentDate, setCurrentDate] = useState<string>('');
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -89,8 +73,8 @@ export default function CultosSwiper() {
           diasemana: culto.diasemana,
           data: culto.data,
           hora: culto.hora,
-          imagem: culto.arte, // Map 'arte' from API to 'imagem' used in component
-          corDestaque: culto.cordestaque, // Map 'cordestaque' from API to 'corDestaque' used in component
+          arte: culto.arte,
+          corDestaque: culto.cordestaque,
           orador: {
             id: culto.orador.id,
             nome: culto.orador.nome,
@@ -121,17 +105,6 @@ export default function CultosSwiper() {
     setCurrentDate(today.toLocaleDateString("pt-BR", options));
   }, []);
 
-  const formatDateForDisplay = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-
-    // Obter dia, mês e ano e adicionar zeros à esquerda quando necessário
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  };
 
   // If loading, show a loading state
   if (isLoading) {
@@ -223,7 +196,7 @@ export default function CultosSwiper() {
         >
           {cultos.map((culto) => {
             // Default to primary if the color doesn't exist in our theme
-            const colorClasses = themeColors[culto.corDestaque as keyof typeof themeColors] || themeColors.primary;
+            const colorClasses = themeColors[culto.cordestaque as keyof typeof themeColors] || themeColors.primary;
 
             return (
               <SwiperSlide key={culto.id}>
@@ -256,7 +229,7 @@ export default function CultosSwiper() {
                   {/* Banner Image */}
                   <div className="relative w-full h-[50vh] sm:h-[60vh] overflow-hidden">
                     <Image
-                      src={culto.imagem}
+                      src={culto.arte}
                       alt={culto.titulo}
                       fill
                       priority

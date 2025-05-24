@@ -4,43 +4,48 @@ import { unlink, writeFile } from "fs/promises";
 import { join } from "path";
 import { v4 as uuidv4 } from "uuid";
 import { existsSync } from "fs";
-
-// Define the proper types for route params according to Next.js 15
-type RouteParams = {
-    params: {
-        id: string;
-    };
-    searchParams: { [key: string]: string | string[] | undefined };
-};
+import { RouteParams } from "@/types/routeParams";
 
 export async function GET(
     request: NextRequest,
-    context: RouteParams
+    { params }: RouteParams  // ✅ Corrigido - uso consistente de destructuring
 ) {
-    const id = context.params.id;
-
     try {
+        // ✅ Await params para Next.js 15+
+        const { id } = await params;
+
         const sql = neon(process.env.DATABASE_URL as string);
 
         const rows = await sql`SELECT * FROM cultos WHERE id = ${id}`;
 
         if (rows.length === 0) {
-            return NextResponse.json({ error: "Culto não encontrado" }, { status: 404 });
+            return NextResponse.json({ 
+                success: false,
+                error: "Culto não encontrado" 
+            }, { status: 404 });
         }
 
-        return NextResponse.json(rows[0]);
+        return NextResponse.json({
+            success: true,
+            data: rows[0]
+        });
     } catch (error) {
         console.error("Database error:", error);
-        return NextResponse.json({ error: "Falha ao buscar culto" }, { status: 500 });
+        return NextResponse.json({ 
+            success: false,
+            error: "Falha ao buscar culto" 
+        }, { status: 500 });
     }
 }
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: RouteParams  // ✅ Corrigido - usando RouteParams
 ) {
     try {
-        const id = params.id;
+        // ✅ Await params para Next.js 15+
+        const { id } = await params;
+        
         const formData = await request.formData();
 
         // Extrair dados
@@ -52,8 +57,19 @@ export async function PUT(
         const oradorId = parseInt(formData.get("oradorId") as string);
         const arte = formData.get("arte") as File;
 
+        // Validação básica
+        if (!titulo || !diasemana || !data || !hora) {
+            return NextResponse.json({ 
+                success: false,
+                error: "Campos obrigatórios não preenchidos" 
+            }, { status: 400 });
+        }
+
         if (isNaN(oradorId) || oradorId <= 0) {
-            return NextResponse.json({ error: "ID do orador inválido" }, { status: 400 });
+            return NextResponse.json({ 
+                success: false,
+                error: "ID do orador inválido" 
+            }, { status: 400 });
         }
 
         const sql = neon(process.env.DATABASE_URL as string);
@@ -61,7 +77,10 @@ export async function PUT(
         // Verificar se culto existe
         const existingCulto = await sql`SELECT arte FROM cultos WHERE id = ${id}`;
         if (existingCulto.length === 0) {
-            return NextResponse.json({ error: "Culto não encontrado" }, { status: 404 });
+            return NextResponse.json({ 
+                success: false,
+                error: "Culto não encontrado" 
+            }, { status: 404 });
         }
 
         let imagemPath = existingCulto[0].arte; // Preserva a imagem atual por padrão
@@ -111,20 +130,28 @@ export async function PUT(
             RETURNING *
         `;
 
-        return NextResponse.json(updatedCulto[0]);
+        return NextResponse.json({
+            success: true,
+            message: "Culto atualizado com sucesso",
+            data: updatedCulto[0]
+        });
     } catch (error) {
         console.error("Erro ao atualizar culto:", error);
-        return NextResponse.json({ error: "Falha ao atualizar culto" }, { status: 500 });
+        return NextResponse.json({ 
+            success: false,
+            error: "Falha ao atualizar culto" 
+        }, { status: 500 });
     }
 }
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: RouteParams  // ✅ Corrigido - usando RouteParams
 ) {
-    const id = params.id;
-
     try {
+        // ✅ Await params para Next.js 15+
+        const { id } = await params;
+
         // Connect to database using neon
         const sql = neon(process.env.DATABASE_URL as string);
 
@@ -133,7 +160,10 @@ export async function DELETE(
 
         if (currentCultos.length === 0) {
             return NextResponse.json(
-                { error: "Culto não encontrado" },
+                { 
+                    success: false,
+                    error: "Culto não encontrado" 
+                },
                 { status: 404 }
             );
         }
@@ -142,12 +172,14 @@ export async function DELETE(
 
         // Try to delete the banner image file if it's not a default
         if (
-            currentCulto.imagem &&
-            !currentCulto.imagem.includes("default")
+            currentCulto.arte &&  // ✅ Corrigido - usando 'arte' em vez de 'imagem'
+            !currentCulto.arte.includes("default")
         ) {
             try {
-                const imagePath = join(process.cwd(), "public", currentCulto.imagem);
-                await unlink(imagePath);
+                const imagePath = join(process.cwd(), "public", currentCulto.arte);
+                if (existsSync(imagePath)) {
+                    await unlink(imagePath);
+                }
             } catch (error) {
                 // Just log the error, don't fail the delete
                 console.error("Could not delete banner image:", error);
@@ -161,7 +193,9 @@ export async function DELETE(
         ) {
             try {
                 const imagePath = join(process.cwd(), "public", currentCulto.oradorImagem);
-                await unlink(imagePath);
+                if (existsSync(imagePath)) {
+                    await unlink(imagePath);
+                }
             } catch (error) {
                 // Just log the error, don't fail the delete
                 console.error("Could not delete orador image:", error);
@@ -171,11 +205,17 @@ export async function DELETE(
         // Delete culto from database using neon
         await sql`DELETE FROM cultos WHERE id = ${id}`;
 
-        return NextResponse.json({ success: true });
+        return NextResponse.json({ 
+            success: true,
+            message: "Culto excluído com sucesso" 
+        });
     } catch (error) {
         console.error("Error deleting culto:", error);
         return NextResponse.json(
-            { error: "Falha ao excluir culto" },
+            { 
+                success: false,
+                error: "Falha ao excluir culto" 
+            },
             { status: 500 }
         );
     }

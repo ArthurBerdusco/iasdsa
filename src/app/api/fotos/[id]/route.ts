@@ -3,18 +3,19 @@ import { neon } from '@neondatabase/serverless';
 import { writeFile, unlink } from "fs/promises";
 import { join } from "path";
 import { existsSync } from "fs";
+import { RouteParams } from "@/types/routeParams";
 
 // GET: Fetch a single foto by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams
 ) {
   try {
-    const id = params.id;
-    
+    const id = await params;
+
     // Connect to the database
     const sql = neon(process.env.DATABASE_URL as string);
-    
+
     // Query the specific foto
     const foto = await sql`
       SELECT 
@@ -26,14 +27,14 @@ export async function GET(
       FROM fotos
       WHERE id = ${id}
     `;
-    
+
     if (foto.length === 0) {
       return NextResponse.json(
         { error: "Foto não encontrada" },
         { status: 404 }
       );
     }
-    
+
     return NextResponse.json(foto[0]);
   } catch (error) {
     console.error("Database error:", error);
@@ -47,38 +48,38 @@ export async function GET(
 // PUT: Update an existing foto
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams  // ✅ Corrigido - usando RouteParams
 ) {
   try {
-    const id = params.id;
-    
+    const { id } = await params;
+
     // Parse form data from request
     const formData = await request.formData();
-    
+
     // Extract foto data
     const titulo = formData.get("titulo") as string;
     const descricao = formData.get("descricao") as string;
     const data = formData.get("data") as string;
-    
+
     // Connect to database
     const sql = neon(process.env.DATABASE_URL as string);
-    
+
     // Check if foto exists
     const existingFoto = await sql`
       SELECT foto FROM fotos WHERE id = ${id}
     `;
-    
+
     if (existingFoto.length === 0) {
       return NextResponse.json(
         { error: "Foto não encontrada" },
         { status: 404 }
       );
     }
-    
+
     // Handle image upload if provided
     const foto = formData.get("foto") as File;
     let fotoPath = existingFoto[0].foto; // Keep existing image by default
-    
+
     if (foto && foto.size > 0) {
       // Delete old image if it exists
       const oldFotoPath = existingFoto[0].foto;
@@ -88,27 +89,27 @@ export async function PUT(
           await unlink(oldFilePath);
         }
       }
-      
+
       // Upload new image
       const fotoBytes = await foto.arrayBuffer();
       const buffer = Buffer.from(fotoBytes);
-      
+
       // Create fotos folder if it doesn't exist
       const uploadDir = join(process.cwd(), "public", "/images/fotos");
       await ensureDir(uploadDir);
-      
+
       // Generate unique filename based on title and timestamp
       const extension = foto.name.split(".").pop();
       const timestamp = new Date().getTime();
       const filename = `${titulo.toLowerCase().replace(/\s+/g, "-")}-${timestamp}.${extension}`;
-      
+
       // Save file
       await writeFile(join(uploadDir, filename), buffer);
-      
+
       // Update image path for database
       fotoPath = `/images/fotos/${filename}`;
     }
-    
+
     // Update the foto record
     const updatedFoto = await sql`
       UPDATE fotos
@@ -125,7 +126,7 @@ export async function PUT(
         data, 
         foto
     `;
-    
+
     return NextResponse.json(updatedFoto[0]);
   } catch (error) {
     console.error("Error updating foto:", error);
@@ -139,26 +140,26 @@ export async function PUT(
 // DELETE: Remove a foto
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: RouteParams  // ✅ Corrigido - usando RouteParams
 ) {
   try {
-    const id = params.id;
-    
+    const { id } = await params;
+
     // Connect to database
     const sql = neon(process.env.DATABASE_URL as string);
-    
+
     // Check if foto exists and get image path
     const existingFoto = await sql`
       SELECT foto FROM fotos WHERE id = ${id}
     `;
-    
+
     if (existingFoto.length === 0) {
       return NextResponse.json(
         { error: "Foto não encontrada" },
         { status: 404 }
       );
     }
-    
+
     // Delete the image file if it exists
     const fotoPath = existingFoto[0].foto;
     if (fotoPath) {
@@ -167,10 +168,10 @@ export async function DELETE(
         await unlink(filePath);
       }
     }
-    
+
     // Delete the foto record
     await sql`DELETE FROM fotos WHERE id = ${id}`;
-    
+
     return NextResponse.json(
       { message: "Foto removida com sucesso" },
       { status: 200 }

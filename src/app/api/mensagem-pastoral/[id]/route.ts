@@ -1,24 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from '@neondatabase/serverless';
-
-// Define the proper types for route params according to Next.js
-type RouteParams = {
-    params: {
-        id: string;
-    };
-    searchParams: { [key: string]: string | string[] | undefined };
-};
+import { RouteParams } from "@/types/routeParams";
 
 /**
  * GET handler - Busca uma mensagem pastoral específica pelo ID
  */
 export async function GET(
     request: NextRequest,
-    context: RouteParams
+    { params }: RouteParams  // ✅ Corrigido - usando RouteParams
 ) {
-    const id = context.params.id;
 
     try {
+        const { id } = await params;
         // Connect to database using neon
         const sql = neon(process.env.DATABASE_URL as string);
 
@@ -50,9 +43,9 @@ export async function GET(
  */
 export async function PUT(
     request: NextRequest,
-    context: { params: { id: string } }
+    { params }: RouteParams  // ✅ Corrigido - usando RouteParams
 ) {
-    const { id } = context.params;
+    const { id } = await params;
 
     try {
         const formData = await request.formData();
@@ -114,9 +107,9 @@ export async function PUT(
  */
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: RouteParams
 ) {
-    const id = params.id;
+    const { id } = await params;
 
     try {
         // Connect to database using neon

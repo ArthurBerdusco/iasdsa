@@ -1,26 +1,10 @@
 "use client";
 
 import { useState, useEffect, FormEvent, ChangeEvent } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-
-// Interface for Culto data
-interface Culto {
-  id: number;
-  titulo: string;
-  diasemana: string;
-  data: string;
-  hora: string;
-  orador: Orador;
-  arte: string;
-  cordestaque: string;
-}
-
-interface Orador {
-  id: number;
-  nome: string;
-  foto: string;
-}
+import { Culto } from "@/types/cultos";
+import { Orador } from "@/types/oradores";
+import { formatDateForDisplay, formatDateForInput } from "@/utils/formatoData";
 
 export default function CultosAdmin() {
   const [cultos, setCultos] = useState<Culto[]>([]);
@@ -256,26 +240,6 @@ export default function CultosAdmin() {
     setIsCreating(false);
     setIsEditing(false);
     resetForm();
-  };
-
-  // Format date for input fields (YYYY-MM-DD)
-  const formatDateForInput = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
-  };
-
-  // Formata a data para exibição visual no formato brasileiro (DD/MM/YYYY)
-  const formatDateForDisplay = (dateString: string) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-
-    // Obter dia, mês e ano e adicionar zeros à esquerda quando necessário
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
   };
 
   return (

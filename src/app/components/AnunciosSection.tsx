@@ -3,38 +3,39 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, Calendar, FormInput, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { Anuncio, TipoLink } from '@/types/anuncios';
 
-// Tipos
-export enum TipoLink {
-  WHATSAPP = 'whatsapp',
-  FORMS = 'forms',
-  INSTAGRAM = 'instagram',
-  FACEBOOK = 'facebook',
-  WEBSITE = 'website',
+// Tipagem para as interfaces necessárias
+interface SectionHeaderProps {
+  title: string;
 }
 
-export interface AnuncioLink {
-  id: number;
-  tipo_link: TipoLink;
-  url: string;
-  textoBotao?: string;
+interface AnuncioLinksProps {
+  anuncio: Anuncio;
+  variant?: "card" | "destaque";
 }
 
-export interface Anuncio {
-  id: number;
-  titulo: string;
-  texto: string;
-  arte: string;
-  dataEvento: string;
-  dataPublicacao: Date;
-  dataExpiracao?: Date;
-  destaque: boolean;
-  ativo: boolean;
-  links: AnuncioLink[];
+interface AnuncioCardProps {
+  anuncio: Anuncio;
+}
+
+interface AnuncioDestaqueProps {
+  anuncio: Anuncio;
+}
+
+interface MonthDividerProps {
+  month: string;
+  year: number;
+}
+
+interface GrupoMensal {
+  mes: string;
+  ano: number;
+  anuncios: Anuncio[];
 }
 
 // Componentes auxiliares
-const SectionHeader = ({ title }) => (
+const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
   <div className="text-center mb-10">
     <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{title}</h2>
     <div className="w-24 h-1 bg-blue-500 mx-auto rounded"></div>
@@ -42,8 +43,8 @@ const SectionHeader = ({ title }) => (
 );
 
 // Componente para mostrar os links/botões dos anúncios
-const AnuncioLinks = ({ anuncio, variant = "card" }) => {
-  const getLinkByTipo = (tipo) => {
+const AnuncioLinks: React.FC<AnuncioLinksProps> = ({ anuncio, variant = "card" }) => {
+  const getLinkByTipo = (tipo: TipoLink) => {
     return anuncio.links?.find(link => link.tipo_link === tipo);
   };
 
@@ -56,13 +57,13 @@ const AnuncioLinks = ({ anuncio, variant = "card" }) => {
         <div className={isDestaque ? "" : ""}>
           {isDestaque && <span className="text-sm text-gray-500 block mb-1">Inscrição</span>}
           <Link
-            href={getLinkByTipo(TipoLink.FORMS).url}
+            href={getLinkByTipo(TipoLink.FORMS)!.url}
             target="_blank"
             rel="noopener noreferrer"
             className={`inline-flex w-full items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-colors duration-300`}
           >
             <FormInput className={`${isDestaque ? "h-5 w-5" : "h-4 w-4"} mr-2`} />
-            {getLinkByTipo(TipoLink.FORMS).textoBotao || 'Inscrever-se'}
+            {getLinkByTipo(TipoLink.FORMS)!.textoBotao || 'Inscrever-se'}
           </Link>
         </div>
       )}
@@ -71,13 +72,13 @@ const AnuncioLinks = ({ anuncio, variant = "card" }) => {
         <div className={isDestaque ? "" : ""}>
           {isDestaque && <span className="text-sm text-gray-500 block mb-1">Informações</span>}
           <Link
-            href={getLinkByTipo(TipoLink.WHATSAPP).url}
+            href={getLinkByTipo(TipoLink.WHATSAPP)!.url}
             target="_blank"
             rel="noopener noreferrer"
             className={`inline-flex w-full items-center justify-center bg-green-500 hover:bg-green-600 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-colors duration-300`}
           >
             <MessageCircle className={`${isDestaque ? "h-5 w-5" : "h-4 w-4"} mr-2`} />
-            {getLinkByTipo(TipoLink.WHATSAPP).textoBotao || 'WhatsApp'}
+            {getLinkByTipo(TipoLink.WHATSAPP)!.textoBotao || 'WhatsApp'}
           </Link>
         </div>
       )}
@@ -87,7 +88,7 @@ const AnuncioLinks = ({ anuncio, variant = "card" }) => {
         <div className="flex gap-2">
           {getLinkByTipo(TipoLink.INSTAGRAM) && (
             <Link
-              href={getLinkByTipo(TipoLink.INSTAGRAM).url}
+              href={getLinkByTipo(TipoLink.INSTAGRAM)!.url}
               target="_blank"
               rel="noopener noreferrer"
               className={`flex-1 inline-flex items-center justify-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:brightness-110 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-all duration-300`}
@@ -100,13 +101,13 @@ const AnuncioLinks = ({ anuncio, variant = "card" }) => {
               >
                 <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zM12 7a5 5 0 1 1 0 10a5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7zm5.75-.88a.88.88 0 1 1-1.75 0a.88.88 0 0 1 1.75 0z" />
               </svg>
-              {isDestaque ? getLinkByTipo(TipoLink.INSTAGRAM).textoBotao || 'Instagram' : 'Instagram'}
+              {isDestaque ? getLinkByTipo(TipoLink.INSTAGRAM)!.textoBotao || 'Instagram' : 'Instagram'}
             </Link>
           )}
 
           {getLinkByTipo(TipoLink.FACEBOOK) && (
             <Link
-              href={getLinkByTipo(TipoLink.FACEBOOK).url}
+              href={getLinkByTipo(TipoLink.FACEBOOK)!.url}
               target="_blank"
               rel="noopener noreferrer"
               className={`flex-1 inline-flex items-center justify-center bg-blue-700 hover:bg-blue-800 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-colors duration-300`}
@@ -119,19 +120,19 @@ const AnuncioLinks = ({ anuncio, variant = "card" }) => {
               >
                 <path d="M12.001 2.002c-5.522 0-9.999 4.477-9.999 9.999c0 4.99 3.656 9.126 8.437 9.879v-6.988h-2.54v-2.891h2.54V9.798c0-2.508 1.493-3.891 3.776-3.891c1.094 0 2.24.195 2.24.195v2.459h-1.264c-1.24 0-1.628.772-1.628 1.563v1.875h2.771l-.443 2.891h-2.328v6.988C18.344 21.129 22 16.992 22 12.001c0-5.522-4.477-9.999-9.999-9.999z" />
               </svg>
-              {isDestaque ? getLinkByTipo(TipoLink.FACEBOOK).textoBotao || 'Facebook' : ''}
+              {isDestaque ? getLinkByTipo(TipoLink.FACEBOOK)!.textoBotao || 'Facebook' : ''}
             </Link>
           )}
 
           {getLinkByTipo(TipoLink.WEBSITE) && (
             <Link
-              href={getLinkByTipo(TipoLink.WEBSITE).url}
+              href={getLinkByTipo(TipoLink.WEBSITE)!.url}
               target="_blank"
               rel="noopener noreferrer"
               className={`flex-1 inline-flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-colors duration-300`}
             >
               <Search className={`${isDestaque ? "h-5 w-5" : "h-4 w-4"} mr-2`} />
-              {isDestaque ? getLinkByTipo(TipoLink.WEBSITE).textoBotao || 'Saiba mais' : ''}
+              {isDestaque ? getLinkByTipo(TipoLink.WEBSITE)!.textoBotao || 'Saiba mais' : ''}
             </Link>
           )}
         </div>
@@ -141,19 +142,20 @@ const AnuncioLinks = ({ anuncio, variant = "card" }) => {
 };
 
 // Cartão de anúncio adaptável para diferentes proporções de imagem
-const AnuncioCard = ({ anuncio }) => {
+const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageRatio, setImageRatio] = useState(0);
 
   // Verifica a proporção da imagem após o carregamento
-  const handleImageLoad = (e) => {
-    const { naturalWidth, naturalHeight } = e.target;
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    const { naturalWidth, naturalHeight } = target;
     setImageRatio(naturalWidth / naturalHeight);
     setImageLoaded(true);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
   };
@@ -211,15 +213,16 @@ const AnuncioCard = ({ anuncio }) => {
 };
 
 // Anúncio em destaque com layout adaptativo
-const AnuncioDestaque = ({ anuncio }) => {
+const AnuncioDestaque: React.FC<AnuncioDestaqueProps> = ({ anuncio }) => {
   const [imageRatio, setImageRatio] = useState(0);
 
-  const handleImageLoad = (e) => {
-    const { naturalWidth, naturalHeight } = e.target;
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    const { naturalWidth, naturalHeight } = target;
     setImageRatio(naturalWidth / naturalHeight);
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
   };
@@ -246,7 +249,6 @@ const AnuncioDestaque = ({ anuncio }) => {
             <div className="inline-flex items-center bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
               <Calendar className="h-4 w-4 mr-1" />
               <span>{formatDate(anuncio.dataEvento)}</span>
-
             </div>
           </div>
         </div>
@@ -268,7 +270,7 @@ const AnuncioDestaque = ({ anuncio }) => {
 };
 
 // Componente para exibir mês/ano como cabeçalho
-const MonthDivider = ({ month, year }) => (
+const MonthDivider: React.FC<MonthDividerProps> = ({ month, year }) => (
   <div className="relative flex items-center my-8">
     <div className="flex-grow border-t border-gray-300/30"></div>
     <span className="flex-shrink mx-4 text-white/90 font-medium">{month} {year}</span>
@@ -277,7 +279,7 @@ const MonthDivider = ({ month, year }) => (
 );
 
 // Componente principal
-const Anuncios = () => {
+const Anuncios: React.FC = () => {
   const [anuncios, setAnuncios] = useState<Anuncio[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -296,8 +298,7 @@ const Anuncios = () => {
       if (!response.ok) {
         throw new Error("Falha ao carregar anúncios");
       }
-      const data = await response.json();
-
+      const data: Anuncio[] = await response.json();
       setAnuncios(data);
     } catch (error) {
       console.error("Erro ao buscar anúncios:", error);
@@ -326,8 +327,8 @@ const Anuncios = () => {
   );
 
   // Agrupar anúncios por mês/ano
-  const agruparPorMes = (anuncios) => {
-    const grupos = {};
+  const agruparPorMes = (anuncios: Anuncio[]): GrupoMensal[] => {
+    const grupos: Record<string, GrupoMensal> = {};
 
     anuncios.forEach(anuncio => {
       const data = new Date(anuncio.dataEvento);
@@ -454,7 +455,7 @@ const Anuncios = () => {
           </h3>
 
           {gruposPaginados.length > 0 ? (
-            gruposPaginados.map((grupo, index) => (
+            gruposPaginados.map((grupo) => (
               <div key={`${grupo.mes}-${grupo.ano}`}>
                 <MonthDivider month={grupo.mes.charAt(0).toUpperCase() + grupo.mes.slice(1)} year={grupo.ano} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
