@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageCircle, Calendar, FormInput, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Anuncio, TipoLink } from '@/types/anuncios';
+import { formatDateForDisplay } from '@/utils/formatoData';
 
 // Tipagem para as interfaces necessárias
 interface SectionHeaderProps {
@@ -222,11 +223,6 @@ const AnuncioDestaque: React.FC<AnuncioDestaqueProps> = ({ anuncio }) => {
     setImageRatio(naturalWidth / naturalHeight);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
-  };
-
   // Determina o layout baseado na proporção da imagem
   const isVertical = imageRatio < 0.8;
 
@@ -248,7 +244,7 @@ const AnuncioDestaque: React.FC<AnuncioDestaqueProps> = ({ anuncio }) => {
           <div className="absolute top-4 left-4 z-10">
             <div className="inline-flex items-center bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
               <Calendar className="h-4 w-4 mr-1" />
-              <span>{formatDate(anuncio.dataEvento)}</span>
+              <span>{formatDateForDisplay(anuncio.dataEvento)}</span>
             </div>
           </div>
         </div>
