@@ -1,12 +1,15 @@
+import { toZonedTime, format } from 'date-fns-tz';
+
 export const formatDateForDisplay = (dateString: string) => {
     if (!dateString) return "";
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // +1 porque mês começa do zero
-    const year = date.getFullYear();
 
-    return `${day}/${month}/${year}`;
+    const timeZone = 'America/Sao_Paulo';
+    const date = toZonedTime(dateString, timeZone); // substitui utcToZonedTime
+
+    return format(date, 'dd/MM/yyyy', { timeZone });
 };
+
+
 
 // Format date for input fields (YYYY-MM-DD)
 export const formatDateForInput = (dateString: string) => {
