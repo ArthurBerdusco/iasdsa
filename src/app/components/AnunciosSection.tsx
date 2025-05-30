@@ -156,10 +156,10 @@ const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio }) => {
     setImageLoaded(true);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-  };
+  // const formatDate = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+  // };
 
   // Define classes diferentes com base na proporção da imagem
   const getImageContainerClass = () => {
@@ -197,7 +197,7 @@ const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio }) => {
         <div className="absolute bottom-0 left-0 right-0 p-3">
           <div className="inline-flex items-center bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
             <Calendar className="h-3 w-3 mr-1" />
-            <span>{formatDate(anuncio.dataEvento)}</span>
+            <span>{formatDateForDisplay(anuncio.dataEvento)}</span>
           </div>
         </div>
       </div>
