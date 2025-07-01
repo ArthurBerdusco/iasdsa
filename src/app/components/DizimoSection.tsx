@@ -1,96 +1,310 @@
-import React from 'react';
-import { ExternalLink } from 'lucide-react';
+'use client'
+
+import React, { useState, useEffect } from 'react';
+import { ExternalLink, Copy, Check, Heart, Church, Users, BookOpen, QrCode, Smartphone } from 'lucide-react';
+import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa';
 import Link from 'next/link';
+import Footer from './Footer';
+import Image from 'next/image';
 
-const BannerDizimo = () => {
+const SocialCard = ({ icon, platform, handle, url, color }) => {
   return (
-    <div className="bg-blue-950 text-white">
-      <div className="max-w-6xl mx-auto py-12 px-4">
-        <div className="relative overflow-hidden rounded-xl shadow-2xl flex flex-col lg:flex-row">
-          {/* Conteúdo principal à esquerda */}
-          <div className="relative flex-1 flex flex-col justify-center p-6 md:p-10 lg:p-16 z-10 bg-gradient-to-br from-stone-400 to-stone-500">
-            <div className="max-w-2xl mx-auto lg:mx-0">
-              <div className="flex items-center mb-6">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">Dízimos e Ofertas</h2>
-              </div>
-
-              <p className="text-blue-100 mb-8 text-base md:text-lg">
-                Contribua para o avanço da obra de Deus por meio de seus dízimos e ofertas. A sua ajuda é importante para manutenção da igreja e pregação do evangelho.
-              </p>
-
-              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
-                <Link
-                  target='_blank'
-                  href="https://giving.7me.app/guest-donation/church/d83b1b17-d0cc-4c9a-ab4d-86c2f26acc43?utm_source=boletim&utm_medium=link&utm_campaign=boletim"
-                  className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 md:py-4 px-6 rounded-lg shadow-lg transition transform hover:translate-y-[-2px] focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-base md:text-lg w-full sm:w-auto">
-                  <span>Clique para Dizimar</span>
-                  <ExternalLink className="h-4 w-4 md:h-5 md:w-5 ml-2 flex-shrink-0" />
-                </Link>
-              </div>
-
-              <div className="">
-                <p className="text-white text-sm md:text-base">Baixe o aplicativo:</p>
-                <div className="flex gap-2">
-                  <Link href="https://play.google.com/store/apps/details?id=com.iatec.acms.me&pcampaignid=web_share" target="_blank" className="transition hover:opacity-80">
-                    <img src="/images/badge-google.svg" alt="Google Play" className="h-10 md:h-12 w-auto" />
-                  </Link>
-                  <Link href="https://apps.apple.com/br/app/7me/id1344775660" target="_blank" className="transition hover:opacity-80">
-                    <img src="/images/badge-apple.svg" alt="App Store" className="h-10 md:h-12 w-auto" />
-                  </Link>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          {/* Informações do 7ME à direita */}
-          <div id="sobre-7me" className="relative flex-1 flex flex-col justify-center items-center bg-white text-black p-6 md:p-10 lg:p-16 rounded-b-xl lg:rounded-b-none lg:rounded-r-xl shadow-lg">
-            <div className="w-full max-w-md">
-              <div className="flex flex-col items-center mb-6">
-                <div className="bg-blue-100 p-3 rounded-full mb-4">
-                  <img
-                    src="/images/7me.png"
-                    alt="7ME Logo"
-                    className="w-32 h-32 md:w-32 md:h-32"
-                  />
-                </div>
-                <h3 className="text-2xl md:text-3xl font-bold mb-2 text-blue-800 text-center">O que é o 7ME?</h3>
-                <div className="w-20 h-1 bg-blue-600 rounded mb-4"></div>
-              </div>
-
-              <p className="text-gray-700 text-center mb-6">
-                O 7ME é um espaço para membros e amigos da Igreja Adventista do Sétimo Dia. Por meio de seu sistema online e aplicativo, você pode:
-              </p>
-
-              <ul className="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-3">
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2 mt-0.5 flex-shrink-0">✅</span>
-                  <span className="text-gray-800">Atualizar seus dados cadastrais</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2 mt-0.5 flex-shrink-0">✅</span>
-                  <span className="text-gray-800">Solicitar transferências entre igrejas</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2 mt-0.5 flex-shrink-0">✅</span>
-                  <span className="text-gray-800">Acompanhar a situação financeira da igreja</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2 mt-0.5 flex-shrink-0">✅</span>
-                  <span className="text-gray-800">Adorar a Deus por meio dos dízimos e ofertas</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-500 mr-2 mt-0.5 flex-shrink-0">✅</span>
-                  <span className="text-gray-800">Conferir recibos e extratos</span>
-                </li>
-              </ul>
-
-            </div>
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block group transform transition-all duration-300 hover:scale-105"
+    >
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden transition-shadow duration-300 group-hover:shadow-2xl border border-blue-100">
+        <div className={`p-6 ${color} relative overflow-hidden`}>
+          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+          <div className="relative z-10 w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+            {icon}
           </div>
         </div>
+        <div className="p-6">
+          <h3 className="text-xl font-bold text-blue-950 mb-2">
+            {platform}
+          </h3>
+          <p className="text-blue-700 mb-4 text-sm">
+            {handle}
+          </p>
+          <span className="inline-flex items-center text-sm font-semibold text-blue-600 group-hover:text-blue-800 transition-colors">
+            Seguir
+            <ExternalLink className="ml-2 h-4 w-4" />
+          </span>
+        </div>
       </div>
-    </div>
+    </a>
   );
 };
 
-export default BannerDizimo;
+const PaginaDizimosOfertas = () => {
+  const [qrCodeCopied, setQrCodeCopied] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const pixCode = "d83b1b17-d0cc-4c9a-ab4d-86c2f26acc43";
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(pixCode);
+      setQrCodeCopied(true);
+      setTimeout(() => setQrCodeCopied(false), 3000);
+    } catch (err) {
+      console.error('Erro ao copiar código:', err);
+    }
+  };
+
+  return (
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+        {/* Hero Section */}
+        <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+          <div className="relative overflow-hidden bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950">
+            <div className="absolute inset-0 bg-black/20"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-950/60 to-transparent"></div>
+
+            <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-20 lg:py-24">
+              <div className="text-center">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+                  Dízimos e Ofertas
+                </h1>
+                <p className="text-xl sm:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+                  Sua contribuição fortalece a missão da igreja.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="relative -mt-12 z-10">
+          <div className="max-w-7xl mx-auto px-4">
+
+            {/* QR Code Section */}
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-12 border border-blue-200">
+              <div className="grid lg:grid-cols-2 gap-0 lg:min-h-[600px]">
+
+                {/* QR Code Side */}
+                <div className="p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-blue-50 to-white flex flex-col justify-center">
+                  <div className="max-w-sm mx-auto">
+                    <div className="text-center mb-6">
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl mb-3">
+                        <QrCode className="h-6 w-6 text-blue-950" />
+                      </div>
+                      <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-950 mb-2">
+                        Escaneie o QR Code
+                      </h2>
+                      <p className="text-blue-700 text-base">
+                        Contribua de forma rápida e segura
+                      </p>
+                    </div>
+
+                    {/* QR Code Placeholder */}
+                    <div className="bg-white border-2 border-dashed border-blue-300 rounded-xl p-6 mb-6 w-full max-w-60 mx-auto aspect-square flex flex-col items-center justify-center shadow-inner">
+                      <div className="w-full h-full flex items-center justify-center">
+                        <img
+                          src="/images/qr-code-bento.png"
+                          alt="QR Code Bento"
+                          className="w-4/5 h-4/5 object-contain rounded-xl"
+                        />
+                      </div>
+                      <div className="text-center mt-4">
+                        <p className="text-blue-800 font-semibold mb-1 text-sm">QR CODE PIX</p>
+                        <p className="text-xs text-blue-600 leading-relaxed">
+                          Aponte a câmera aqui<br />
+                          para escanear
+                        </p>
+                      </div>
+                    </div>
+
+
+                    {/* Copy Code Section */}
+                    {/* <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold text-blue-950">Ou copie a chave PIX:</p>
+                        <Smartphone className="h-4 w-4 text-blue-600" />
+                      </div>
+
+                      <div className="bg-blue-50 rounded-lg border-2 border-blue-200 overflow-hidden">
+                        <div className="flex items-center p-3">
+                          <span className="flex-1 text-xs font-mono text-blue-950 break-all pr-2">
+                            {pixCode}
+                          </span>
+                          <button
+                            onClick={handleCopyCode}
+                            className={`flex-shrink-0 p-2 rounded-md transition-all duration-200 ${qrCodeCopied
+                                ? 'bg-green-600 text-white'
+                                : 'bg-blue-950 hover:bg-blue-900 text-white hover:scale-105'
+                              }`}
+                            title="Copiar chave PIX"
+                          >
+                            {qrCodeCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                          </button>
+                        </div>
+                      </div>
+
+                      {qrCodeCopied && (
+                        <div className="flex items-center justify-center text-green-600 font-semibold text-sm animate-pulse">
+                          <Check className="h-3 w-3 mr-2" />
+                          Chave PIX copiada!
+                        </div>
+                      )}
+                    </div> */}
+                  </div>
+                </div>
+
+                {/* Information Side */}
+                <div className="p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950 text-white relative overflow-hidden flex flex-col justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 to-transparent"></div>
+                  <div className="relative z-10 max-w-md mx-auto lg:mx-0">
+
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 leading-tight">
+                      Sua Contribuição <span className="text-amber-300">Importa</span>
+                    </h3>
+
+                    <p className="text-blue-100 text-base lg:text-lg mb-6 leading-relaxed">
+                      Juntos, construímos uma igreja forte e uma comunidade unida no amor de Cristo.
+                    </p>
+
+                    <div className="space-y-3 mb-8">
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0 w-7 h-7 bg-amber-400 rounded-lg flex items-center justify-center mr-3">
+                          <Church className="h-3 w-3 text-amber-900" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white text-sm">Manutenção da Igreja</p>
+
+                        </div>
+                      </div>
+
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0 w-7 h-7 bg-amber-400 rounded-lg flex items-center justify-center mr-3">
+                          <Users className="h-3 w-3 text-amber-900" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white text-sm">Evangelização</p>
+
+                        </div>
+                      </div>
+
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0 w-7 h-7 bg-amber-400 rounded-lg flex items-center justify-center mr-3">
+                          <Heart className="h-3 w-3 text-amber-900" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-white text-sm">Ação Social</p>
+
+                        </div>
+                      </div>
+                    </div>
+
+                    <a
+                      href="https://giving.7me.app/guest-donation/church/d83b1b17-d0cc-4c9a-ab4d-86c2f26acc43?utm_source=boletim&utm_medium=link&utm_campaign=boletim"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center justify-center w-full bg-white text-blue-950 font-bold py-3 lg:py-4 px-6 lg:px-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/50 text-base lg:text-lg mb-6"
+                    >
+                      <span>Contribuir Online</span>
+                      <ExternalLink className="h-4 w-4 lg:h-5 lg:w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </a>
+
+                    <div className="pt-6 border-t border-blue-800/50">
+                      <p className="text-blue-200 text-xs font-semibold mb-3">Baixe o aplicativo 7ME:</p>
+                      <div className="flex gap-3 justify-center lg:justify-start">
+                        <a
+                          href="https://play.google.com/store/apps/details?id=com.iatec.acms.me&pcampaignid=web_share"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="transition-all duration-300 hover:scale-110 hover:brightness-110"
+                        >
+                          <div className="bg-blue-950 border border-blue-800 rounded-md p-2 h-9 flex items-center">
+                            <span className="text-white text-xs font-semibold px-2">Google Play</span>
+                          </div>
+                        </a>
+                        <a
+                          href="https://apps.apple.com/br/app/7me/id1344775660"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="transition-all duration-300 hover:scale-110 hover:brightness-110"
+                        >
+                          <div className="bg-blue-950 border border-blue-800 rounded-md p-2 h-9 flex items-center">
+                            <span className="text-white text-xs font-semibold px-2">App Store</span>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Media Section */}
+            <div className="mb-12">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl font-bold text-blue-950 mb-4">
+                  Conecte-se Conosco
+                </h2>
+                <p className="text-xl text-blue-700 max-w-2xl mx-auto">
+                  Acompanhe nossas atividades e faça parte da nossa comunidade digital
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <SocialCard
+                  icon={<FaFacebook className="text-white text-3xl" />}
+                  platform="Facebook"
+                  handle="IASD Santo Amaro"
+                  url="https://www.facebook.com/iasdsantoamarosp/?locale=pt_BR"
+                  color="bg-gradient-to-br from-blue-600 to-blue-700"
+                />
+                <SocialCard
+                  icon={<FaInstagram className="text-white text-3xl" />}
+                  platform="Instagram"
+                  handle="@adventistas.santoamaro"
+                  url="https://www.instagram.com/adventistas.santoamaro/"
+                  color="bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500"
+                />
+                <SocialCard
+                  icon={<FaYoutube className="text-white text-3xl" />}
+                  platform="YouTube"
+                  handle="Adventistas Santo Amaro"
+                  url="https://www.youtube.com/@AdventistasSantoAmaro"
+                  color="bg-gradient-to-br from-red-600 to-red-700"
+                />
+              </div>
+            </div>
+
+            {/* Boletim Link */}
+            <div className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 rounded-3xl p-8 sm:p-12 text-center text-white shadow-2xl">
+              <div className="max-w-3xl mx-auto">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-6">
+                  <BookOpen className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-bold mb-4">
+                  Mais Informações no Boletim
+                </h3>
+                <p className="text-blue-100 text-lg mb-8 leading-relaxed">
+                  Acesse nosso boletim digital para ficar por dentro de todas as atividades, estudos e eventos da igreja.
+                </p>
+                <Link href={'/'} className="inline-flex items-center justify-center bg-white text-blue-950 font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/50 text-lg">
+                  <span>Acessar Boletim</span>
+                  <BookOpen className="h-5 w-5 ml-3" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <Footer />
+    </>
+  );
+};
+
+export default PaginaDizimosOfertas;

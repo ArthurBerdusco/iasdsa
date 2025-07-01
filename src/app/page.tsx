@@ -8,7 +8,7 @@ import DizimoSection from "./components/DizimoSection";
 import Footer from "./components/Footer";
 import NavBar from "./components/NavBar";
 import FotosDaSemana from "./components/FotosDaSemana";
-import RedesSociais from "./components/RedesSociais";
+import RedesSociais from "./components/CultosSemana";
 import MensagemPastoral from "./components/MensagemPastoral";
 import { Element } from "react-scroll";
 import { ComponenteConfig, UseComponentConfigReturn, ApiResponse } from "@/types/components";

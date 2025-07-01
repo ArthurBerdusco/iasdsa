@@ -5,14 +5,7 @@ import { useState, useEffect, ReactNode } from "react";
 import SectionHeader from "./SectionHeader";
 import { CultoYoutube } from "@/types/ultimosCultos";
 import { formatDateForDisplay } from "@/utils/formatoData";
-
-interface SocialCardProps {
-    icon: ReactNode;
-    platform: string;
-    handle: string;
-    url: string;
-    color: string;
-}
+import SocialCard from "./SocialCard";
 
 const RedesSociais = () => {
     const [cultos, setCultos] = useState<CultoYoutube[]>([]);
@@ -59,34 +52,7 @@ const RedesSociais = () => {
         <section className="bg-blue-950 text-white">
             <div className="max-w-6xl mx-auto py-12 px-4">
                 {/* Header com ícone */}
-                <SectionHeader title='REDES SOCIAIS' />
-
-                {/* Social Media Cards */}
-                <div className="max-w-6xl mx-auto py-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-                        <SocialCard
-                            icon={<FaFacebook className="text-white text-2xl" />}
-                            platform="Facebook"
-                            handle="IASD Santo Amaro"
-                            url="https://www.facebook.com/iasdsantoamarosp/?locale=pt_BR"
-                            color="bg-blue-600"
-                        />
-                        <SocialCard
-                            icon={<FaInstagram className="text-white text-2xl" />}
-                            platform="Instagram"
-                            handle="@adventistas.santoamaro"
-                            url="https://www.instagram.com/adventistas.santoamaro/"
-                            color="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500"
-                        />
-                        <SocialCard
-                            icon={<FaYoutube className="text-white text-2xl" />}
-                            platform="YouTube"
-                            handle="Adventistas Santo Amaro"
-                            url="https://www.youtube.com/@AdventistasSantoAmaro"
-                            color="bg-red-600"
-                        />
-                    </div>
-                </div>
+                <SectionHeader title='CULTOS DA SEMANA' />
 
                 {/* cultos Section - Refactored */}
 
@@ -110,11 +76,6 @@ const RedesSociais = () => {
                                     </svg>
                                 </a>
                             </div>
-
-                            {/* Description text */}
-                            <p className="text-blue-700 text-sm">
-                                Assista aos cultos anteriores e mantenha-se conectado com nossa igreja
-                            </p>
                         </div>
                     </div>
 
@@ -206,34 +167,6 @@ const RedesSociais = () => {
 };
 
 // Helper component for social media cards
-const SocialCard = ({ icon, platform, handle, url, color }: SocialCardProps) => {
-    return (
-        <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block group"
-        >
-            <div className="bg-white rounded-xl shadow-md overflow-hidden transition transform group-hover:shadow-lg group-hover:-translate-y-1">
-                <div className={`p-4 ${color}`}>
-                    <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-                        {icon}
-                    </div>
-                </div>
-                <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-800 mb-1">
-                        {platform}
-                    </h3>
-                    <p className="text-gray-500 mb-4">
-                        {handle}
-                    </p>
-                    <span className="text-sm font-medium text-blue-600 group-hover:text-blue-800">
-                        Seguir →
-                    </span>
-                </div>
-            </div>
-        </a>
-    );
-};
+
 
 export default RedesSociais;
