@@ -1,13 +1,20 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Copy, Check, Heart, Church, Users, BookOpen, QrCode, Smartphone } from 'lucide-react';
+import { ExternalLink, Heart, Church, Users, BookOpen, QrCode } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa';
 import Link from 'next/link';
 import Footer from './Footer';
-import Image from 'next/image';
 
-const SocialCard = ({ icon, platform, handle, url, color }) => {
+interface SocialCardProps {
+  icon: React.ReactNode;          // ÚNICA que não é string
+  platform: string;
+  handle: string;
+  url: string;
+  color: string;
+}
+
+const SocialCard: React.FC<SocialCardProps> = ({ icon, platform, handle, url, color }) => {
   return (
     <a
       href={url}
