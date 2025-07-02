@@ -1,13 +1,13 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Heart, Church, Users, BookOpen, QrCode } from 'lucide-react';
+import { ExternalLink, Heart, Church, Users, BookOpen } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa';
 import Link from 'next/link';
 import Footer from './Footer';
 
 interface SocialCardProps {
-  icon: React.ReactNode;          // ÚNICA que não é string
+  icon: React.ReactNode;          
   platform: string;
   handle: string;
   url: string;
@@ -92,76 +92,38 @@ const PaginaDizimosOfertas = () => {
         <div className="relative -mt-12 z-10">
           <div className="max-w-7xl mx-auto px-4">
 
-            {/* QR Code Section */}
+            {/* Church Identity Section */}
             <div className="bg-white rounded-3xl shadow-2xl overflow-hidden mb-12 border border-blue-200">
               <div className="grid lg:grid-cols-2 gap-0 lg:min-h-[600px]">
 
-                {/* QR Code Side */}
+                {/* Church Photo Side */}
                 <div className="p-6 sm:p-8 lg:p-10 bg-gradient-to-br from-blue-50 to-white flex flex-col justify-center">
-                  <div className="max-w-sm mx-auto">
+                  <div className="max-w-lg mx-auto">
                     <div className="text-center mb-6">
                       <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl mb-3">
-                        <QrCode className="h-6 w-6 text-blue-950" />
+                        <Church className="h-6 w-6 text-blue-950" />
                       </div>
                       <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-950 mb-2">
-                        Escaneie o QR Code
+                        IASD Santo Amaro
                       </h2>
                       <p className="text-blue-700 text-base">
-                        Contribua de forma rápida e segura
+                        Uma comunidade unida no amor de Cristo
                       </p>
                     </div>
 
-                    {/* QR Code Placeholder */}
-                    <div className="bg-white border-2 border-dashed border-blue-300 rounded-xl p-6 mb-6 w-full max-w-60 mx-auto aspect-square flex flex-col items-center justify-center shadow-inner">
-                      <div className="w-full h-full flex items-center justify-center">
+                    {/* Church Photo */}
+                    <div className="bg-gradient-to-br from-blue-100 to-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-6 w-full mx-auto shadow-inner">
+                      <div className="w-full h-64 sm:h-80 flex items-center justify-center bg-blue-200/50 rounded-xl">
+
                         <img
-                          src="/images/qr-code-bento.png"
-                          alt="QR Code Bento"
-                          className="w-4/5 h-4/5 object-contain rounded-xl"
+                          src="/images/santo-amaro.png"
+                          alt="Igreja Adventista do Sétimo Dia Santo Amaro"
+                          className="w-full h-full object-cover rounded-xl"
                         />
-                      </div>
-                      <div className="text-center mt-4">
-                        <p className="text-blue-800 font-semibold mb-1 text-sm">QR CODE PIX</p>
-                        <p className="text-xs text-blue-600 leading-relaxed">
-                          Aponte a câmera aqui<br />
-                          para escanear
-                        </p>
+                        
                       </div>
                     </div>
 
-
-                    {/* Copy Code Section */}
-                    {/* <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold text-blue-950">Ou copie a chave PIX:</p>
-                        <Smartphone className="h-4 w-4 text-blue-600" />
-                      </div>
-
-                      <div className="bg-blue-50 rounded-lg border-2 border-blue-200 overflow-hidden">
-                        <div className="flex items-center p-3">
-                          <span className="flex-1 text-xs font-mono text-blue-950 break-all pr-2">
-                            {pixCode}
-                          </span>
-                          <button
-                            onClick={handleCopyCode}
-                            className={`flex-shrink-0 p-2 rounded-md transition-all duration-200 ${qrCodeCopied
-                                ? 'bg-green-600 text-white'
-                                : 'bg-blue-950 hover:bg-blue-900 text-white hover:scale-105'
-                              }`}
-                            title="Copiar chave PIX"
-                          >
-                            {qrCodeCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                          </button>
-                        </div>
-                      </div>
-
-                      {qrCodeCopied && (
-                        <div className="flex items-center justify-center text-green-600 font-semibold text-sm animate-pulse">
-                          <Check className="h-3 w-3 mr-2" />
-                          Chave PIX copiada!
-                        </div>
-                      )}
-                    </div> */}
                   </div>
                 </div>
 
