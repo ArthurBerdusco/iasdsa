@@ -107,7 +107,7 @@ const PaginaDizimosOfertas = () => {
                         IASD Santo Amaro
                       </h2>
                       <p className="text-blue-700 text-base">
-                        Uma comunidade unida no amor de Cristo
+                        Vivendo a esperança, compartilhando o evangelho.
                       </p>
                     </div>
 
