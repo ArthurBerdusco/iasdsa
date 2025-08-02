@@ -271,7 +271,6 @@ const PaginaDizimosOfertas = () => {
 
 
       </div>
-      <Footer />
     </>
   );
 };
