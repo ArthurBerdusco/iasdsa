@@ -142,37 +142,9 @@ const AnuncioLinks: React.FC<AnuncioLinksProps> = ({ anuncio, variant = "card" }
   );
 };
 
-// Cartão de anúncio adaptável para diferentes proporções de imagem
+// Cartão de anúncio com altura fixa e imagem responsiva
 const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageRatio, setImageRatio] = useState(0);
-
-  // Verifica a proporção da imagem após o carregamento
-  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const target = e.target as HTMLImageElement;
-    const { naturalWidth, naturalHeight } = target;
-    setImageRatio(naturalWidth / naturalHeight);
-    setImageLoaded(true);
-  };
-
-  // const formatDate = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-  // };
-
-  // Define classes diferentes com base na proporção da imagem
-  const getImageContainerClass = () => {
-    if (!imageLoaded) return "aspect-video"; // Padrão antes de carregar
-
-    if (imageRatio < 0.85) {
-      return "aspect-[2/3]"; // Imagem vertical
-    } else if (imageRatio > 1.5) {
-      return "aspect-[16/9]"; // Imagem horizontal panorâmica
-    } else {
-      return "aspect-square"; // Imagem quadrada ou próxima disso
-    }
-  };
 
   return (
     <div
@@ -184,18 +156,17 @@ const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Imagem responsiva com adaptação baseada na proporção da imagem */}
-      <div className={`relative ${getImageContainerClass()} overflow-hidden`}>
+      {/* Container de imagem com altura fixa */}
+      <div className="relative h-48 sm:h-52 lg:h-56 overflow-hidden">
         <img
           src={anuncio.arte}
           alt={anuncio.titulo}
-          className="w-full h-full object-cover transition-transform duration-700"
+          className="w-full h-full object-cover object-center transition-transform duration-700"
           style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
-          onLoad={handleImageLoad}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <div className="inline-flex items-center bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <div className="absolute bottom-3 left-3 right-3">
+          <div className="inline-flex items-center bg-blue-600/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
             <Calendar className="h-3 w-3 mr-1" />
             <span>{formatDateForDisplay(anuncio.dataEvento)}</span>
           </div>
@@ -204,61 +175,53 @@ const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio }) => {
 
       {/* Conteúdo do card */}
       <div className="p-4 flex flex-col flex-grow">
-        <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">{anuncio.titulo}</h3>
-        <p className="text-gray-600 mb-4 line-clamp-2 text-sm flex-grow">{anuncio.texto}</p>
-        {/* Botões de ação */}
+        <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 leading-tight">{anuncio.titulo}</h3>
+        <p className="text-gray-600 mb-4 line-clamp-2 text-sm flex-grow leading-relaxed">{anuncio.texto}</p>
         <AnuncioLinks anuncio={anuncio} />
       </div>
     </div>
   );
 };
 
-// Anúncio em destaque com layout adaptativo
+// Anúncio em destaque com layout melhorado
 const AnuncioDestaque: React.FC<AnuncioDestaqueProps> = ({ anuncio }) => {
-  const [imageRatio, setImageRatio] = useState(0);
-
-  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const target = e.target as HTMLImageElement;
-    const { naturalWidth, naturalHeight } = target;
-    setImageRatio(naturalWidth / naturalHeight);
-  };
-
-  // Determina o layout baseado na proporção da imagem
-  const isVertical = imageRatio < 0.8;
-
   return (
     <div className="bg-white rounded-xl overflow-hidden shadow-xl mb-8 hover:shadow-2xl transition-all duration-300">
-      <div className={`flex flex-col ${isVertical ? 'lg:flex-row' : 'lg:flex-col'}`}>
-        {/* Imagem adaptativa */}
-        <div className={`${isVertical ? 'lg:w-1/2' : ''} relative overflow-hidden ${imageRatio === 0 ? 'aspect-video' : ''}`}>
-          <img
-            src={anuncio.arte}
-            alt={anuncio.titulo}
-            className={`w-full ${isVertical ? 'lg:h-full' : 'h-64 lg:h-80 xl:h-96'} object-cover object-center transform hover:scale-105 transition-transform duration-700`}
-            onLoad={handleImageLoad}
-          />
-          {/* Gradiente somente na versão móvel ou em imagens horizontais */}
-          <div className={`absolute inset-0 bg-gradient-to-b from-black/30 to-transparent opacity-80 ${isVertical ? 'lg:hidden' : ''}`}></div>
+      <div className="flex flex-col lg:flex-row">
+        {/* Container de imagem responsivo */}
+        <div className="lg:w-2/5 xl:w-1/2 relative overflow-hidden">
+          <div className="h-64 sm:h-80 lg:h-full min-h-[320px] flex items-center justify-center bg-black">
+            <img
+              src={anuncio.arte}
+              alt={anuncio.titulo}
+              className="max-h-full max-w-full object-contain transition-transform duration-700 hover:scale-105"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40 lg:bg-gradient-to-r lg:from-transparent lg:to-black/20"></div>
 
-          {/* Tag de data sobre a imagem */}
+          {/* Tag de data */}
           <div className="absolute top-4 left-4 z-10">
-            <div className="inline-flex items-center bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium shadow-lg">
-              <Calendar className="h-4 w-4 mr-1" />
+            <div className="inline-flex items-center bg-blue-600/90 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+              <Calendar className="h-4 w-4 mr-2" />
               <span>{formatDateForDisplay(anuncio.dataEvento)}</span>
             </div>
           </div>
         </div>
 
-        {/* Conteúdo adaptativo */}
-        <div className={`${isVertical ? 'lg:w-1/2' : ''} p-5 lg:p-8 flex flex-col justify-between`}>
+        {/* Conteúdo */}
+        <div className="lg:w-3/5 xl:w-1/2 p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
           <div>
-            <h3 className="text-2xl md:text-3xl text-gray-800 font-bold mb-3">{anuncio.titulo}</h3>
-            <p className="text-gray-600 mb-6 text-sm md:text-base line-clamp-3 md:line-clamp-4 lg:line-clamp-none">
+            <h3 className="text-2xl sm:text-3xl lg:text-4xl text-gray-800 font-bold mb-4 leading-tight">
+              {anuncio.titulo}
+            </h3>
+            <p className="text-gray-600 mb-6 text-base sm:text-lg leading-relaxed line-clamp-4">
               {anuncio.texto}
             </p>
           </div>
 
-          <AnuncioLinks anuncio={anuncio} variant="destaque" />
+          <div className="mt-6">
+            <AnuncioLinks anuncio={anuncio} variant="destaque" />
+          </div>
         </div>
       </div>
     </div>
@@ -269,7 +232,7 @@ const AnuncioDestaque: React.FC<AnuncioDestaqueProps> = ({ anuncio }) => {
 const MonthDivider: React.FC<MonthDividerProps> = ({ month, year }) => (
   <div className="relative flex items-center my-8">
     <div className="flex-grow border-t border-gray-300/30"></div>
-    <span className="flex-shrink mx-4 text-white/90 font-medium">{month} {year}</span>
+    <span className="flex-shrink mx-4 text-white/90 font-medium text-lg">{month} {year}</span>
     <div className="flex-grow border-t border-gray-300/30"></div>
   </div>
 );
@@ -281,7 +244,7 @@ const Anuncios: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [filtro, setFiltro] = useState('');
   const [pagina, setPagina] = useState(1);
-  const anunciosPorPagina = 9; // Aumentado para mostrar mais por página
+  const anunciosPorPagina = 9;
 
   useEffect(() => {
     fetchAnuncios();
@@ -454,7 +417,7 @@ const Anuncios: React.FC = () => {
             gruposPaginados.map((grupo) => (
               <div key={`${grupo.mes}-${grupo.ano}`}>
                 <MonthDivider month={grupo.mes.charAt(0).toUpperCase() + grupo.mes.slice(1)} year={grupo.ano} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                   {grupo.anuncios.map((anuncio) => (
                     <AnuncioCard key={anuncio.id} anuncio={anuncio} />
                   ))}
