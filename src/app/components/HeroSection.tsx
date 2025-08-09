@@ -3,11 +3,12 @@
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import 'swiper/css/effect-fade';
 import Image from 'next/image';
-import { CalendarDays, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarDays, Clock, ChevronLeft, ChevronRight, User } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay, EffectFade, EffectCoverflow } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import SectionHeader from './SectionHeader';
 import { Culto } from '@/types/cultos';
@@ -18,32 +19,38 @@ const themeColors = {
   primary: {
     text: 'text-blue-400',
     bgLight: 'bg-blue-900/50',
-    border: 'border-blue-400'
+    border: 'border-blue-400',
+    gradient: 'from-blue-500/20 to-blue-600/30'
   },
   secondary: {
     text: 'text-purple-400',
     bgLight: 'bg-purple-900/50',
-    border: 'border-purple-400'
+    border: 'border-purple-400',
+    gradient: 'from-purple-500/20 to-purple-600/30'
   },
   success: {
     text: 'text-green-400',
     bgLight: 'bg-green-900/50',
-    border: 'border-green-400'
+    border: 'border-green-400',
+    gradient: 'from-green-500/20 to-green-600/30'
   },
   warning: {
     text: 'text-yellow-400',
     bgLight: 'bg-yellow-900/50',
-    border: 'border-yellow-400'
+    border: 'border-yellow-400',
+    gradient: 'from-yellow-500/20 to-yellow-600/30'
   },
   danger: {
     text: 'text-red-400',
     bgLight: 'bg-red-900/50',
-    border: 'border-red-400'
+    border: 'border-red-400',
+    gradient: 'from-red-500/20 to-red-600/30'
   },
   info: {
     text: 'text-cyan-400',
     bgLight: 'bg-cyan-900/50',
-    border: 'border-cyan-400'
+    border: 'border-cyan-400',
+    gradient: 'from-cyan-500/20 to-cyan-600/30'
   }
 };
 
@@ -52,9 +59,22 @@ export default function CultosSwiper() {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [cultos, setCultos] = useState<Culto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const navigationPrevRef = useRef<HTMLButtonElement>(null);
   const navigationNextRef = useRef<HTMLButtonElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
+
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Fetch cultos data
   useEffect(() => {
@@ -104,7 +124,6 @@ export default function CultosSwiper() {
     };
     setCurrentDate(today.toLocaleDateString("pt-BR", options));
   }, []);
-
 
   // If loading, show a loading state
   if (isLoading) {
@@ -160,74 +179,76 @@ export default function CultosSwiper() {
       {/* Title with subtle underline */}
       <SectionHeader title='PRÓXIMOS CULTOS' />
 
-      {/* Swiper Component */}
-      <div className="relative pb-12">
+      {/* Swiper Component - Layout Unificado */}
+      <div className="relative">
         <Swiper
-          modules={[Navigation, Pagination, Autoplay]}
-          spaceBetween={0}
+          modules={[Navigation, Pagination, Autoplay, EffectFade]}
+          spaceBetween={20}
           slidesPerView={1}
           centeredSlides={true}
           loop={true}
+          effect="fade"
+          fadeEffect={{
+            crossFade: true
+          }}
+          speed={800}
           autoplay={{
-            delay: 8000,
+            delay: 10000,
             disableOnInteraction: false,
+            pauseOnMouseEnter: true,
           }}
-          pagination={{
-            clickable: true,
-            dynamicBullets: true,
-          }}
+          pagination={false} // Removido as bolinhas automáticas do Swiper
           navigation={{
             prevEl: navigationPrevRef.current,
             nextEl: navigationNextRef.current,
           }}
           onBeforeInit={(swiper) => {
             swiperRef.current = swiper;
-
             if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
               swiper.params.navigation.prevEl = navigationPrevRef.current;
               swiper.params.navigation.nextEl = navigationNextRef.current;
             }
           }}
-
           onSlideChange={(swiper) => {
             setActiveIndex(swiper.realIndex);
           }}
-          className="cultos-swiper rounded-2xl overflow-hidden shadow-xl"
+          className="cultos-swiper rounded-2xl overflow-hidden shadow-2xl mb-4"
         >
           {cultos.map((culto) => {
-            // Default to primary if the color doesn't exist in our theme
             const colorClasses = themeColors[culto.cordestaque as keyof typeof themeColors] || themeColors.primary;
 
             return (
               <SwiperSlide key={culto.id}>
-                <div className="bg-blue-900/30 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10">
-                  {/* Card Header */}
-                  <div className="bg-white/10 p-4 md:p-6 flex flex-col gap-4 md:flex-row md:justify-between md:items-center border-b border-white/10">
-                    {/* Dia da semana + Título */}
-                    <div className="flex flex-col">
-                      <span className={`text-xl md:text-2xl font-black tracking-wider ${colorClasses.text}`}>
-                        {culto.diasemana}
-                      </span>
-                      <h3 className="text-white text-base md:text-lg font-semibold opacity-80 mt-1">
-                        {culto.titulo}
-                      </h3>
-                    </div>
-
-                    {/* Data e Hora */}
-                    <div className="flex flex-wrap gap-3 mt-2 md:mt-0">
-                      <div className={`flex items-center ${colorClasses.bgLight} px-3 py-1.5 rounded-lg`}>
-                        <CalendarDays size={16} className={`${colorClasses.text} mr-2`} />
-                        <span className="text-white font-medium">{formatDateForDisplay(culto.data)}</span>
+                <div className="relative bg-gradient-to-br from-blue-900/40 to-blue-950/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10">
+                  
+                  {/* Header Section - Unificado para mobile e desktop */}
+                  <div className="relative z-20 bg-gradient-to-b from-blue-950/95 via-blue-950/80 to-transparent p-4 md:p-6 border-b border-white/10">
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
+                      <div>
+                        <span className={`text-xl md:text-2xl font-black tracking-wider ${colorClasses.text}`}>
+                          {culto.diasemana}
+                        </span>
+                        <h3 className="text-white text-base md:text-lg font-semibold opacity-90 mt-1">
+                          {culto.titulo}
+                        </h3>
                       </div>
-                      <div className={`flex items-center ${colorClasses.bgLight} px-3 py-1.5 rounded-lg`}>
-                        <Clock size={16} className={`${colorClasses.text} mr-2`} />
-                        <span className="text-white font-medium">{culto.hora}</span>
+
+                      {/* Date and Time - Layout flexível */}
+                      <div className="flex gap-2 md:gap-3">
+                        <div className={`flex items-center ${colorClasses.bgLight} backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2 rounded-lg border ${colorClasses.border}/30`}>
+                          <CalendarDays size={isMobile ? 14 : 16} className={`${colorClasses.text} mr-1.5 md:mr-2`} />
+                          <span className="text-white font-medium text-sm md:text-base">{formatDateForDisplay(culto.data)}</span>
+                        </div>
+                        <div className={`flex items-center ${colorClasses.bgLight} backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2 rounded-lg border ${colorClasses.border}/30`}>
+                          <Clock size={isMobile ? 14 : 16} className={`${colorClasses.text} mr-1.5 md:mr-2`} />
+                          <span className="text-white font-medium text-sm md:text-base">{culto.hora}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Banner Image */}
-                  <div className="relative w-full h-[50vh] sm:h-[60vh] overflow-hidden">
+                  {/* Image Section - Altura reduzida e padronizada */}
+                  <div className="relative h-[35vh] md:h-[40vh] overflow-hidden">
                     <Image
                       src={culto.arte}
                       alt={culto.titulo}
@@ -235,25 +256,26 @@ export default function CultosSwiper() {
                       priority
                       className="object-contain object-center transition-transform duration-700 hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-transparent to-transparent md:bg-gradient-to-b md:from-transparent md:via-transparent md:to-blue-950/10"></div>
+                  </div>
 
-                    {/* Subtle gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-blue-950/10 to-transparent"></div>
-
-                    {/* Speaker info overlay with improved design */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                      <div className="flex items-center transparent p-3 rounded-lg inline-flex">
-                        <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-white/70 shadow-lg">
-                          <Image
-                            src={culto.orador.foto}
-                            alt={culto.orador.nome}
-                            fill
-                            style={{ objectFit: 'cover' }}
-                          />
-                        </div>
-                        <div className="ml-3">
-                          <p className="text-xs text-white/70 uppercase tracking-wider">Orador</p>
-                          <p className="text-white font-semibold text-lg">{culto.orador.nome}</p>
-                        </div>
+                  {/* Speaker Info Section - Layout unificado */}
+                  <div className="relative z-20 bg-gradient-to-t from-blue-950/95 to-blue-950/80 md:bg-gradient-to-r md:from-blue-900/30 md:to-blue-800/30 backdrop-blur-sm border-t border-white/10 p-4 md:p-6">
+                    <div className="flex items-center space-x-3 md:justify-center">
+                      <div className={`relative w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 md:border-3 ${colorClasses.border} shadow-lg md:shadow-xl md:ring-2 md:ring-white/20`}>
+                        <Image
+                          src={culto.orador.foto}
+                          alt={culto.orador.nome}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <div className="md:ml-2">
+                        <p className={`text-xs md:text-sm ${colorClasses.text} uppercase tracking-wider font-medium md:font-semibold mb-1 md:mb-2 flex items-center md:justify-center`}>
+                          <User size={isMobile ? 14 : 16} className={`${colorClasses.text} mr-1.5 md:mr-2`} />
+                          Orador
+                        </p>
+                        <p className="text-white font-semibold md:font-bold text-base md:text-xl md:text-center">{culto.orador.nome}</p>
                       </div>
                     </div>
                   </div>
@@ -263,23 +285,42 @@ export default function CultosSwiper() {
           })}
         </Swiper>
 
-        {/* Custom Navigation Buttons - Improved */}
-        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 z-10 flex justify-between px-2 md:px-6 pointer-events-none">
-          <button
-            ref={navigationPrevRef}
-            className="w-12 h-12 rounded-full bg-black/30 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/50 transition-all focus:outline-none pointer-events-auto shadow-lg"
-            aria-label="Anterior"
-          >
-            <ChevronLeft size={22} />
-          </button>
-          <button
-            ref={navigationNextRef}
-            className="w-12 h-12 rounded-full bg-black/30 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/50 transition-all focus:outline-none pointer-events-auto shadow-lg"
-            aria-label="Próximo"
-          >
-            <ChevronRight size={22} />
-          </button>
-        </div>
+        {/* Navigation Buttons - Apenas para desktop */}
+        {!isMobile && (
+          <div className="absolute left-6 right-6 top-[40%] -translate-y-1/2 z-30 flex justify-between pointer-events-none">
+            <button
+              ref={navigationPrevRef}
+              className="w-12 h-12 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/70 transition-all duration-300 focus:outline-none pointer-events-auto shadow-lg border border-white/20"
+              aria-label="Anterior"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              ref={navigationNextRef}
+              className="w-12 h-12 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/70 transition-all duration-300 focus:outline-none pointer-events-auto shadow-lg border border-white/20"
+              aria-label="Próximo"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        )}
+
+        {/* Custom Navigation Dots - Apenas se houver mais de um culto */}
+        {cultos.length > 1 && (
+          <div className="flex justify-center pt-4">
+            <div className="flex space-x-2">
+              {cultos.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index === activeIndex ? 'bg-white scale-125' : 'bg-white/50'
+                    }`}
+                  onClick={() => swiperRef.current?.slideToLoop(index)}
+                  aria-label={`Ir para slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

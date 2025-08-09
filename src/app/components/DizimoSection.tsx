@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Footer from './Footer';
 
 interface SocialCardProps {
-  icon: React.ReactNode;          
+  icon: React.ReactNode;
   platform: string;
   handle: string;
   url: string;
@@ -120,7 +120,7 @@ const PaginaDizimosOfertas = () => {
                           alt="Igreja Adventista do Sétimo Dia Santo Amaro"
                           className="w-full h-full object-cover rounded-xl"
                         />
-                        
+
                       </div>
                     </div>
 
@@ -213,7 +213,7 @@ const PaginaDizimosOfertas = () => {
             </div>
 
             {/* Social Media Section */}
-            <div className="mb-12">
+            <div className="mb-12 py-12">
               <div className="text-center mb-12">
                 <h2 className="text-3xl sm:text-4xl font-bold text-blue-950 mb-4">
                   Conecte-se Conosco
@@ -248,24 +248,6 @@ const PaginaDizimosOfertas = () => {
               </div>
             </div>
 
-            {/* Boletim Link */}
-            <div className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 rounded-3xl p-8 sm:p-12 text-center text-white shadow-2xl">
-              <div className="max-w-3xl mx-auto">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-6">
-                  <BookOpen className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-bold mb-4">
-                  Mais Informações no Boletim
-                </h3>
-                <p className="text-blue-100 text-lg mb-8 leading-relaxed">
-                  Acesse nosso boletim digital para ficar por dentro de todas as atividades, estudos e eventos da igreja.
-                </p>
-                <Link href={'/'} className="inline-flex items-center justify-center bg-white text-blue-950 font-bold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/50 text-lg">
-                  <span>Acessar Boletim</span>
-                  <BookOpen className="h-5 w-5 ml-3" />
-                </Link>
-              </div>
-            </div>
           </div>
         </div>
 

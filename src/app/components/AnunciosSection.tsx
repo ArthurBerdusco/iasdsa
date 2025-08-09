@@ -1,27 +1,41 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Calendar, FormInput, Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, ExternalLink, Star, Calendar } from 'lucide-react';
 import Link from 'next/link';
-import { Anuncio, TipoLink } from '@/types/anuncios';
-import { formatDateForDisplay } from '@/utils/formatoData';
 
-// Tipagem para as interfaces necessárias
+// Tipagem para as interfaces necessárias (usando as originais do código)
+interface Anuncio {
+  id: string;
+  titulo: string;
+  texto: string;
+  arte: string;
+  dataEvento: string;
+  ativo: boolean;
+  destaque: boolean;
+  links?: Array<{
+    tipo_link: string;
+    url: string;
+    textoBotao?: string;
+  }>;
+}
+
+enum TipoLink {
+  FORMS = 'forms',
+  WHATSAPP = 'whatsapp',
+  INSTAGRAM = 'instagram',
+  FACEBOOK = 'facebook',
+  WEBSITE = 'website'
+}
+
 interface SectionHeaderProps {
   title: string;
 }
 
-interface AnuncioLinksProps {
-  anuncio: Anuncio;
-  variant?: "card" | "destaque";
-}
-
 interface AnuncioCardProps {
   anuncio: Anuncio;
-}
-
-interface AnuncioDestaqueProps {
-  anuncio: Anuncio;
+  isDestaque?: boolean;
+  variant?: 'mobile' | 'desktop-destaque' | 'desktop-regular';
 }
 
 interface MonthDividerProps {
@@ -35,7 +49,12 @@ interface GrupoMensal {
   anuncios: Anuncio[];
 }
 
-// Componentes auxiliares
+// Função para formatar data
+const formatDateForDisplay = (dateString: string): string => {
+  return new Date(dateString).toLocaleDateString('pt-BR');
+};
+
+// Componente de cabeçalho da seção
 const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
   <div className="text-center mb-10">
     <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">{title}</h2>
@@ -43,197 +62,250 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
   </div>
 );
 
-// Componente para mostrar os links/botões dos anúncios
-const AnuncioLinks: React.FC<AnuncioLinksProps> = ({ anuncio, variant = "card" }) => {
-  const getLinkByTipo = (tipo: TipoLink) => {
-    return anuncio.links?.find(link => link.tipo_link === tipo);
+// Componente principal do card de anúncio adaptado para diferentes layouts
+const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio, isDestaque = false, variant = 'mobile' }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Pegar o link principal (prioridade: forms > whatsapp > website > outros)
+  const getLinkPrincipal = () => {
+    if (!anuncio.links || anuncio.links.length === 0) return '#';
+    
+    const prioridade = [TipoLink.FORMS, TipoLink.WHATSAPP, TipoLink.WEBSITE, TipoLink.INSTAGRAM, TipoLink.FACEBOOK];
+    
+    for (const tipo of prioridade) {
+      const link = anuncio.links.find(l => l.tipo_link === tipo);
+      if (link) return link.url;
+    }
+    
+    return anuncio.links[0].url;
   };
 
-  const isDestaque = variant === "destaque";
-  const buttonClasses = isDestaque ? "py-3 text-sm md:text-base" : "py-2 text-xs md:text-sm";
+  const linkPrincipal = getLinkPrincipal();
 
-  return (
-    <div className={`space-y-2 ${isDestaque ? "flex flex-col gap-3" : "mt-auto"}`}>
-      {getLinkByTipo(TipoLink.FORMS) && (
-        <div className={isDestaque ? "" : ""}>
-          {isDestaque && <span className="text-sm text-gray-500 block mb-1">Inscrição</span>}
-          <Link
-            href={getLinkByTipo(TipoLink.FORMS)!.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`inline-flex w-full items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-colors duration-300`}
-          >
-            <FormInput className={`${isDestaque ? "h-5 w-5" : "h-4 w-4"} mr-2`} />
-            {getLinkByTipo(TipoLink.FORMS)!.textoBotao || 'Inscrever-se'}
-          </Link>
-        </div>
-      )}
+  // Layout para desktop - destaque (coluna esquerda)
+  if (variant === 'desktop-destaque') {
+    return (
+      <Link
+        href={linkPrincipal}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block group"
+      >
+        <div
+          className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-400 bg-white mb-6"
+          style={{
+            transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
+            transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease'
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
 
-      {getLinkByTipo(TipoLink.WHATSAPP) && (
-        <div className={isDestaque ? "" : ""}>
-          {isDestaque && <span className="text-sm text-gray-500 block mb-1">Informações</span>}
-          <Link
-            href={getLinkByTipo(TipoLink.WHATSAPP)!.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`inline-flex w-full items-center justify-center bg-green-500 hover:bg-green-600 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-colors duration-300`}
-          >
-            <MessageCircle className={`${isDestaque ? "h-5 w-5" : "h-4 w-4"} mr-2`} />
-            {getLinkByTipo(TipoLink.WHATSAPP)!.textoBotao || 'WhatsApp'}
-          </Link>
-        </div>
-      )}
-
-      {/* Botões para Instagram, Facebook e Website condensados em menu dropdown para economizar espaço */}
-      {(getLinkByTipo(TipoLink.INSTAGRAM) || getLinkByTipo(TipoLink.FACEBOOK) || getLinkByTipo(TipoLink.WEBSITE)) && (
-        <div className="flex gap-2">
-          {getLinkByTipo(TipoLink.INSTAGRAM) && (
-            <Link
-              href={getLinkByTipo(TipoLink.INSTAGRAM)!.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex-1 inline-flex items-center justify-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 hover:brightness-110 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-all duration-300`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className={`${isDestaque ? "h-5 w-5" : "h-4 w-4"} mr-2`}
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.5A4.25 4.25 0 0 0 3.5 7.75v8.5A4.25 4.25 0 0 0 7.75 20.5h8.5A4.25 4.25 0 0 0 20.5 16.25v-8.5A4.25 4.25 0 0 0 16.25 3.5h-8.5zM12 7a5 5 0 1 1 0 10a5 5 0 0 1 0-10zm0 1.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7zm5.75-.88a.88.88 0 1 1-1.75 0a.88.88 0 0 1 1.75 0z" />
-              </svg>
-              {isDestaque ? getLinkByTipo(TipoLink.INSTAGRAM)!.textoBotao || 'Instagram' : 'Instagram'}
-            </Link>
-          )}
-
-          {getLinkByTipo(TipoLink.FACEBOOK) && (
-            <Link
-              href={getLinkByTipo(TipoLink.FACEBOOK)!.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex-1 inline-flex items-center justify-center bg-blue-700 hover:bg-blue-800 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-colors duration-300`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className={`${isDestaque ? "h-5 w-5" : "h-4 w-4"} mr-2`}
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12.001 2.002c-5.522 0-9.999 4.477-9.999 9.999c0 4.99 3.656 9.126 8.437 9.879v-6.988h-2.54v-2.891h2.54V9.798c0-2.508 1.493-3.891 3.776-3.891c1.094 0 2.24.195 2.24.195v2.459h-1.264c-1.24 0-1.628.772-1.628 1.563v1.875h2.771l-.443 2.891h-2.328v6.988C18.344 21.129 22 16.992 22 12.001c0-5.522-4.477-9.999-9.999-9.999z" />
-              </svg>
-              {isDestaque ? getLinkByTipo(TipoLink.FACEBOOK)!.textoBotao || 'Facebook' : ''}
-            </Link>
-          )}
-
-          {getLinkByTipo(TipoLink.WEBSITE) && (
-            <Link
-              href={getLinkByTipo(TipoLink.WEBSITE)!.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex-1 inline-flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white font-medium ${buttonClasses} px-4 rounded-lg transition-colors duration-300`}
-            >
-              <Search className={`${isDestaque ? "h-5 w-5" : "h-4 w-4"} mr-2`} />
-              {isDestaque ? getLinkByTipo(TipoLink.WEBSITE)!.textoBotao || 'Saiba mais' : ''}
-            </Link>
-          )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-// Cartão de anúncio com altura fixa e imagem responsiva
-const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  return (
-    <div
-      className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col"
-      style={{
-        transform: isHovered ? 'translateY(-5px)' : 'translateY(0)',
-        transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out'
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Container de imagem com altura fixa */}
-      <div className="relative h-48 sm:h-52 lg:h-56 overflow-hidden">
-        <img
-          src={anuncio.arte}
-          alt={anuncio.titulo}
-          className="w-full h-full object-cover object-center transition-transform duration-700"
-          style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-        <div className="absolute bottom-3 left-3 right-3">
-          <div className="inline-flex items-center bg-blue-600/90 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg">
-            <Calendar className="h-3 w-3 mr-1" />
-            <span>{formatDateForDisplay(anuncio.dataEvento)}</span>
+          {/* Ícone de link externo */}
+          <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="bg-black/70 backdrop-blur-sm rounded-full p-2">
+              <ExternalLink className="h-4 w-4 text-white" />
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Conteúdo do card */}
-      <div className="p-4 flex flex-col flex-grow">
-        <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 leading-tight">{anuncio.titulo}</h3>
-        <p className="text-gray-600 mb-4 line-clamp-2 text-sm flex-grow leading-relaxed">{anuncio.texto}</p>
-        <AnuncioLinks anuncio={anuncio} />
-      </div>
-    </div>
-  );
-};
-
-// Anúncio em destaque com layout melhorado
-const AnuncioDestaque: React.FC<AnuncioDestaqueProps> = ({ anuncio }) => {
-  return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-xl mb-8 hover:shadow-2xl transition-all duration-300">
-      <div className="flex flex-col lg:flex-row">
-        {/* Container de imagem responsivo */}
-        <div className="lg:w-2/5 xl:w-1/2 relative overflow-hidden">
-          <div className="h-64 sm:h-80 lg:h-full min-h-[320px] flex items-center justify-center bg-black">
+          {/* Container da imagem */}
+          <div className="relative w-full" style={{ aspectRatio: '16/10' }}>
             <img
               src={anuncio.arte}
               alt={anuncio.titulo}
-              className="max-h-full max-w-full object-contain transition-transform duration-700 hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-500"
+              style={{ 
+                transform: isHovered ? 'scale(1.05)' : 'scale(1)',
+                filter: isHovered ? 'brightness(1.1)' : 'brightness(1)'
+              }}
             />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40 lg:bg-gradient-to-r lg:from-transparent lg:to-black/20"></div>
+            
+            {/* Overlay gradiente para legibilidade */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-          {/* Tag de data */}
-          <div className="absolute top-4 left-4 z-10">
-            <div className="inline-flex items-center bg-blue-600/90 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-              <Calendar className="h-4 w-4 mr-2" />
-              <span>{formatDateForDisplay(anuncio.dataEvento)}</span>
+          </div>
+
+          {/* Efeito de borda no hover */}
+          <div className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-yellow-400/50 transition-colors duration-300" />
+        </div>
+      </Link>
+    );
+  }
+
+  // Layout para desktop - anúncios regulares (coluna direita)
+  if (variant === 'desktop-regular') {
+    return (
+      <Link
+        href={linkPrincipal}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block group"
+      >
+        <div
+          className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 bg-white"
+          style={{
+            transform: isHovered ? 'translateY(-3px)' : 'translateY(0)',
+            transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease'
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {/* Ícone de link externo */}
+          <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="bg-black/70 backdrop-blur-sm rounded-full p-1.5">
+              <ExternalLink className="h-3 w-3 text-white" />
+            </div>
+          </div>
+
+          {/* Container da imagem */}
+          <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+            <img
+              src={anuncio.arte}
+              alt={anuncio.titulo}
+              className="w-full h-full object-cover transition-all duration-300"
+              style={{ 
+                transform: isHovered ? 'scale(1.02)' : 'scale(1)',
+                filter: isHovered ? 'brightness(1.05)' : 'brightness(1)'
+              }}
+            />
+            
+            {/* Overlay sutil */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
+
+          </div>
+
+          {/* Borda no hover */}
+          <div className="absolute inset-0 rounded-lg border-2 border-transparent group-hover:border-blue-200 transition-colors duration-300" />
+        </div>
+      </Link>
+    );
+  }
+
+  // Layout mobile/original
+  if (isDestaque) {
+    return (
+      <Link
+        href={linkPrincipal}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block group"
+      >
+        <div
+          className="relative overflow-hidden rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 mb-8 max-w-4xl mx-auto"
+          style={{
+            transform: isHovered ? 'translateY(-8px)' : 'translateY(0)',
+            transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease'
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {/* Ícone de link externo */}
+          <div className="absolute top-6 right-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="bg-black/70 backdrop-blur-sm rounded-full p-2">
+              <ExternalLink className="h-5 w-5 text-white" />
+            </div>
+          </div>
+
+          {/* Container da imagem com aspect ratio fixo */}
+          <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+            <img
+              src={anuncio.arte}
+              alt={anuncio.titulo}
+              className="w-full h-full object-contain bg-gradient-to-br from-blue-50 to-blue-100 transition-transform duration-700"
+              style={{ 
+                transform: isHovered ? 'scale(1.02)' : 'scale(1)',
+                filter: isHovered ? 'brightness(1.05)' : 'brightness(1)'
+              }}
+            />
+            
+            {/* Overlay sutil para interação */}
+            <div 
+              className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-300"
+            />
+
+            {/* Indicador de clique */}
+            <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+              <div className="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium shadow-lg">
+                Clique para acessar
+              </div>
+            </div>
+          </div>
+
+          {/* Efeito de borda animada no hover */}
+          <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
+               style={{
+                 background: 'linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.1) 50%, transparent 70%)',
+                 backgroundSize: '200% 200%',
+                 animation: isHovered ? 'shimmer 2s ease-in-out infinite' : 'none'
+               }}>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href={linkPrincipal}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block group"
+    >
+      <div
+        className="relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 bg-white"
+        style={{
+          transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease'
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Ícone de link externo */}
+        <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="bg-black/70 backdrop-blur-sm rounded-full p-1.5">
+            <ExternalLink className="h-4 w-4 text-white" />
+          </div>
+        </div>
+
+        {/* Container da imagem com aspect ratio fixo */}
+        <div className="relative w-full" style={{ aspectRatio: '16/9' }}>
+          <img
+            src={anuncio.arte}
+            alt={anuncio.titulo}
+            className="w-full h-full object-contain bg-gradient-to-br from-gray-50 to-gray-100 transition-all duration-500"
+            style={{ 
+              transform: isHovered ? 'scale(1.03)' : 'scale(1)',
+              filter: isHovered ? 'brightness(1.05)' : 'brightness(1)'
+            }}
+          />
+          
+          {/* Overlay para interação */}
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-300 rounded-xl" />
+
+          {/* Indicador de clique (apenas mobile) */}
+          <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 sm:hidden transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+            <div className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-medium shadow-lg">
+              Tocar para acessar
             </div>
           </div>
         </div>
 
-        {/* Conteúdo */}
-        <div className="lg:w-3/5 xl:w-1/2 p-6 sm:p-8 lg:p-10 flex flex-col justify-between">
-          <div>
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl text-gray-800 font-bold mb-4 leading-tight">
-              {anuncio.titulo}
-            </h3>
-            <p className="text-gray-600 mb-6 text-base sm:text-lg leading-relaxed line-clamp-4">
-              {anuncio.texto}
-            </p>
-          </div>
-
-          <div className="mt-6">
-            <AnuncioLinks anuncio={anuncio} variant="destaque" />
-          </div>
-        </div>
+        {/* Borda sutil no hover */}
+        <div className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-blue-200 transition-colors duration-300" />
       </div>
-    </div>
+    </Link>
   );
 };
 
-// Componente para exibir mês/ano como cabeçalho
+// Componente para divisor de mês
 const MonthDivider: React.FC<MonthDividerProps> = ({ month, year }) => (
-  <div className="relative flex items-center my-8">
-    <div className="flex-grow border-t border-gray-300/30"></div>
-    <span className="flex-shrink mx-4 text-white/90 font-medium text-lg">{month} {year}</span>
-    <div className="flex-grow border-t border-gray-300/30"></div>
+  <div className="relative flex items-center my-6">
+    <div className="flex-grow border-t border-white/20"></div>
+    <span className="flex-shrink mx-4 text-white/90 font-semibold text-base tracking-wide flex items-center">
+      <Calendar className="h-4 w-4 mr-2" />
+      {month} {year}
+    </span>
+    <div className="flex-grow border-t border-white/20"></div>
   </div>
 );
 
@@ -244,7 +316,7 @@ const Anuncios: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [filtro, setFiltro] = useState('');
   const [pagina, setPagina] = useState(1);
-  const anunciosPorPagina = 9;
+  const anunciosPorPagina = 6; // Para os grupos mensais no desktop
 
   useEffect(() => {
     fetchAnuncios();
@@ -272,15 +344,14 @@ const Anuncios: React.FC = () => {
     .filter(anuncio => anuncio.ativo)
     .filter(anuncio =>
       anuncio.titulo.toLowerCase().includes(filtro.toLowerCase()) ||
-      anuncio.texto.toLowerCase().includes(filtro.toLowerCase()) ||
-      new Date(anuncio.dataEvento).toLocaleDateString('pt-BR').includes(filtro)
+      anuncio.texto.toLowerCase().includes(filtro.toLowerCase())
     );
 
   // Separar anúncios em destaque
   const anunciosDestaque = anunciosFiltrados.filter(anuncio => anuncio.destaque);
   const anunciosRegulares = anunciosFiltrados.filter(anuncio => !anuncio.destaque);
 
-  // Ordenar anúncios por data (os mais próximos primeiro)
+  // Ordenar anúncios por data
   const anunciosOrdenados = [...anunciosRegulares].sort((a, b) =>
     new Date(a.dataEvento).getTime() - new Date(b.dataEvento).getTime()
   );
@@ -296,17 +367,12 @@ const Anuncios: React.FC = () => {
       const chave = `${mes}-${ano}`;
 
       if (!grupos[chave]) {
-        grupos[chave] = {
-          mes,
-          ano,
-          anuncios: []
-        };
+        grupos[chave] = { mes, ano, anuncios: [] };
       }
 
       grupos[chave].anuncios.push(anuncio);
     });
 
-    // Converter objeto em array e ordenar por data
     return Object.values(grupos).sort((a, b) => {
       const dataA = new Date(a.anuncios[0].dataEvento);
       const dataB = new Date(b.anuncios[0].dataEvento);
@@ -316,7 +382,7 @@ const Anuncios: React.FC = () => {
 
   const gruposMensais = agruparPorMes(anunciosOrdenados);
 
-  // Paginação para grupos de meses
+  // Paginação para desktop
   const totalPaginas = Math.max(1, Math.ceil(gruposMensais.length / anunciosPorPagina));
   const gruposPaginados = gruposMensais.slice(
     (pagina - 1) * anunciosPorPagina,
@@ -370,100 +436,176 @@ const Anuncios: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-b from-blue-950 to-blue-900 text-white min-h-screen">
-      <div className="max-w-6xl mx-auto py-12 px-4">
+      {/* CSS para animação shimmer */}
+      <style jsx>{`
+        @keyframes shimmer {
+          0% { background-position: 200% 0; }
+          100% { background-position: -200% 0; }
+        }
+      `}</style>
+      
+      <div className="max-w-7xl mx-auto py-12 px-4">
         {/* Header */}
         <SectionHeader title="QUADRO DE ANÚNCIOS" />
 
         {/* Barra de busca */}
-        <div className="relative mb-10 max-w-md mx-auto">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Buscar anúncios..."
-              value={filtro}
-              onChange={(e) => {
-                setFiltro(e.target.value);
-                setPagina(1);
-              }}
-              className="w-full bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full py-3 pl-12 pr-4 outline-none focus:ring-2 focus:ring-blue-400 placeholder-white/60"
-            />
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5" />
+        <div className="relative mb-12 max-w-md mx-auto">
+          <input
+            type="text"
+            placeholder="Buscar anúncios..."
+            value={filtro}
+            onChange={(e) => {
+              setFiltro(e.target.value);
+              setPagina(1);
+            }}
+            className="w-full bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-full py-3 pl-12 pr-4 outline-none focus:ring-2 focus:ring-blue-400 placeholder-white/60 transition-all duration-300"
+          />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5" />
+        </div>
+
+        {/* Layout responsivo: Mobile vs Desktop */}
+        <div className="lg:hidden">
+          {/* Layout Mobile (mantido como estava) */}
+          
+          {/* Anúncios em Destaque */}
+          {anunciosDestaque.length > 0 && (
+            <div className="mb-16">
+              <h3 className="text-xl font-bold text-white/90 mb-8 flex items-center">
+                <span className="inline-block w-2 h-6 bg-yellow-400 mr-3 rounded-full"></span>
+                ⭐ Anúncios em Destaque
+              </h3>
+              <div className="space-y-8">
+                {anunciosDestaque.map(anuncio => (
+                  <AnuncioCard key={anuncio.id} anuncio={anuncio} isDestaque={true} variant="mobile" />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Anúncios agrupados por mês */}
+          <div>
+            {gruposMensais.length > 0 ? (
+              gruposMensais.map((grupo) => (
+                <div key={`${grupo.mes}-${grupo.ano}`}>
+                  <MonthDivider 
+                    month={grupo.mes.charAt(0).toUpperCase() + grupo.mes.slice(1)} 
+                    year={grupo.ano} 
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
+                    {grupo.anuncios.map((anuncio) => (
+                      <AnuncioCard key={anuncio.id} anuncio={anuncio} variant="mobile" />
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-20">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-xl font-medium mb-2">Nenhum anúncio encontrado</h3>
+                <p className="text-white/70">Tente usar termos diferentes na busca</p>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Anúncios em Destaque */}
-        {anunciosDestaque.length > 0 && (
-          <div className="mb-12">
-            <h3 className="text-xl font-bold text-white/90 mb-6 flex items-center">
-              <span className="inline-block w-2 h-6 bg-yellow-400 mr-3 rounded-full"></span>
-              Eventos em Destaque
-            </h3>
-            <div className="space-y-8">
-              {anunciosDestaque.map(anuncio => (
-                <AnuncioDestaque key={anuncio.id} anuncio={anuncio} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Anúncios agrupados por mês */}
-        <div>
-          <h3 className="text-xl font-bold text-white/90 mb-6 flex items-center">
-            <span className="inline-block w-2 h-6 bg-blue-400 mr-3 rounded-full"></span>
-            Calendário de Eventos
-          </h3>
-
-          {gruposPaginados.length > 0 ? (
-            gruposPaginados.map((grupo) => (
-              <div key={`${grupo.mes}-${grupo.ano}`}>
-                <MonthDivider month={grupo.mes.charAt(0).toUpperCase() + grupo.mes.slice(1)} year={grupo.ano} />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  {grupo.anuncios.map((anuncio) => (
-                    <AnuncioCard key={anuncio.id} anuncio={anuncio} />
-                  ))}
+        <div className="hidden lg:block">
+          {/* Layout Desktop - 3 Colunas */}
+          <div className="grid grid-cols-12 gap-8">
+            
+            {/* Coluna 1: Anúncios em Destaque */}
+            <div className="col-span-4">
+              <div className="sticky top-6">
+                <h3 className="text-xl font-bold text-white/90 mb-6 flex items-center">
+                  <Star className="h-5 w-5 mr-2 text-yellow-400" fill="currentColor" />
+                  Anúncios em Destaque
+                </h3>
+                <div className="space-y-4">
+                  {anunciosDestaque.length > 0 ? (
+                    anunciosDestaque.map(anuncio => (
+                      <AnuncioCard key={anuncio.id} anuncio={anuncio} variant="desktop-destaque" />
+                    ))
+                  ) : (
+                    <div className="text-center py-12 text-white/60">
+                      <Star className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                      <p>Nenhum anúncio em destaque no momento</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="text-center py-16">
-              <div className="text-6xl mb-4">😢</div>
-              <h3 className="text-xl font-medium mb-2">Nenhum anúncio encontrado</h3>
-              <p className="text-white/70">Tente usar termos diferentes na busca</p>
             </div>
-          )}
 
-          {/* Paginação */}
-          {totalPaginas > 1 && (
-            <div className="flex justify-center items-center mt-10 space-x-2">
-              <button
-                onClick={paginaAnterior}
-                disabled={pagina === 1}
-                className={`flex items-center justify-center p-2 rounded-full 
-                  ${pagina === 1
-                    ? 'bg-blue-800/50 text-white/50 cursor-not-allowed'
-                    : 'bg-blue-700 text-white hover:bg-blue-600'
-                  }`}
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
+            {/* Coluna 2: Separador visual */}
+            <div className="col-span-1 flex justify-center">
+              <div className="w-px bg-white/20 h-full"></div>
+            </div>
 
-              <div className="text-white/90 px-4">
-                Página {pagina} de {totalPaginas}
+            {/* Coluna 3: Calendário de Anúncios */}
+            <div className="col-span-7">
+              <h3 className="text-xl font-bold text-white/90 mb-6 flex items-center">
+                <Calendar className="h-5 w-5 mr-2 text-blue-400" />
+                Calendário de Anúncios
+              </h3>
+              
+              <div>
+                {gruposPaginados.length > 0 ? (
+                  gruposPaginados.map((grupo) => (
+                    <div key={`${grupo.mes}-${grupo.ano}`} className="mb-25">
+                      <MonthDivider 
+                        month={grupo.mes.charAt(0).toUpperCase() + grupo.mes.slice(1)} 
+                        year={grupo.ano} 
+                      />
+                      <div className="grid grid-cols-2 gap-4">
+                        {grupo.anuncios.map((anuncio) => (
+                          <AnuncioCard key={anuncio.id} anuncio={anuncio} variant="desktop-regular" />
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-20">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h3 className="text-xl font-medium mb-2">Nenhum anúncio encontrado</h3>
+                    <p className="text-white/70">Tente usar termos diferentes na busca</p>
+                  </div>
+                )}
+
+                {/* Paginação Desktop */}
+                {totalPaginas > 1 && (
+                  <div className="flex justify-center items-center mt-12 space-x-4">
+                    <button
+                      onClick={paginaAnterior}
+                      disabled={pagina === 1}
+                      className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 
+                        ${pagina === 1
+                          ? 'bg-blue-800/50 text-white/50 cursor-not-allowed'
+                          : 'bg-blue-700 text-white hover:bg-blue-600 hover:scale-105'
+                        }`}
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </button>
+
+                    <div className="text-white/90 px-6 py-2 bg-white/10 backdrop-blur-sm rounded-full">
+                      <span className="font-medium">{pagina}</span>
+                      <span className="text-white/70 mx-2">de</span>
+                      <span className="font-medium">{totalPaginas}</span>
+                    </div>
+
+                    <button
+                      onClick={proximaPagina}
+                      disabled={pagina === totalPaginas}
+                      className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 
+                        ${pagina === totalPaginas
+                          ? 'bg-blue-800/50 text-white/50 cursor-not-allowed'
+                          : 'bg-blue-700 text-white hover:bg-blue-600 hover:scale-105'
+                        }`}
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  </div>
+                )}
               </div>
-
-              <button
-                onClick={proximaPagina}
-                disabled={pagina === totalPaginas}
-                className={`flex items-center justify-center p-2 rounded-full 
-                  ${pagina === totalPaginas
-                    ? 'bg-blue-800/50 text-white/50 cursor-not-allowed'
-                    : 'bg-blue-700 text-white hover:bg-blue-600'
-                  }`}
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
