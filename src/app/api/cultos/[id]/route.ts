@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from '@neondatabase/serverless';
-import { unlink, writeFile } from "fs/promises";
+import { unlink } from "fs/promises";
 import { join } from "path";
-import { v4 as uuidv4 } from "uuid";
+import { put, del } from '@vercel/blob';
 import { existsSync } from "fs";
 import { RouteParams } from "@/types/routeParams";
 
@@ -40,12 +40,10 @@ export async function GET(
 
 export async function PUT(
     request: NextRequest,
-    { params }: RouteParams  // ✅ Corrigido - usando RouteParams
+    { params }: RouteParams
 ) {
     try {
-        // ✅ Await params para Next.js 15+
         const { id } = await params;
-        
         const formData = await request.formData();
 
         // Extrair dados
@@ -85,35 +83,41 @@ export async function PUT(
 
         let imagemPath = existingCulto[0].arte; // Preserva a imagem atual por padrão
 
-        // Upload nova imagem, se houver
+        // Upload nova imagem usando Vercel Blob, se houver
         if (arte && arte.size > 0) {
-            // Deletar imagem antiga
-            if (imagemPath && !imagemPath.includes("default")) {
-                const oldImagePath = join(process.cwd(), "public", imagemPath);
-                if (existsSync(oldImagePath)) {
-                    await unlink(oldImagePath);
+            try {
+                // Deletar imagem antiga do Vercel Blob
+                if (imagemPath && !imagemPath.includes("default") && imagemPath.startsWith("https://")) {
+                    try {
+                        await del(imagemPath);
+                    } catch (deleteError) {
+                        console.warn("Não foi possível deletar imagem antiga:", deleteError);
+                    }
                 }
+
+                // Upload nova imagem para Vercel Blob
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = today.getMonth() + 1;
+                const monthName = getMonthName(month);
+                
+                const extension = arte.name.split(".").pop();
+                const filename = `culto-${diasemana.toLowerCase()}-${Date.now()}.${extension}`;
+                const filepath = `${year}/${month}_${monthName}/${filename}`;
+
+                const blob = await put(filepath, arte, {
+                    access: 'public',
+                });
+
+                imagemPath = blob.url;
+
+            } catch (uploadError) {
+                console.error("Erro no upload da imagem:", uploadError);
+                return NextResponse.json({ 
+                    success: false,
+                    error: "Erro ao fazer upload da imagem" 
+                }, { status: 500 });
             }
-
-            // Salvar nova imagem
-            const arteBytes = await arte.arrayBuffer();
-            const buffer = Buffer.from(arteBytes);
-
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = today.getMonth() + 1;
-            const monthName = getMonthName(month);
-            const weekRange = getWeekRange(today.getDate());
-
-            const folderPath = `/images/${year}/${month}_${monthName}/Semana_${weekRange}`;
-            const uploadDir = join(process.cwd(), "public", folderPath);
-            await ensureDir(uploadDir);
-
-            const extension = arte.name.split(".").pop();
-            const filename = `culto-${diasemana.toLowerCase()}-${uuidv4().slice(0, 6)}.${extension}`;
-            await writeFile(join(uploadDir, filename), buffer);
-
-            imagemPath = `${folderPath}/${filename}`;
         }
 
         // Atualizar culto
