@@ -1,33 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from '@neondatabase/serverless';
-import { writeFile } from "fs/promises";
-import { join } from "path";
+import { put } from '@vercel/blob';
 import { v4 as uuidv4 } from "uuid";
 
 export async function GET() {
   try {
-    // Connect to the database using neon
     const sql = neon(process.env.DATABASE_URL as string);
 
     const result = await sql`
-    SELECT 
-      c.id, 
-      c.titulo, 
-      c.diasemana, 
-      c.data, 
-      c.hora, 
-      c.arte, 
-      c.cordestaque,
-      o.id as orador_id, 
-      o.nome as orador_nome, 
-      o.foto as orador_foto
-    FROM 
-      cultos c
-    LEFT JOIN 
-      oradores o ON c.orador_id = o.id
-    ORDER BY 
-      c.data ASC
-  `;
+      SELECT 
+        c.id, 
+        c.titulo, 
+        c.diasemana, 
+        c.data, 
+        c.hora, 
+        c.arte, 
+        c.cordestaque,
+        o.id as orador_id, 
+        o.nome as orador_nome, 
+        o.foto as orador_foto
+      FROM 
+        cultos c
+      LEFT JOIN 
+        oradores o ON c.orador_id = o.id
+      ORDER BY 
+        c.data ASC
+    `;
 
     // Transformar os resultados no formato esperado pelo frontend
     const formattedCultos = result.map(row => ({
@@ -57,8 +55,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse form data from request
-    console.log("cheguei no post")
+    console.log("cheguei no post");
     const formData = await request.formData();
 
     // Extract basic culto data
@@ -66,8 +63,6 @@ export async function POST(request: NextRequest) {
     const diasemana = formData.get("diasemana") as string;
     const data = formData.get("data") as string;
     const hora = formData.get("hora") as string;
-
-    // Get orador ID - agora vamos extrair o ID do orador como número
 
     console.log(formData.get("oradorId"));
     const oradorId = parseInt(formData.get("oradorId") as string);
@@ -81,54 +76,37 @@ export async function POST(request: NextRequest) {
     }
 
     const cordestaque = formData.get("cordestaque") as string;
-
-    // Get file upload data
     const arte = formData.get("arte") as File;
 
-    // Initialize image paths
-    let imagemPath = "/images/default-banner.jpg";
+    let imagemUrl = "/images/default-banner.jpg";
 
-    // Handle banner image upload if provided
+    // Upload para Vercel Blob se houver arquivo
     if (arte) {
-      const bannerBytes = await arte.arrayBuffer();
-      const buffer = Buffer.from(bannerBytes);
-
-      // Create year/month folder structure
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth() + 1;
       const monthName = getMonthName(month);
+      const weekRange = getWeekRange(today.getDate());
 
-      // Calculate week range
-      const dayOfMonth = today.getDate();
-      const weekRange = getWeekRange(dayOfMonth);
-
-      // Create folder path
-      const folderPath = `/images/${year}/${month}_${monthName}/Semana_${weekRange}`;
-
-      // Ensure directory exists
-      const uploadDir = join(process.cwd(), "public", folderPath);
-      await ensureDir(uploadDir);
-
-      // Generate unique filename
+      // Criar nome do arquivo organizado
       const extension = arte.name.split(".").pop();
-      const filename = `culto-${diasemana.toLowerCase()}-${uuidv4().slice(0, 6)}.${extension}`;
+      const filename = `cultos/${year}/${month}_${monthName}/Semana_${weekRange}/culto-${diasemana.toLowerCase()}-${uuidv4().slice(0, 6)}.${extension}`;
 
-      // Save file
-      await writeFile(join(uploadDir, filename), buffer);
+      // Upload para Vercel Blob
+      const blob = await put(filename, arte, {
+        access: 'public',
+      });
 
-      // Update image path for database
-      imagemPath = `${folderPath}/${filename}`;
+      imagemUrl = blob.url;
     }
 
-    // Connect to database using neon
     const sql = neon(process.env.DATABASE_URL as string);
 
     // Insert new culto into database
     const newCulto = await sql`
       INSERT INTO cultos 
       (titulo, diasemana, data, hora, orador_id, arte, cordestaque) 
-      VALUES (${titulo}, ${diasemana}, ${data}, ${hora}, ${oradorId}, ${imagemPath}, ${cordestaque}) 
+      VALUES (${titulo}, ${diasemana}, ${data}, ${hora}, ${oradorId}, ${imagemUrl}, ${cordestaque}) 
       RETURNING *
     `;
 
@@ -139,18 +117,6 @@ export async function POST(request: NextRequest) {
       { error: "Falha ao criar culto" },
       { status: 500 }
     );
-  }
-}
-
-// Helper function to ensure directory exists
-async function ensureDir(dirPath: string) {
-  try {
-    const { mkdir } = require("fs/promises");
-    await mkdir(dirPath, { recursive: true });
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
-      throw error;
-    }
   }
 }
 

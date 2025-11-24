@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from '@neondatabase/serverless';
-import { writeFile, unlink } from "fs/promises";
-import { join } from "path";
-import { existsSync } from "fs";
+import { put, del } from '@vercel/blob';
 import { RouteParams } from "@/types/routeParams";
 import { Anuncio } from "@/types/anuncios";
 
@@ -12,10 +10,8 @@ export async function GET(
   { params }: RouteParams
 ) {
   try {
-    // Await params para Next.js 15+
     const { id } = await params;
     
-    // Connect to the database
     const sql = neon(process.env.DATABASE_URL as string);
     
     // Query the specific anúncio with its links
@@ -73,13 +69,11 @@ export async function GET(
 // PUT: Update an existing announcement
 export async function PUT(
     request: NextRequest,
-    { params }: RouteParams  // ✅ Mudança aqui - usando RouteParams
+    { params }: RouteParams
 ) {
     try {
-        // ✅ Await params para Next.js 15+
         const { id } = await params;
 
-        // Parse form data from request
         const formData = await request.formData();
 
         // Extract anúncio data
@@ -91,7 +85,6 @@ export async function PUT(
         const linksString = formData.get("links") as string;
         const links = linksString ? JSON.parse(linksString) : [];
 
-        // Connect to database
         const sql = neon(process.env.DATABASE_URL as string);
 
         // Check if anúncio exists
@@ -109,38 +102,30 @@ export async function PUT(
             );
         }
 
-        // Handle image upload if provided
-        const arte = formData.get("arte") as File;
-        let artePath = existingAnuncio[0].arte; // Keep existing image by default
+        const arte = formData.get("arte") as File | null;
+        let arteUrl = existingAnuncio[0].arte; // Keep existing image by default
 
+        // If new image uploaded
         if (arte && arte.size > 0) {
-            // Delete old image if it exists
-            const oldArtePath = existingAnuncio[0].arte;
-            if (oldArtePath) {
-                const oldFilePath = join(process.cwd(), "public", oldArtePath);
-                if (existsSync(oldFilePath)) {
-                    await unlink(oldFilePath);
+            // Delete old image from Blob if exists
+            if (existingAnuncio[0].arte) {
+                try {
+                    await del(existingAnuncio[0].arte);
+                } catch (error) {
+                    console.error("Error deleting old image from blob:", error);
                 }
             }
 
-            // Upload new image
-            const arteBytes = await arte.arrayBuffer();
-            const buffer = Buffer.from(arteBytes);
-
-            // Create anuncios folder if it doesn't exist
-            const uploadDir = join(process.cwd(), "public", "/images/anuncios");
-            await ensureDir(uploadDir);
-
-            // Generate unique filename based on title and timestamp
+            // Upload new image to Vercel Blob
+            const timestamp = Date.now();
             const extension = arte.name.split(".").pop();
-            const timestamp = new Date().getTime();
-            const filename = `${titulo.toLowerCase().replace(/\s+/g, "-")}-${timestamp}.${extension}`;
+            const filename = `anuncios/${titulo.toLowerCase().replace(/\s+/g, "-")}-${timestamp}.${extension}`;
 
-            // Save file
-            await writeFile(join(uploadDir, filename), buffer);
+            const blob = await put(filename, arte, {
+                access: 'public',
+            });
 
-            // Update image path for database
-            artePath = `/images/anuncios/${filename}`;
+            arteUrl = blob.url;
         }
 
         // Update the anúncio
@@ -149,7 +134,7 @@ export async function PUT(
           SET 
             titulo = ${titulo},
             texto = ${texto},
-            arte = ${artePath},
+            arte = ${arteUrl},
             data_evento = ${dataEvento},
             destaque = ${destaque},
             ativo = ${ativo}
@@ -226,16 +211,14 @@ export async function PUT(
 // DELETE: Remove an announcement
 export async function DELETE(
     request: NextRequest,
-    { params }: RouteParams  // ✅ Mudança aqui - usando RouteParams
+    { params }: RouteParams
 ) {
     try {
-        // ✅ Await params para Next.js 15+
         const { id } = await params;
 
-        // Connect to database
         const sql = neon(process.env.DATABASE_URL as string);
 
-        // Check if anúncio exists and get image path
+        // Check if anúncio exists and get image URL
         const existingAnuncio = await sql`
           SELECT arte FROM anuncios WHERE id = ${id}
         `;
@@ -250,12 +233,12 @@ export async function DELETE(
             );
         }
 
-        // Delete the image file if it exists
-        const artePath = existingAnuncio[0].arte;
-        if (artePath) {
-            const filePath = join(process.cwd(), "public", artePath);
-            if (existsSync(filePath)) {
-                await unlink(filePath);
+        // Delete the image from Vercel Blob if it exists
+        if (existingAnuncio[0].arte) {
+            try {
+                await del(existingAnuncio[0].arte);
+            } catch (error) {
+                console.error("Error deleting image from blob:", error);
             }
         }
 
@@ -281,17 +264,5 @@ export async function DELETE(
             },
             { status: 500 }
         );
-    }
-}
-
-// Helper function to ensure directory exists
-async function ensureDir(dirPath: string) {
-    try {
-        const { mkdir } = require("fs/promises");
-        await mkdir(dirPath, { recursive: true });
-    } catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
-            throw error;
-        }
     }
 }

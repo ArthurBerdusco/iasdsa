@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from '@neondatabase/serverless';
-import { writeFile } from "fs/promises";
-import { join } from "path";
+import { put } from '@vercel/blob';
 
 export async function GET() {
   try {
-    // Connect to the database using neon
     const sql = neon(process.env.DATABASE_URL as string);
     
     // Query all anúncios with their links using JOIN
@@ -49,7 +47,6 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse form data from request
     const formData = await request.formData();
     
     // Extract anúncio data
@@ -61,34 +58,23 @@ export async function POST(request: NextRequest) {
     const linksString = formData.get("links") as string;
     const links = linksString ? JSON.parse(linksString) : [];
     
-    // Get file upload data
     const arte = formData.get("arte") as File;
     
-    // Initialize image path
-    let artePath = null;
+    let arteUrl = null;
     
-    // Handle image upload if provided
+    // Upload to Vercel Blob if provided
     if (arte) {
-      const arteBytes = await arte.arrayBuffer();
-      const buffer = Buffer.from(arteBytes);
-      
-      // Create anuncios folder if it doesn't exist
-      const uploadDir = join(process.cwd(), "public", "/images/anuncios");
-      await ensureDir(uploadDir);
-      
-      // Generate unique filename based on title and timestamp
+      const timestamp = Date.now();
       const extension = arte.name.split(".").pop();
-      const timestamp = new Date().getTime();
-      const filename = `${titulo.toLowerCase().replace(/\s+/g, "-")}-${timestamp}.${extension}`;
+      const filename = `anuncios/${titulo.toLowerCase().replace(/\s+/g, "-")}-${timestamp}.${extension}`;
       
-      // Save file
-      await writeFile(join(uploadDir, filename), buffer);
+      const blob = await put(filename, arte, {
+        access: 'public',
+      });
       
-      // Update image path for database
-      artePath = `/images/anuncios/${filename}`;
+      arteUrl = blob.url;
     }
     
-    // Connect to database using neon
     const sql = neon(process.env.DATABASE_URL as string);
     
     // 1. Inserir o anúncio primeiro
@@ -104,7 +90,7 @@ export async function POST(request: NextRequest) {
       ) VALUES (
         ${titulo}, 
         ${texto}, 
-        ${artePath}, 
+        ${arteUrl}, 
         ${dataEvento}, 
         ${new Date().toISOString()}, 
         ${destaque},
@@ -126,9 +112,8 @@ export async function POST(request: NextRequest) {
     
     // 2. Inserir os links relacionados, se houver
     if (links && links.length > 0) {
-      
       for (const link of links) {
-        console.log(link.tipo_link)
+        console.log(link.tipo_link);
         await sql`
           INSERT INTO anuncio_links (
             anuncio_id, 
@@ -181,17 +166,5 @@ export async function POST(request: NextRequest) {
       { error: "Falha ao criar anúncio" },
       { status: 500 }
     );
-  }
-}
-
-// Helper function to ensure directory exists
-async function ensureDir(dirPath: string) {
-  try {
-    const { mkdir } = require("fs/promises");
-    await mkdir(dirPath, { recursive: true });
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
-      throw error;
-    }
   }
 }

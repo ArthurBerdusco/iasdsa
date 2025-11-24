@@ -1,17 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from '@neondatabase/serverless';
-import { unlink, writeFile } from "fs/promises";
-import { join } from "path";
+import { put, del } from '@vercel/blob';
 import { v4 as uuidv4 } from "uuid";
-import { existsSync } from "fs";
 import { RouteParams } from "@/types/routeParams";
 
 export async function GET(
     request: NextRequest,
-    { params }: RouteParams  // ✅ Corrigido - uso consistente de destructuring
+    { params }: RouteParams
 ) {
     try {
-        // ✅ Await params para Next.js 15+
         const { id } = await params;
 
         const sql = neon(process.env.DATABASE_URL as string);
@@ -40,10 +37,9 @@ export async function GET(
 
 export async function PUT(
     request: NextRequest,
-    { params }: RouteParams  // ✅ Corrigido - usando RouteParams
+    { params }: RouteParams
 ) {
     try {
-        // ✅ Await params para Next.js 15+
         const { id } = await params;
         
         const formData = await request.formData();
@@ -55,7 +51,7 @@ export async function PUT(
         const hora = formData.get("hora") as string;
         const cordestaque = formData.get("cordestaque") as string;
         const oradorId = parseInt(formData.get("oradorId") as string);
-        const arte = formData.get("arte") as File;
+        const arte = formData.get("arte") as File | null;
 
         // Validação básica
         if (!titulo || !diasemana || !data || !hora) {
@@ -83,37 +79,34 @@ export async function PUT(
             }, { status: 404 });
         }
 
-        let imagemPath = existingCulto[0].arte; // Preserva a imagem atual por padrão
+        let imagemUrl = existingCulto[0].arte; // Preserva a imagem atual por padrão
 
         // Upload nova imagem, se houver
         if (arte && arte.size > 0) {
-            // Deletar imagem antiga
-            if (imagemPath && !imagemPath.includes("default")) {
-                const oldImagePath = join(process.cwd(), "public", imagemPath);
-                if (existsSync(oldImagePath)) {
-                    await unlink(oldImagePath);
+            // Deletar imagem antiga do Blob se não for default
+            if (imagemUrl && !imagemUrl.includes("default")) {
+                try {
+                    await del(imagemUrl);
+                } catch (error) {
+                    console.error("Error deleting old image from blob:", error);
                 }
             }
 
-            // Salvar nova imagem
-            const arteBytes = await arte.arrayBuffer();
-            const buffer = Buffer.from(arteBytes);
-
+            // Upload nova imagem para Vercel Blob
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth() + 1;
             const monthName = getMonthName(month);
             const weekRange = getWeekRange(today.getDate());
 
-            const folderPath = `/images/${year}/${month}_${monthName}/Semana_${weekRange}`;
-            const uploadDir = join(process.cwd(), "public", folderPath);
-            await ensureDir(uploadDir);
-
             const extension = arte.name.split(".").pop();
-            const filename = `culto-${diasemana.toLowerCase()}-${uuidv4().slice(0, 6)}.${extension}`;
-            await writeFile(join(uploadDir, filename), buffer);
+            const filename = `cultos/${year}/${month}_${monthName}/Semana_${weekRange}/culto-${diasemana.toLowerCase()}-${uuidv4().slice(0, 6)}.${extension}`;
 
-            imagemPath = `${folderPath}/${filename}`;
+            const blob = await put(filename, arte, {
+                access: 'public',
+            });
+
+            imagemUrl = blob.url;
         }
 
         // Atualizar culto
@@ -124,7 +117,7 @@ export async function PUT(
                 data = ${data},
                 hora = ${hora},
                 orador_id = ${oradorId},
-                arte = ${imagemPath},
+                arte = ${imagemUrl},
                 cordestaque = ${cordestaque}
             WHERE id = ${id}
             RETURNING *
@@ -146,13 +139,11 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: RouteParams  // ✅ Corrigido - usando RouteParams
+    { params }: RouteParams
 ) {
     try {
-        // ✅ Await params para Next.js 15+
         const { id } = await params;
 
-        // Connect to database using neon
         const sql = neon(process.env.DATABASE_URL as string);
 
         // Get current culto data to access image paths
@@ -170,39 +161,25 @@ export async function DELETE(
 
         const currentCulto = currentCultos[0];
 
-        // Try to delete the banner image file if it's not a default
-        if (
-            currentCulto.arte &&  // ✅ Corrigido - usando 'arte' em vez de 'imagem'
-            !currentCulto.arte.includes("default")
-        ) {
+        // Deletar imagem do Blob se não for default
+        if (currentCulto.arte && !currentCulto.arte.includes("default")) {
             try {
-                const imagePath = join(process.cwd(), "public", currentCulto.arte);
-                if (existsSync(imagePath)) {
-                    await unlink(imagePath);
-                }
+                await del(currentCulto.arte);
             } catch (error) {
-                // Just log the error, don't fail the delete
-                console.error("Could not delete banner image:", error);
+                console.error("Could not delete banner image from blob:", error);
             }
         }
 
-        // Try to delete the orador image file if it's not a default
-        if (
-            currentCulto.oradorImagem &&
-            !currentCulto.oradorImagem.includes("sem-imagem")
-        ) {
+        // Deletar imagem do orador do Blob se não for default
+        if (currentCulto.oradorImagem && !currentCulto.oradorImagem.includes("sem-imagem")) {
             try {
-                const imagePath = join(process.cwd(), "public", currentCulto.oradorImagem);
-                if (existsSync(imagePath)) {
-                    await unlink(imagePath);
-                }
+                await del(currentCulto.oradorImagem);
             } catch (error) {
-                // Just log the error, don't fail the delete
-                console.error("Could not delete orador image:", error);
+                console.error("Could not delete orador image from blob:", error);
             }
         }
 
-        // Delete culto from database using neon
+        // Delete culto from database
         await sql`DELETE FROM cultos WHERE id = ${id}`;
 
         return NextResponse.json({ 
@@ -218,18 +195,6 @@ export async function DELETE(
             },
             { status: 500 }
         );
-    }
-}
-
-// Helper function to ensure directory exists
-async function ensureDir(dirPath: string) {
-    try {
-        const { mkdir } = require("fs/promises");
-        await mkdir(dirPath, { recursive: true });
-    } catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
-            throw error;
-        }
     }
 }
 
