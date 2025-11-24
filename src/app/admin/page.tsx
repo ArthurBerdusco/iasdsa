@@ -65,6 +65,7 @@ const AdminComponentConfig: React.FC = () => {
       anuncios: 'Anúncios',
       pedido_oracao: 'Pedido de Oração',
       fotos_semana: 'Fotos da Semana',
+      fotos_blob: 'Blob',
       dizimo: 'Dízimo e Ofertas',
       redes_sociais: 'Redes Sociais'
     };

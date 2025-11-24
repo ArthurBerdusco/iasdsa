@@ -18,6 +18,7 @@ export type ComponenteChave =
   | 'anuncios'
   | 'pedido_oracao'
   | 'fotos_semana'
+  | 'fotos_blob'
   | 'dizimo'
   | 'redes_sociais';
 

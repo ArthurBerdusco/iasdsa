@@ -5,6 +5,7 @@ import ProgramacaoCultos from "./components/ProgramacaoSection";
 import AnunciosSection from "./components/AnunciosSection";
 import PedidoOracao from "./components/PedidoOracao";
 import DizimoSection from "./components/DizimoSection";
+import FotosBlob from "./components/FotosBlob";
 import Footer from "./components/Footer";
 import NavBar from "./components/NavBar";
 import FotosDaSemana from "./components/FotosDaSemana";
@@ -12,6 +13,7 @@ import RedesSociais from "./components/CultosSemana";
 import MensagemPastoral from "./components/MensagemPastoral";
 import { Element } from "react-scroll";
 import { ComponenteConfig, UseComponentConfigReturn, ApiResponse } from "@/types/components";
+
 
 // Hook personalizado para carregar configurações
 const useComponentConfig = (): UseComponentConfigReturn => {
@@ -21,6 +23,7 @@ const useComponentConfig = (): UseComponentConfigReturn => {
     programacao_cultos: true,
     anuncios: true,
     pedido_oracao: true,
+    fotos_blob: false,
     fotos_semana: false,
     dizimo: true,
     redes_sociais: true,
@@ -33,17 +36,17 @@ const useComponentConfig = (): UseComponentConfigReturn => {
       try {
         setLoading(true);
         const response = await fetch('/api/componentes-config');
-        
+
         if (!response.ok) {
           throw new Error(`Erro HTTP: ${response.status}`);
         }
-        
+
         const data: ApiResponse<ComponenteConfig> = await response.json();
-        
+
         if (data.error) {
           throw new Error(data.error);
         }
-        
+
         if (data.config) {
           setConfig(data.config);
         }
@@ -88,7 +91,7 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-blue-950">
       <NavBar />
-      
+
       {config.cultos && (
         <Element name="cultos">
           <Cultos />
@@ -122,6 +125,12 @@ const Home: React.FC = () => {
       {config.fotos_semana && (
         <Element name="fotos">
           <FotosDaSemana />
+        </Element>
+      )}
+
+      {config.fotos_blob && (
+        <Element name="blob">
+          <FotosBlob />
         </Element>
       )}
 

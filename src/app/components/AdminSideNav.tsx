@@ -86,6 +86,12 @@ export function SideNav({
       href: '/admin/fotos',
       description: 'Fotos dos eventos'
     },
+        { 
+      name: 'Blob', 
+      icon: <Image className="w-5 h-5" />, 
+      href: '/admin/blob',
+      description: 'Blobs'
+    },
     { 
       name: 'Mensagem Pastoral', 
       icon: <MessageSquare className="w-5 h-5" />, 
