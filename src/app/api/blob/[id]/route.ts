@@ -4,12 +4,12 @@ import { put, del } from '@vercel/blob';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const formData = await request.formData();
     
-    const id = params.id;
+    const { id } = await params; // Await params aqui
     const titulo = formData.get("titulo") as string;
     const descricao = formData.get("descricao") as string;
     const data = formData.get("data") as string;
@@ -93,10 +93,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params; // Await params aqui
     const sql = neon(process.env.DATABASE_URL as string);
     
     // Get photo URL before deleting
