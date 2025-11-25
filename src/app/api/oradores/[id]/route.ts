@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { neon } from '@neondatabase/serverless';
-import { writeFile } from "fs/promises";
-import { join } from "path";
+import { put, del } from '@vercel/blob';
 import { v4 as uuidv4 } from "uuid";
-import * as fs from "fs/promises";
 import { RouteParams } from "@/types/routeParams";
-
 
 export async function GET(
     request: NextRequest,
     { params }: RouteParams
-
 ) {
     const { id } = await params;
 
@@ -33,7 +29,6 @@ export async function GET(
 export async function PUT(
     request: NextRequest,
     { params }: RouteParams
-
 ) {
     try {
         const { id } = await params;
@@ -54,42 +49,38 @@ export async function PUT(
         const currentOrador = currentOradores[0];
 
         // Handle photo upload if provided
-        let fotoPath = currentOrador.foto; // Keep existing photo by default
+        let fotoUrl = currentOrador.foto; // Keep existing photo by default
         const foto = formData.get("foto") as File | null;
 
-        if (foto) {
-            const fotoBytes = await foto.arrayBuffer();
-            const buffer = Buffer.from(fotoBytes);
-
-            const uploadDir = join(process.cwd(), "public", "images", "oradores");
-            await ensureDir(uploadDir);
-
-            const extension = foto.name.split(".").pop();
-            const filename = `${nome.toLowerCase().replace(/\s+/g, "-")}-${uuidv4().slice(0, 6)}.${extension}`;
-            const filePath = join(uploadDir, filename);
-            await writeFile(filePath, buffer);
-
-            // Try to delete old image if it exists
+        if (foto && foto.size > 0) {
+            // Try to delete old image from Blob if it exists and is not default
             if (currentOrador.foto && !currentOrador.foto.includes("sem-imagem")) {
                 try {
-                    const oldPath = join(process.cwd(), "public", currentOrador.foto);
-                    await fs.unlink(oldPath);
+                    await del(currentOrador.foto);
                 } catch (err) {
-                    console.error("Erro ao deletar imagem antiga do orador:", err);
+                    console.error("Erro ao deletar imagem antiga do orador do blob:", err);
                 }
             }
 
-            fotoPath = `/images/oradores/${filename}`;
+            // Upload new image to Vercel Blob
+            const extension = foto.name.split(".").pop();
+            const filename = `oradores/${nome.toLowerCase().replace(/\s+/g, "-")}-${uuidv4().slice(0, 6)}.${extension}`;
+
+            const blob = await put(filename, foto, {
+                access: 'public',
+            });
+
+            fotoUrl = blob.url;
         }
 
         // Update in database
         const updatedOrador = await sql`
-      UPDATE oradores
-      SET nome = ${nome},
-          foto = ${fotoPath}
-      WHERE id = ${id}
-      RETURNING *
-    `;
+            UPDATE oradores
+            SET nome = ${nome},
+                foto = ${fotoUrl}
+            WHERE id = ${id}
+            RETURNING *
+        `;
 
         return NextResponse.json(updatedOrador[0]);
     } catch (error) {
@@ -103,12 +94,11 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: RouteParams 
+    { params }: RouteParams
 ) {
     const { id } = await params;
 
     try {
-        // Connect to database using neon
         const sql = neon(process.env.DATABASE_URL as string);
 
         // Get current orador data to access image paths
@@ -123,22 +113,16 @@ export async function DELETE(
 
         const currentOrador = currentOradores[0];
 
-
-        // Try to delete the orador image file if it's not a default
-        if (
-            currentOrador.foto &&
-            !currentOrador.foto.includes("sem-imagem")
-        ) {
+        // Try to delete the orador image from Blob if it's not a default
+        if (currentOrador.foto && !currentOrador.foto.includes("sem-imagem")) {
             try {
-                const imagePath = join(process.cwd(), "public", currentOrador.foto);
-                await fs.unlink(imagePath);
+                await del(currentOrador.foto);
             } catch (error) {
-                // Just log the error, don't fail the delete
-                console.error("Could not delete orador image:", error);
+                console.error("Could not delete orador image from blob:", error);
             }
         }
 
-        // Delete orador from database using neon
+        // Delete orador from database
         await sql`DELETE FROM oradores WHERE id = ${id}`;
 
         return NextResponse.json({ success: true });
@@ -148,17 +132,5 @@ export async function DELETE(
             { error: "Falha ao excluir orador" },
             { status: 500 }
         );
-    }
-}
-
-// Helper function to ensure directory exists
-async function ensureDir(dirPath: string) {
-    try {
-        const { mkdir } = require("fs/promises");
-        await mkdir(dirPath, { recursive: true });
-    } catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
-            throw error;
-        }
     }
 }
