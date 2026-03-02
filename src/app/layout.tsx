@@ -1,44 +1,35 @@
 import type { Metadata } from "next";
-import { Roboto, Montserrat, Nunito } from "next/font/google";
+import { getTheme, generateCSSVariables, generateGoogleFontsURL } from "@/lib/theme-repository";
 import "./globals.css";
-
-// Primary font - Roboto for body text and general content
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  display: "swap",
-});
-
-// Secondary font - Montserrat for headings and important elements
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
-
-// Tertiary font - Nunito for softer, warmer elements
-const nunito = Nunito({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Igreja Adventista Santo Amaro - Boletim Informativo",
   description: "Boletim informativo da Igreja Adventista do Sétimo Dia de Santo Amaro",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Busca o tema no Neon — server-side, sem custo extra de rede
+  const theme = await getTheme();
+  const cssVars = generateCSSVariables(theme);
+  const fontsURL = generateGoogleFontsURL(theme);
+
   return (
     <html lang="pt-BR">
-      <body className={`${roboto.className} antialiased`}>
-        <div className="font-layout">
-          {children}
-        </div>
+      <head>
+        {/* Fontes dinâmicas do Google — trocam junto com o tema */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href={fontsURL} />
+
+        {/* CSS variables injetadas via SSR — refletem o tema salvo no banco */}
+        <style dangerouslySetInnerHTML={{ __html: cssVars }} />
+      </head>
+      <body className="antialiased">
+        {children}
       </body>
     </html>
   );
