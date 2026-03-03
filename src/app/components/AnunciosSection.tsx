@@ -65,18 +65,18 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ title }) => (
 // Componente principal do card de anúncio adaptado para diferentes layouts
 const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio, isDestaque = false, variant = 'mobile' }) => {
   const [isHovered, setIsHovered] = useState(false);
-  
+
   // Pegar o link principal (prioridade: forms > whatsapp > website > outros)
   const getLinkPrincipal = () => {
     if (!anuncio.links || anuncio.links.length === 0) return '#';
-    
+
     const prioridade = [TipoLink.FORMS, TipoLink.WHATSAPP, TipoLink.WEBSITE, TipoLink.INSTAGRAM, TipoLink.FACEBOOK];
-    
+
     for (const tipo of prioridade) {
       const link = anuncio.links.find(l => l.tipo_link === tipo);
       if (link) return link.url;
     }
-    
+
     return anuncio.links[0].url;
   };
 
@@ -114,12 +114,12 @@ const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio, isDestaque = false, 
               src={anuncio.arte}
               alt={anuncio.titulo}
               className="w-full h-full object-cover transition-transform duration-500"
-              style={{ 
+              style={{
                 transform: isHovered ? 'scale(1.05)' : 'scale(1)',
                 filter: isHovered ? 'brightness(1.1)' : 'brightness(1)'
               }}
             />
-            
+
             {/* Overlay gradiente para legibilidade */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
@@ -163,12 +163,12 @@ const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio, isDestaque = false, 
               src={anuncio.arte}
               alt={anuncio.titulo}
               className="w-full h-full object-cover transition-all duration-300"
-              style={{ 
+              style={{
                 transform: isHovered ? 'scale(1.02)' : 'scale(1)',
                 filter: isHovered ? 'brightness(1.05)' : 'brightness(1)'
               }}
             />
-            
+
             {/* Overlay sutil */}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
 
@@ -212,14 +212,14 @@ const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio, isDestaque = false, 
               src={anuncio.arte}
               alt={anuncio.titulo}
               className="w-full h-full object-contain bg-gradient-to-br from-blue-50 to-blue-100 transition-transform duration-700"
-              style={{ 
+              style={{
                 transform: isHovered ? 'scale(1.02)' : 'scale(1)',
                 filter: isHovered ? 'brightness(1.05)' : 'brightness(1)'
               }}
             />
-            
+
             {/* Overlay sutil para interação */}
-            <div 
+            <div
               className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-300"
             />
 
@@ -232,12 +232,12 @@ const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio, isDestaque = false, 
           </div>
 
           {/* Efeito de borda animada no hover */}
-          <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-               style={{
-                 background: 'linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.1) 50%, transparent 70%)',
-                 backgroundSize: '200% 200%',
-                 animation: isHovered ? 'shimmer 2s ease-in-out infinite' : 'none'
-               }}>
+          <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            style={{
+              background: 'linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.1) 50%, transparent 70%)',
+              backgroundSize: '200% 200%',
+              animation: isHovered ? 'shimmer 2s ease-in-out infinite' : 'none'
+            }}>
           </div>
         </div>
       </Link>
@@ -273,12 +273,12 @@ const AnuncioCard: React.FC<AnuncioCardProps> = ({ anuncio, isDestaque = false, 
             src={anuncio.arte}
             alt={anuncio.titulo}
             className="w-full h-full object-contain bg-gradient-to-br from-gray-50 to-gray-100 transition-all duration-500"
-            style={{ 
+            style={{
               transform: isHovered ? 'scale(1.03)' : 'scale(1)',
               filter: isHovered ? 'brightness(1.05)' : 'brightness(1)'
             }}
           />
-          
+
           {/* Overlay para interação */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-300 rounded-xl" />
 
@@ -435,7 +435,7 @@ const Anuncios: React.FC = () => {
   }
 
   return (
-    <div className="bg-gradient-to-b from-blue-950 to-blue-900 text-white min-h-screen">
+    <div className="text-white min-h-screen">
       {/* CSS para animação shimmer */}
       <style jsx>{`
         @keyframes shimmer {
@@ -443,7 +443,7 @@ const Anuncios: React.FC = () => {
           100% { background-position: -200% 0; }
         }
       `}</style>
-      
+
       <div className="max-w-7xl mx-auto py-12 px-4">
         {/* Header */}
         <SectionHeader title="QUADRO DE ANÚNCIOS" />
@@ -466,7 +466,7 @@ const Anuncios: React.FC = () => {
         {/* Layout responsivo: Mobile vs Desktop */}
         <div className="lg:hidden">
           {/* Layout Mobile (mantido como estava) */}
-          
+
           {/* Anúncios em Destaque */}
           {anunciosDestaque.length > 0 && (
             <div className="mb-16">
@@ -487,9 +487,9 @@ const Anuncios: React.FC = () => {
             {gruposMensais.length > 0 ? (
               gruposMensais.map((grupo) => (
                 <div key={`${grupo.mes}-${grupo.ano}`}>
-                  <MonthDivider 
-                    month={grupo.mes.charAt(0).toUpperCase() + grupo.mes.slice(1)} 
-                    year={grupo.ano} 
+                  <MonthDivider
+                    month={grupo.mes.charAt(0).toUpperCase() + grupo.mes.slice(1)}
+                    year={grupo.ano}
                   />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
                     {grupo.anuncios.map((anuncio) => (
@@ -511,7 +511,7 @@ const Anuncios: React.FC = () => {
         <div className="hidden lg:block">
           {/* Layout Desktop - 3 Colunas */}
           <div className="grid grid-cols-12 gap-8">
-            
+
             {/* Coluna 1: Anúncios em Destaque */}
             <div className="col-span-4">
               <div className="sticky top-6">
@@ -545,14 +545,14 @@ const Anuncios: React.FC = () => {
                 <Calendar className="h-5 w-5 mr-2 text-blue-400" />
                 Calendário de Anúncios
               </h3>
-              
+
               <div>
                 {gruposPaginados.length > 0 ? (
                   gruposPaginados.map((grupo) => (
                     <div key={`${grupo.mes}-${grupo.ano}`} className="mb-25">
-                      <MonthDivider 
-                        month={grupo.mes.charAt(0).toUpperCase() + grupo.mes.slice(1)} 
-                        year={grupo.ano} 
+                      <MonthDivider
+                        month={grupo.mes.charAt(0).toUpperCase() + grupo.mes.slice(1)}
+                        year={grupo.ano}
                       />
                       <div className="grid grid-cols-2 gap-4">
                         {grupo.anuncios.map((anuncio) => (
