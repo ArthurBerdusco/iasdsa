@@ -8,53 +8,59 @@ import Image from 'next/image';
 import { CalendarDays, Clock, ChevronLeft, ChevronRight, User } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay, EffectFade, EffectCoverflow } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import SectionHeader from './SectionHeader';
 import { Culto } from '@/types/cultos';
 import { formatDateForDisplay } from '@/utils/formatoData';
+import { generateGoogleFontsURL } from '@/lib/theme-repository';
 
-// Theme colors for different emphasis colors
-const themeColors = {
-  primary: {
-    text: 'text-blue-400',
-    bgLight: 'bg-blue-900/50',
-    border: 'border-blue-400',
-    gradient: 'from-blue-500/20 to-blue-600/30'
-  },
-  secondary: {
-    text: 'text-purple-400',
-    bgLight: 'bg-purple-900/50',
-    border: 'border-purple-400',
-    gradient: 'from-purple-500/20 to-purple-600/30'
-  },
-  success: {
-    text: 'text-green-400',
-    bgLight: 'bg-green-900/50',
-    border: 'border-green-400',
-    gradient: 'from-green-500/20 to-green-600/30'
-  },
-  warning: {
-    text: 'text-yellow-400',
-    bgLight: 'bg-yellow-900/50',
-    border: 'border-yellow-400',
-    gradient: 'from-yellow-500/20 to-yellow-600/30'
-  },
-  danger: {
-    text: 'text-red-400',
-    bgLight: 'bg-red-900/50',
-    border: 'border-red-400',
-    gradient: 'from-red-500/20 to-red-600/30'
-  },
-  info: {
-    text: 'text-cyan-400',
-    bgLight: 'bg-cyan-900/50',
-    border: 'border-cyan-400',
-    gradient: 'from-cyan-500/20 to-cyan-600/30'
-  }
-};
+
+import { useTheme } from "@/context/ThemeContext";
+
 
 export default function CultosSwiper() {
+
+  const theme = useTheme();                          // ← adicione esta linha
+  const { colors, typography, layout, effects } = theme;  // ← e esta
+
+  // ── Derivações do tema (mesmo padrão do ThemePreview) ──────────────────────
+
+  const heroGradient =
+    effects.heroStyle === 'gradient'
+      ? `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`
+      : effects.heroStyle === 'image-overlay'
+        ? `linear-gradient(135deg, ${colors.primary}dd 0%, ${colors.secondary}99 100%)`
+        : colors.primary;
+
+  const btnRadius =
+    effects.buttonStyle === 'pill'
+      ? 50
+      : effects.buttonStyle === 'rounded'
+        ? layout.borderRadius
+        : 2;
+
+  const cardShadow =
+    effects.cardShadow === 'soft'
+      ? '0 4px 24px rgba(0,0,0,0.08)'
+      : effects.cardShadow === 'hard'
+        ? '4px 4px 0 rgba(0,0,0,0.2)'
+        : 'none';
+
+  const headerBg =
+    layout.headerStyle === 'transparent'
+      ? 'transparent'
+      : layout.headerStyle === 'white'
+        ? '#fff'
+        : colors.primary;
+
+  const headerColor =
+    layout.headerStyle === 'white' ? colors.text : colors.textInverse;
+
+  const fontsURL = generateGoogleFontsURL(theme);
+
+  // ── Estado ─────────────────────────────────────────────────────────────────
+
   const [currentDate, setCurrentDate] = useState<string>('');
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [cultos, setCultos] = useState<Culto[]>([]);
@@ -64,29 +70,19 @@ export default function CultosSwiper() {
   const navigationNextRef = useRef<HTMLButtonElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
-  // Check if mobile
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
-
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Fetch cultos data
   useEffect(() => {
     const fetchCultos = async () => {
       try {
         const response = await fetch('/api/cultos');
-        if (!response.ok) {
-          throw new Error('Failed to fetch cultos');
-        }
+        if (!response.ok) throw new Error('Failed to fetch cultos');
         const data = await response.json();
-
-        // Transform the API data to match our component requirements
         const formattedCultos = data.map((culto: any) => ({
           id: culto.id,
           titulo: culto.titulo,
@@ -95,13 +91,8 @@ export default function CultosSwiper() {
           hora: culto.hora,
           arte: culto.arte,
           corDestaque: culto.cordestaque,
-          orador: {
-            id: culto.orador.id,
-            nome: culto.orador.nome,
-            foto: culto.orador.foto
-          }
+          orador: { id: culto.orador.id, nome: culto.orador.nome, foto: culto.orador.foto },
         }));
-
         setCultos(formattedCultos);
       } catch (error) {
         console.error('Error fetching cultos:', error);
@@ -109,95 +100,150 @@ export default function CultosSwiper() {
         setIsLoading(false);
       }
     };
-
     fetchCultos();
   }, []);
 
-  // Set the current date on component mount
   useEffect(() => {
     const today = new Date();
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-    setCurrentDate(today.toLocaleDateString("pt-BR", options));
+    setCurrentDate(
+      today.toLocaleDateString('pt-BR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    );
   }, []);
 
-  // If loading, show a loading state
+  // ── Estados de loading / vazio ─────────────────────────────────────────────
+
+  const shellStyle: React.CSSProperties = {
+    position: 'relative',
+    maxWidth: 1152,
+    margin: '0 auto',
+    padding: '24px 16px',
+    background: colors.background,
+    fontFamily: typography.fontBody,
+    color: colors.text,
+  };
+
+  const sectionTitleStyle: React.CSSProperties = {
+    fontFamily: typography.fontHeading,
+    fontSize: typography.sizeH1 * 0.6,
+    fontWeight: Number(typography.headingWeight),
+    color: colors.textInverse,
+  };
+
+  const dateStyle: React.CSSProperties = {
+    fontSize: 14,
+    color: colors.textInverse,
+    opacity: 0.8,
+  };
+
+  const dividerStyle: React.CSSProperties = {
+    borderBottom: `1px solid ${colors.primary}4d`, // ~30% opacity
+    marginBottom: 32,
+    paddingBottom: 16,
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
+  };
+
   if (isLoading) {
     return (
-      <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 border-b border-blue-500/30 pb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-white">
-            BOLETIM INFORMATIVO
-          </h1>
-          <p className="text-sm md:text-base text-white/80 mt-2 sm:mt-0">{currentDate}</p>
+      <section style={shellStyle}>
+        <link rel="stylesheet" href={fontsURL} />
+        <div style={dividerStyle}>
+          <span style={sectionTitleStyle}>BOLETIM INFORMATIVO</span>
+          <span style={dateStyle}>{currentDate}</span>
         </div>
-        <SectionHeader title='PRÓXIMOS CULTOS' />
-        <div className="h-[60vh] flex items-center justify-center">
-          <div className="animate-pulse text-white">Carregando cultos...</div>
+        <SectionHeader title="PRÓXIMOS CULTOS" />
+        <div style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ color: colors.textMuted }}>Carregando cultos...</span>
         </div>
       </section>
     );
   }
 
-  // If no cultos data, show a message
   if (cultos.length === 0) {
     return (
-      <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 border-b border-blue-500/30 pb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-white">
-            BOLETIM INFORMATIVO
-          </h1>
-          <p className="text-sm md:text-base text-white/80 mt-2 sm:mt-0">{currentDate}</p>
+      <section style={shellStyle}>
+        <link rel="stylesheet" href={fontsURL} />
+        <div style={dividerStyle}>
+          <span style={sectionTitleStyle}>BOLETIM INFORMATIVO</span>
+          <span style={dateStyle}>{currentDate}</span>
         </div>
-        <SectionHeader title='PRÓXIMOS CULTOS' />
-        <div className="h-[40vh] flex items-center justify-center">
-          <p className="text-white/70 text-center">Nenhum culto programado no momento.</p>
+        <SectionHeader title="PRÓXIMOS CULTOS" />
+        <div style={{ height: '40vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <p style={{ color: colors.textMuted, textAlign: 'center' }}>Nenhum culto programado no momento.</p>
         </div>
       </section>
     );
   }
 
+  // ── Render principal ───────────────────────────────────────────────────────
+
   return (
-    <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
-      {/* Subtle background element */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-gradient-to-br from-blue-500/5 to-purple-500/5 blur-3xl"></div>
+    <section style={shellStyle}>
+      {/* Carrega as fontes do Google – mesmo padrão do ThemePreview */}
+      <link rel="stylesheet" href={fontsURL} />
+
+      {/* Fundo decorativo */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: 80,
+            right: 80,
+            width: 384,
+            height: 384,
+            borderRadius: '50%',
+            background: `radial-gradient(circle, ${colors.primary}0d 0%, ${colors.secondary}0d 100%)`,
+            filter: 'blur(64px)',
+          }}
+        />
       </div>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-8 border-b border-blue-500/30 pb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-white">
+      {/* ── Cabeçalho da seção ─────────────────────────────────────────── */}
+      <div style={dividerStyle}>
+        <h1
+          style={{
+            fontFamily: typography.fontHeading,
+            fontSize: isMobile ? 22 : 28,
+            fontWeight: Number(typography.headingWeight),
+            color: colors.primary,
+            margin: 0,
+          }}
+        >
           BOLETIM INFORMATIVO
         </h1>
-        <p className="text-sm md:text-base text-white/80 mt-2 sm:mt-0">{currentDate}</p>
+        <p style={dateStyle}>{currentDate}</p>
       </div>
 
-      {/* Title with subtle underline */}
-      <SectionHeader title='PRÓXIMOS CULTOS' />
+      <SectionHeader title="PRÓXIMOS CULTOS" />
 
-      {/* Swiper Component - Layout Unificado */}
-      <div className="relative">
+      {/* ── Swiper ────────────────────────────────────────────────────── */}
+      <div style={{ position: 'relative' }}>
         <Swiper
           modules={[Navigation, Pagination, Autoplay, EffectFade]}
           spaceBetween={20}
           slidesPerView={1}
-          centeredSlides={true}
-          loop={true}
+          centeredSlides
+          loop
           effect="fade"
-          fadeEffect={{
-            crossFade: true
-          }}
+          fadeEffect={{ crossFade: true }}
           speed={800}
-          autoplay={{
-            delay: 10000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }}
-          pagination={false} // Removido as bolinhas automáticas do Swiper
+          autoplay={{ delay: 10000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+          pagination={false}
           navigation={{
             prevEl: navigationPrevRef.current,
             nextEl: navigationNextRef.current,
@@ -209,113 +255,281 @@ export default function CultosSwiper() {
               swiper.params.navigation.nextEl = navigationNextRef.current;
             }
           }}
-          onSlideChange={(swiper) => {
-            setActiveIndex(swiper.realIndex);
-          }}
-          className="cultos-swiper rounded-2xl overflow-hidden shadow-2xl mb-4"
+          onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+          style={{ borderRadius: layout.borderRadius, overflow: 'hidden', marginBottom: 16 }}
         >
-          {cultos.map((culto) => {
-            const colorClasses = themeColors[culto.cordestaque as keyof typeof themeColors] || themeColors.primary;
-
-            return (
-              <SwiperSlide key={culto.id}>
-                <div className="relative bg-gradient-to-br from-blue-900/40 to-blue-950/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10">
-                  
-                  {/* Header Section - Unificado para mobile e desktop */}
-                  <div className="relative z-20 bg-gradient-to-b from-blue-950/95 via-blue-950/80 to-transparent p-4 md:p-6 border-b border-white/10">
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
-                      <div>
-                        <span className={`text-xl md:text-2xl font-black tracking-wider ${colorClasses.text}`}>
-                          {culto.diasemana}
-                        </span>
-                        <h3 className="text-white text-base md:text-lg font-semibold opacity-90 mt-1">
-                          {culto.titulo}
-                        </h3>
-                      </div>
-
-                      {/* Date and Time - Layout flexível */}
-                      <div className="flex gap-2 md:gap-3">
-                        <div className={`flex items-center ${colorClasses.bgLight} backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2 rounded-lg border ${colorClasses.border}/30`}>
-                          <CalendarDays size={isMobile ? 14 : 16} className={`${colorClasses.text} mr-1.5 md:mr-2`} />
-                          <span className="text-white font-medium text-sm md:text-base">{formatDateForDisplay(culto.data)}</span>
-                        </div>
-                        <div className={`flex items-center ${colorClasses.bgLight} backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2 rounded-lg border ${colorClasses.border}/30`}>
-                          <Clock size={isMobile ? 14 : 16} className={`${colorClasses.text} mr-1.5 md:mr-2`} />
-                          <span className="text-white font-medium text-sm md:text-base">{culto.hora}</span>
-                        </div>
-                      </div>
+          {cultos.map((culto) => (
+            <SwiperSlide key={culto.id}>
+              {/* ── Card do culto (hero dinâmico) ──────────────────── */}
+              <div
+                style={{
+                  position: 'relative',
+                  background: `linear-gradient(135deg, ${colors.surface} 0%, ${colors.backgroundAlt} 100%)`,
+                  borderRadius: layout.borderRadius,
+                  overflow: 'hidden',
+                  border: `1px solid ${colors.primary}1a`,
+                }}
+              >
+                {/* ── Topo do card: dia + título + data/hora ──────── */}
+                <div
+                  style={{
+                    position: 'relative',
+                    zIndex: 20,
+                    background: heroGradient,
+                    padding: isMobile ? '16px' : '24px',
+                    borderBottom: `1px solid ${colors.primary}1a`,
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: isMobile ? 'column' : 'row',
+                      justifyContent: 'space-between',
+                      alignItems: isMobile ? 'flex-start' : 'center',
+                      gap: 12,
+                    }}
+                  >
+                    {/* Dia + título */}
+                    <div>
+                      <span
+                        style={{
+                          fontFamily: typography.fontAccent,
+                          fontSize: isMobile ? 20 : 24,
+                          fontWeight: 900,
+                          letterSpacing: '0.05em',
+                          color: colors.accent,
+                          display: 'block',
+                        }}
+                      >
+                        {culto.diasemana}
+                      </span>
+                      <h3
+                        style={{
+                          fontFamily: typography.fontHeading,
+                          fontSize: isMobile ? 14 : 17,
+                          fontWeight: Number(typography.headingWeight),
+                          color: colors.textInverse,
+                          opacity: 0.9,
+                          marginTop: 4,
+                        }}
+                      >
+                        {culto.titulo}
+                      </h3>
                     </div>
-                  </div>
 
-                  {/* Image Section - Altura reduzida e padronizada */}
-                  <div className="relative h-[35vh] md:h-[40vh] overflow-hidden">
-                    <Image
-                      src={culto.arte}
-                      alt={culto.titulo}
-                      fill
-                      priority
-                      className="object-contain object-center transition-transform duration-700 hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-transparent to-transparent md:bg-gradient-to-b md:from-transparent md:via-transparent md:to-blue-950/10"></div>
-                  </div>
-
-                  {/* Speaker Info Section - Layout unificado */}
-                  <div className="relative z-20 bg-gradient-to-t from-blue-950/95 to-blue-950/80 md:bg-gradient-to-r md:from-blue-900/30 md:to-blue-800/30 backdrop-blur-sm border-t border-white/10 p-4 md:p-6">
-                    <div className="flex items-center space-x-3 md:justify-center">
-                      <div className={`relative w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 md:border-3 ${colorClasses.border} shadow-lg md:shadow-xl md:ring-2 md:ring-white/20`}>
-                        <Image
-                          src={culto.orador.foto}
-                          alt={culto.orador.nome}
-                          fill
-                          className="object-cover"
-                        />
+                    {/* Data e hora */}
+                    <div style={{ display: 'flex', gap: isMobile ? 8 : 12 }}>
+                      {/* Badge data */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          background: `${colors.accent}26`,
+                          backdropFilter: 'blur(8px)',
+                          padding: isMobile ? '6px 12px' : '8px 16px',
+                          borderRadius: btnRadius,
+                          border: `1px solid ${colors.accent}4d`,
+                          gap: 6,
+                        }}
+                      >
+                        <CalendarDays size={isMobile ? 14 : 16} style={{ color: colors.accent }} />
+                        <span
+                          style={{
+                            fontFamily: typography.fontBody,
+                            fontSize: isMobile ? 12 : 14,
+                            fontWeight: 600,
+                            color: colors.textInverse,
+                          }}
+                        >
+                          {formatDateForDisplay(culto.data)}
+                        </span>
                       </div>
-                      <div className="md:ml-2">
-                        <p className={`text-xs md:text-sm ${colorClasses.text} uppercase tracking-wider font-medium md:font-semibold mb-1 md:mb-2 flex items-center md:justify-center`}>
-                          <User size={isMobile ? 14 : 16} className={`${colorClasses.text} mr-1.5 md:mr-2`} />
-                          Orador
-                        </p>
-                        <p className="text-white font-semibold md:font-bold text-base md:text-xl md:text-center">{culto.orador.nome}</p>
+
+                      {/* Badge hora */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          background: `${colors.accent}26`,
+                          backdropFilter: 'blur(8px)',
+                          padding: isMobile ? '6px 12px' : '8px 16px',
+                          borderRadius: btnRadius,
+                          border: `1px solid ${colors.accent}4d`,
+                          gap: 6,
+                        }}
+                      >
+                        <Clock size={isMobile ? 14 : 16} style={{ color: colors.accent }} />
+                        <span
+                          style={{
+                            fontFamily: typography.fontBody,
+                            fontSize: isMobile ? 12 : 14,
+                            fontWeight: 600,
+                            color: colors.textInverse,
+                          }}
+                        >
+                          {culto.hora}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </SwiperSlide>
-            );
-          })}
+
+                {/* ── Imagem de arte do culto ─────────────────────── */}
+                <div
+                  style={{
+                    position: 'relative',
+                    height: isMobile ? '35vh' : '40vh',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Image
+                    src={culto.arte}
+                    alt={culto.titulo}
+                    fill
+                    priority
+                    style={{ objectFit: 'contain', objectPosition: 'center', transition: 'transform 700ms' }}
+                  />
+                  {/* Gradiente overlay no rodapé da imagem */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      background: `linear-gradient(to top, ${colors.surface}99 0%, transparent 50%)`,
+                    }}
+                  />
+                </div>
+
+                {/* ── Orador ─────────────────────────────────────── */}
+                <div
+                  style={{
+                    position: 'relative',
+                    zIndex: 20,
+                    background: `linear-gradient(to top, ${colors.surface} 0%, ${colors.backgroundAlt}cc 100%)`,
+                    backdropFilter: 'blur(8px)',
+                    borderTop: `1px solid ${colors.primary}1a`,
+                    padding: isMobile ? '16px' : '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: isMobile ? 'flex-start' : 'center',
+                    gap: 12,
+                  }}
+                >
+                  {/* Avatar */}
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: isMobile ? 48 : 64,
+                      height: isMobile ? 48 : 64,
+                      borderRadius: '50%',
+                      overflow: 'hidden',
+                      border: `2px solid ${colors.primary}`,
+                      boxShadow: cardShadow,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Image src={culto.orador.foto} alt={culto.orador.nome} fill style={{ objectFit: 'cover' }} />
+                  </div>
+
+                  {/* Info */}
+                  <div style={{ marginLeft: isMobile ? 0 : 8 }}>
+                    <p
+                      style={{
+                        fontFamily: typography.fontBody,
+                        fontSize: isMobile ? 11 : 13,
+                        color: colors.primary,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.1em',
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        marginBottom: 4,
+                      }}
+                    >
+                      <User size={isMobile ? 13 : 15} style={{ color: colors.primary }} />
+                      Orador
+                    </p>
+                    <p
+                      style={{
+                        fontFamily: typography.fontHeading,
+                        fontSize: isMobile ? 15 : 20,
+                        fontWeight: Number(typography.headingWeight),
+                        color: colors.text,
+                      }}
+                    >
+                      {culto.orador.nome}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
         </Swiper>
 
-        {/* Navigation Buttons - Apenas para desktop */}
+        {/* ── Botões de navegação (somente desktop) ─────────────────── */}
         {!isMobile && (
-          <div className="absolute left-6 right-6 top-[40%] -translate-y-1/2 z-30 flex justify-between pointer-events-none">
-            <button
-              ref={navigationPrevRef}
-              className="w-12 h-12 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/70 transition-all duration-300 focus:outline-none pointer-events-auto shadow-lg border border-white/20"
-              aria-label="Anterior"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button
-              ref={navigationNextRef}
-              className="w-12 h-12 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/70 transition-all duration-300 focus:outline-none pointer-events-auto shadow-lg border border-white/20"
-              aria-label="Próximo"
-            >
-              <ChevronRight size={20} />
-            </button>
+          <div
+            style={{
+              position: 'absolute',
+              left: 24,
+              right: 24,
+              top: '40%',
+              transform: 'translateY(-50%)',
+              zIndex: 30,
+              display: 'flex',
+              justifyContent: 'space-between',
+              pointerEvents: 'none',
+            }}
+          >
+            {[navigationPrevRef, navigationNextRef].map((ref, i) => (
+              <button
+                key={i}
+                ref={ref}
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: '50%',
+                  background: `${colors.surface}cc`,
+                  color: colors.text,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backdropFilter: 'blur(8px)',
+                  border: `1px solid ${colors.primary}33`,
+                  boxShadow: cardShadow,
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  outline: 'none',
+                  transition: 'background 300ms',
+                }}
+                aria-label={i === 0 ? 'Anterior' : 'Próximo'}
+              >
+                {i === 0 ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+              </button>
+            ))}
           </div>
         )}
 
-        {/* Custom Navigation Dots - Apenas se houver mais de um culto */}
+        {/* ── Dots de paginação ─────────────────────────────────────── */}
         {cultos.length > 1 && (
-          <div className="flex justify-center pt-4">
-            <div className="flex space-x-2">
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 16 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
               {cultos.map((_, index) => (
                 <button
                   key={index}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index === activeIndex ? 'bg-white scale-125' : 'bg-white/50'
-                    }`}
                   onClick={() => swiperRef.current?.slideToLoop(index)}
                   aria-label={`Ir para slide ${index + 1}`}
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    background: index === activeIndex ? colors.primary : `${colors.primary}66`,
+                    transform: index === activeIndex ? 'scale(1.25)' : 'scale(1)',
+                    transition: 'all 300ms',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                  }}
                 />
               ))}
             </div>

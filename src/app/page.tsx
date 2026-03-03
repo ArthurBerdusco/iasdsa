@@ -13,7 +13,8 @@ import RedesSociais from "./components/CultosSemana";
 import MensagemPastoral from "./components/MensagemPastoral";
 import { Element } from "react-scroll";
 import { ComponenteConfig, UseComponentConfigReturn, ApiResponse } from "@/types/components";
-
+import { ThemeProvider } from "@/context/ThemeContext";
+import { useThemeEditor } from "@/hooks/useThemeEditor";
 
 // Hook personalizado para carregar configurações
 const useComponentConfig = (): UseComponentConfigReturn => {
@@ -30,6 +31,7 @@ const useComponentConfig = (): UseComponentConfigReturn => {
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
 
   useEffect(() => {
     const fetchConfig = async (): Promise<void> => {
@@ -70,13 +72,15 @@ const LoadingSpinner: React.FC = () => (
   <div className="min-h-screen bg-blue-950 flex items-center justify-center">
     <div className="text-white text-xl flex items-center space-x-3">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-      <span>Carregando...</span>
+      <span>Ola mundo...</span>
     </div>
   </div>
 );
 
 const Home: React.FC = () => {
   const { config, loading, error } = useComponentConfig();
+
+  const { theme } = useThemeEditor();
 
   // Mostra um loader enquanto carrega as configurações
   if (loading) {
@@ -89,61 +93,64 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-blue-950">
-      <NavBar />
+    <ThemeProvider theme={theme}>
 
-      {config.cultos && (
-        <Element name="cultos">
-          <Cultos />
-        </Element>
-      )}
+      <div className="min-h-screen bg-blue-950">
+        <NavBar />
 
-      {config.mensagem_pastoral && (
-        <Element name="mensagem">
-          <MensagemPastoral />
-        </Element>
-      )}
+        {config.cultos && (
+          <Element name="cultos">
+            <Cultos />
+          </Element>
+        )}
 
-      {config.programacao_cultos && (
-        <Element name="programacao">
-          <ProgramacaoCultos />
-        </Element>
-      )}
+        {config.mensagem_pastoral && (
+          <Element name="mensagem">
+            <MensagemPastoral />
+          </Element>
+        )}
 
-      {config.anuncios && (
-        <Element name="anuncios">
-          <AnunciosSection />
-        </Element>
-      )}
+        {config.programacao_cultos && (
+          <Element name="programacao">
+            <ProgramacaoCultos />
+          </Element>
+        )}
 
-      {config.pedido_oracao && (
-        <Element name="oracao">
-          <PedidoOracao />
-        </Element>
-      )}
+        {config.anuncios && (
+          <Element name="anuncios">
+            <AnunciosSection />
+          </Element>
+        )}
 
-      {config.fotos_semana && (
-        <Element name="fotos">
-          <FotosDaSemana />
-        </Element>
-      )}
+        {config.pedido_oracao && (
+          <Element name="oracao">
+            <PedidoOracao />
+          </Element>
+        )}
 
-      {config.fotos_blob && (
-        <Element name="blob">
-          <FotosBlob />
-        </Element>
-      )}
+        {config.fotos_semana && (
+          <Element name="fotos">
+            <FotosDaSemana />
+          </Element>
+        )}
 
-      {config.dizimo && (
-        <Element name="dizimo">
-          <DizimoSection />
-        </Element>
-      )}
+        {config.fotos_blob && (
+          <Element name="blob">
+            <FotosBlob />
+          </Element>
+        )}
 
-      {config.redes_sociais && <RedesSociais />}
+        {config.dizimo && (
+          <Element name="dizimo">
+            <DizimoSection />
+          </Element>
+        )}
 
-      <Footer />
-    </div>
+        {config.redes_sociais && <RedesSociais />}
+
+        <Footer />
+      </div>
+    </ThemeProvider>
   );
 };
 

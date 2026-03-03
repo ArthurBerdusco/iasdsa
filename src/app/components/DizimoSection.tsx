@@ -68,12 +68,10 @@ const PaginaDizimosOfertas = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+      <div className="min-h-screen">
         {/* Hero Section */}
         <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-          <div className="relative overflow-hidden bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950">
-            <div className="absolute inset-0 bg-black/20"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-950/60 to-transparent"></div>
+          <div className="relative overflow-hidden">
 
             <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-20 lg:py-24">
               <div className="text-center">

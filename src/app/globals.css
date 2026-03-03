@@ -122,3 +122,4 @@ h3 {
    mas agora redirecionam para as variáveis do tema.    ── */
 .font-montserrat { font-family: var(--font-heading); }
 .font-nunito     { font-family: var(--font-body); }
+
