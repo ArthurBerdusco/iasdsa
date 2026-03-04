@@ -1,15 +1,14 @@
-import {auth} from "./auth"
+import { auth } from "./auth"
 import { NextResponse } from "next/server"
+import type { NextAuthRequest } from "next-auth"
 
-export default auth((req) => {
+export default auth((req: NextAuthRequest) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
   
-  // Rotas protegidas
   const isProtectedRoute = nextUrl.pathname.startsWith('/dashboard') ||
                           nextUrl.pathname.startsWith('/admin')
   
-  // Rotas de auth
   const isAuthRoute = nextUrl.pathname.startsWith('/auth')
   
   if (isProtectedRoute && !isLoggedIn) {
