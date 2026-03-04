@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Heart, Church, Users, BookOpen } from 'lucide-react';
+import { ExternalLink, Heart, Church, Users } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa';
-import Link from 'next/link';
-import Footer from './Footer';
+import SectionHeader from './SectionHeader';
 
 interface SocialCardProps {
   icon: React.ReactNode;
@@ -69,16 +68,15 @@ const PaginaDizimosOfertas = () => {
   return (
     <>
       <div className="min-h-screen">
+        {/* Header */}
+        <SectionHeader title="DÍZIMOS E OFERTAS" />
         {/* Hero Section */}
         <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
           <div className="relative overflow-hidden">
 
-            <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-20 lg:py-24">
+            <div className="relative max-w-7xl mx-auto px-4 pb-16 sm:pb-20 lg:pb-24">
               <div className="text-center">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                  Dízimos e Ofertas
-                </h1>
-                <p className="text-xl sm:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl sm:text-2xl text-[var(--color-text)] max-w-3xl mx-auto leading-relaxed">
                   Sua contribuição fortalece a missão da igreja.
                 </p>
               </div>

@@ -1,5 +1,7 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { getTheme, generateCSSVariables, generateGoogleFontsURL } from "@/lib/theme-repository";
+import { ThemeProvider } from "@/context/ThemeContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,12 +9,7 @@ export const metadata: Metadata = {
   description: "Boletim informativo da Igreja Adventista do Sétimo Dia de Santo Amaro",
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  // Busca o tema no Neon — server-side, sem custo extra de rede
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const theme = await getTheme();
   const cssVars = generateCSSVariables(theme);
   const fontsURL = generateGoogleFontsURL(theme);
@@ -20,16 +17,21 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR">
       <head>
-        {/* Fontes dinâmicas do Google — trocam junto com o tema */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href={fontsURL} />
-
-        {/* CSS variables injetadas via SSR — refletem o tema salvo no banco */}
+        {/* CSS vars injetadas uma única vez aqui — fonte da verdade */}
         <style dangerouslySetInnerHTML={{ __html: cssVars }} />
       </head>
       <body className="antialiased">
-        {children}
+        {/*
+          ThemeProvider aqui — wraps toda a app.
+          Componentes acessam via useTheme() sem precisar de prop drilling.
+          Como layout.tsx é Server Component, usamos um wrapper client:
+        */}
+        <ThemeProvider theme={theme}>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
