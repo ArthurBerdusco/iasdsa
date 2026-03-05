@@ -1,5 +1,6 @@
 'use client'
 // TopNav.tsx - Barra de navegação superior otimizada
+import { signOut } from "next-auth/react"
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -366,12 +367,15 @@ export function TopNav({ toggleSidebar, isMobile, isTablet }: TopNavProps) {
                     </div>
                   </Link>
                   <hr className="my-2 border-gray-100" />
-                  <Link href="/logout">
+                  <button onClick={async ()=>{
+                    await signOut({ redirect: true})
+                    window.location.href = "/auth/signin"
+                  }}>
                     <div className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
                       <X className="w-4 h-4" />
                       Sair
                     </div>
-                  </Link>
+                  </button>
                 </div>
               </div>
             )}

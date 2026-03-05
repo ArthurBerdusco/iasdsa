@@ -23,7 +23,7 @@ export default function SignIn() {
       if (result?.error) {
         alert("Credenciais inválidas")
       } else {
-        router.push("/dashboard")
+        router.push("/admin")
       }
     } catch (error) {
       console.error("Login error:", error)

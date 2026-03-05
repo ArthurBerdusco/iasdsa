@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 
 import { Dispatch, SetStateAction } from 'react';
+import { signOut } from 'next-auth/react';
 
 interface SideNavProps {
   collapsed: boolean;
@@ -41,13 +42,13 @@ interface NavItem {
   description?: string;
 }
 
-export function SideNav({ 
-  collapsed, 
-  setCollapsed, 
-  isMobile, 
-  isTablet, 
-  isOpen, 
-  setIsOpen 
+export function SideNav({
+  collapsed,
+  setCollapsed,
+  isMobile,
+  isTablet,
+  isOpen,
+  setIsOpen
 }: SideNavProps) {
   const pathname = usePathname();
   const sideNavRef = useRef<HTMLDivElement | null>(null);
@@ -55,52 +56,52 @@ export function SideNav({
 
   // Navegação principal com badges e descrições
   const navItems: NavItem[] = [
-    { 
-      name: 'Dashboard', 
-      icon: <Home className="w-5 h-5" />, 
+    {
+      name: 'Dashboard',
+      icon: <Home className="w-5 h-5" />,
       href: '/admin',
       description: 'Visão geral do sistema'
     },
-    { 
-      name: 'Cultos', 
-      icon: <Calendar className="w-5 h-5" />, 
+    {
+      name: 'Cultos',
+      icon: <Calendar className="w-5 h-5" />,
       href: '/admin/cultos',
       description: 'Programação dos cultos'
     },
-    { 
-      name: 'Oradores', 
-      icon: <Mic className="w-5 h-5" />, 
+    {
+      name: 'Oradores',
+      icon: <Mic className="w-5 h-5" />,
       href: '/admin/oradores',
       description: 'Pregadores e palestrantes'
     },
-    { 
-      name: 'Anúncios', 
-      icon: <FileText className="w-5 h-5" />, 
+    {
+      name: 'Anúncios',
+      icon: <FileText className="w-5 h-5" />,
       href: '/admin/anuncios',
       badge: 3,
       description: 'Comunicados da igreja'
     },
-    { 
-      name: 'Galeria', 
-      icon: <Image className="w-5 h-5" />, 
+    {
+      name: 'Galeria',
+      icon: <Image className="w-5 h-5" />,
       href: '/admin/fotos',
       description: 'Fotos dos eventos'
     },
-        { 
-      name: 'Blob', 
-      icon: <Image className="w-5 h-5" />, 
+    {
+      name: 'Blob',
+      icon: <Image className="w-5 h-5" />,
       href: '/admin/blob',
       description: 'Blobs'
     },
-    { 
-      name: 'Mensagem Pastoral', 
-      icon: <MessageSquare className="w-5 h-5" />, 
+    {
+      name: 'Mensagem Pastoral',
+      icon: <MessageSquare className="w-5 h-5" />,
       href: '/admin/mensagem-pastoral',
       description: 'Mensagens do pastor'
     },
-    { 
-      name: 'Últimos Cultos', 
-      icon: <Youtube className="w-5 h-5" />, 
+    {
+      name: 'Últimos Cultos',
+      icon: <Youtube className="w-5 h-5" />,
       href: '/admin/ultimos-cultos',
       description: 'Gravações dos cultos'
     },
@@ -215,7 +216,7 @@ export function SideNav({
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               const showTooltip = collapsed && !isMobile && hoveredItem === item.name;
-              
+
               return (
                 <li key={item.name} className="relative">
                   <Link href={item.href}>
@@ -235,27 +236,27 @@ export function SideNav({
                       <span className={`flex-shrink-0 ${collapsed && !isMobile ? '' : 'mr-3'}`}>
                         {item.icon}
                       </span>
-                      
+
                       {(!collapsed || isMobile) && (
                         <>
                           <span className="flex-1 text-sm font-medium whitespace-nowrap">
                             {item.name}
                           </span>
-                          
+
                           {/* Badge */}
                           {item.badge && (
                             <span className="ml-2 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full font-medium">
                               {item.badge}
                             </span>
                           )}
-                          
+
                           {/* Arrow indicator for active */}
                           {isActive && (
                             <ChevronRight className="w-4 h-4 ml-2 text-blue-300" />
                           )}
                         </>
                       )}
-                      
+
                       {/* Tooltip para modo colapsado */}
                       {showTooltip && (
                         <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg z-50 whitespace-nowrap">
@@ -278,10 +279,10 @@ export function SideNav({
               );
             })}
           </ul>
-          
+
           {/* Divider */}
           <div className="mx-4 my-4 border-t border-blue-700/50"></div>
-          
+
           {/* Additional Actions */}
           <ul className="space-y-1 px-2">
             <li>
@@ -317,9 +318,9 @@ export function SideNav({
           py-3 border-t border-blue-700/50
         `}>
           {(!collapsed || isMobile) && (
-            <Link 
-              href="/" 
-              target="_blank" 
+            <Link
+              href="/"
+              target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 text-blue-200 hover:text-white transition-colors text-sm group"
             >
@@ -327,11 +328,11 @@ export function SideNav({
               <span className="font-medium">Ver Site Principal</span>
             </Link>
           )}
-          
+
           {collapsed && !isMobile && (
-            <Link 
-              href="/" 
-              target="_blank" 
+            <Link
+              href="/"
+              target="_blank"
               rel="noopener noreferrer"
               className="flex justify-center text-blue-200 hover:text-white transition-colors group"
               title="Ver Site Principal"
@@ -350,22 +351,24 @@ export function SideNav({
             <div className="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center flex-shrink-0">
               <Users className="w-5 h-5" />
             </div>
-            
+
             {(!collapsed || isMobile) && (
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">Administrador</p>
                 <div className="flex items-center justify-between mt-1">
                   <p className="text-xs text-blue-200 truncate">Online</p>
-                  <Link href="/logout">
-                    <button className="flex items-center gap-1 text-xs text-blue-300 hover:text-red-300 transition-colors group">
-                      <LogOut className="w-3 h-3 group-hover:scale-110 transition-transform" />
-                      <span>Sair</span>
-                    </button>
-                  </Link>
+                  <button onClick={async () => {
+                    await signOut({ redirect: true })
+                    window.location.href = "/auth/signin"
+                  }} className="flex items-center gap-1 text-xs text-blue-300 hover:text-red-300 transition-colors group">
+                    <LogOut className="w-3 h-3 group-hover:scale-110 transition-transform" />
+                    <span>Sair</span>
+                  </button>
+
                 </div>
               </div>
             )}
-            
+
             {collapsed && !isMobile && (
               <div className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-lg z-50 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 <div className="font-medium">Administrador</div>
