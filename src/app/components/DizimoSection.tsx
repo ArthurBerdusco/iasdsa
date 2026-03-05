@@ -1,10 +1,9 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { ExternalLink, Heart, Church, Users, BookOpen } from 'lucide-react';
+import { ExternalLink, Heart, Church, Users } from 'lucide-react';
 import { FaFacebook, FaInstagram, FaYoutube } from 'react-icons/fa';
-import Link from 'next/link';
-import Footer from './Footer';
+import SectionHeader from './SectionHeader';
 
 interface SocialCardProps {
   icon: React.ReactNode;
@@ -68,19 +67,16 @@ const PaginaDizimosOfertas = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
+      <div className="min-h-screen">
+        {/* Header */}
+        <SectionHeader title="DÍZIMOS E OFERTAS" />
         {/* Hero Section */}
         <div className={`transform transition-all duration-1000 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-          <div className="relative overflow-hidden bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950">
-            <div className="absolute inset-0 bg-black/20"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-950/60 to-transparent"></div>
+          <div className="relative overflow-hidden">
 
-            <div className="relative max-w-7xl mx-auto px-4 py-16 sm:py-20 lg:py-24">
+            <div className="relative max-w-7xl mx-auto px-4 pb-16 sm:pb-20 lg:pb-24">
               <div className="text-center">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-                  Dízimos e Ofertas
-                </h1>
-                <p className="text-xl sm:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl sm:text-2xl text-[var(--color-text)] max-w-3xl mx-auto leading-relaxed">
                   Sua contribuição fortalece a missão da igreja.
                 </p>
               </div>
@@ -213,7 +209,7 @@ const PaginaDizimosOfertas = () => {
             </div>
 
             {/* Social Media Section */}
-            <div className="mb-12 py-12">
+            <div className="mb-12 ">
               <div className="text-center mb-12">
                 <h2 className="text-3xl sm:text-4xl font-bold text-blue-950 mb-4">
                   Conecte-se Conosco

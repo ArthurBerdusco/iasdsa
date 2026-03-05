@@ -1,327 +1,247 @@
 'use client';
 
 import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
+
 import Image from 'next/image';
-import { CalendarDays, Clock, ChevronLeft, ChevronRight, User } from 'lucide-react';
-import { useEffect, useState, useRef } from 'react';
+import { CalendarDays, Clock, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination, Autoplay, EffectFade, EffectCoverflow } from 'swiper/modules';
+import { Navigation, Autoplay, EffectFade } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
-import SectionHeader from './SectionHeader';
+
 import { Culto } from '@/types/cultos';
 import { formatDateForDisplay } from '@/utils/formatoData';
+import SectionHeader from './SectionHeader';
 
-// Theme colors for different emphasis colors
-const themeColors = {
-  primary: {
-    text: 'text-blue-400',
-    bgLight: 'bg-blue-900/50',
-    border: 'border-blue-400',
-    gradient: 'from-blue-500/20 to-blue-600/30'
-  },
-  secondary: {
-    text: 'text-purple-400',
-    bgLight: 'bg-purple-900/50',
-    border: 'border-purple-400',
-    gradient: 'from-purple-500/20 to-purple-600/30'
-  },
-  success: {
-    text: 'text-green-400',
-    bgLight: 'bg-green-900/50',
-    border: 'border-green-400',
-    gradient: 'from-green-500/20 to-green-600/30'
-  },
-  warning: {
-    text: 'text-yellow-400',
-    bgLight: 'bg-yellow-900/50',
-    border: 'border-yellow-400',
-    gradient: 'from-yellow-500/20 to-yellow-600/30'
-  },
-  danger: {
-    text: 'text-red-400',
-    bgLight: 'bg-red-900/50',
-    border: 'border-red-400',
-    gradient: 'from-red-500/20 to-red-600/30'
-  },
-  info: {
-    text: 'text-cyan-400',
-    bgLight: 'bg-cyan-900/50',
-    border: 'border-cyan-400',
-    gradient: 'from-cyan-500/20 to-cyan-600/30'
-  }
-};
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+type Badge = { icon: React.ReactNode; label: string };
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function CultoBadge({ icon, label }: Badge) {
+  return (
+    <span className="flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text)] backdrop-blur-sm">
+      <span style={{ color: 'var(--color-accent)' }}>{icon}</span>
+      {label}
+    </span>
+  );
+}
+
+function OradorFooter({ orador }: { orador: Culto['orador'] }) {
+  return (
+    <div className="flex items-center gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-alt)] px-5 py-3">
+      <div className="relative size-10 shrink-0 overflow-hidden rounded-full"
+        style={{ outline: '2px solid var(--color-accent)' }}>
+        <Image src={orador.foto} alt={orador.nome} fill className="object-cover" />
+      </div>
+      <div>
+        <p className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest"
+          style={{ color: 'var(--color-accent)' }}>
+          <User size={10} /> Orador
+        </p>
+        <p className="text-sm font-semibold text-[var(--color-text)]">{orador.nome}</p>
+      </div>
+    </div>
+  );
+}
+
+function NavButton({
+  side,
+  btnRef,
+  label,
+}: {
+  side: 'left' | 'right';
+  btnRef: React.RefObject<HTMLButtonElement | null>;
+  label: string;
+}) {
+  const posClass = side === 'left' ? '-left-4 sm:-left-5' : '-right-4 sm:-right-5';
+  const Icon = side === 'left' ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      ref={btnRef}
+      aria-label={label}
+      className={`absolute top-[42%] z-10 ${posClass} -translate-y-1/2 flex size-8 sm:size-10 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-text)] backdrop-blur-sm transition hover:bg-[var(--color-accent)] hover:text-[var(--color-text-inverse)]`}
+    >
+      <Icon size={16} />
+    </button>
+  );
+}
+
+function PaginationDots({
+  count,
+  active,
+  onSelect,
+}: {
+  count: number;
+  active: number;
+  onSelect: (i: number) => void;
+}) {
+  if (count <= 1) return null;
+  return (
+    <div className="mt-4 flex justify-center gap-1.5">
+      {Array.from({ length: count }).map((_, i) => (
+        <button
+          key={i}
+          onClick={() => onSelect(i)}
+          aria-label={`Slide ${i + 1}`}
+          className="h-1.5 rounded-full transition-all duration-300"
+          style={{
+            width: i === active ? '1.5rem' : '0.375rem',
+            backgroundColor: i === active ? 'var(--color-accent)' : 'var(--color-border)',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// ─── Slide Card ───────────────────────────────────────────────────────────────
+
+function CultoCard({ culto }: { culto: Culto }) {
+  const badges: Badge[] = [
+    { icon: <CalendarDays size={12} />, label: formatDateForDisplay(culto.data) },
+    { icon: <Clock size={12} />, label: culto.hora },
+  ];
+
+  return (
+    <div className="overflow-hidden rounded-[var(--border-radius)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-[var(--color-background-alt)] px-5 py-4">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest"
+            style={{ color: 'var(--color-accent)' }}>
+            {culto.diasemana}
+          </p>
+          <h3 className="text-base font-bold text-[var(--color-text)] sm:text-lg">
+            {culto.titulo}
+          </h3>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {badges.map((b) => (
+            <CultoBadge key={b.label} {...b} />
+          ))}
+        </div>
+      </div>
+
+      {/* Art Image */}
+      <div className="relative aspect-video w-full bg-[var(--color-background)]">
+        <Image
+          src={culto.arte}
+          alt={culto.titulo}
+          fill
+          priority
+          className="object-contain object-center"
+        />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[var(--color-surface)] to-transparent" />
+      </div>
+
+      {/* Footer */}
+      <OradorFooter orador={culto.orador} />
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function CultosSwiper() {
-  const [currentDate, setCurrentDate] = useState<string>('');
-  const [activeIndex, setActiveIndex] = useState<number>(0);
   const [cultos, setCultos] = useState<Culto[]>([]);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-  const navigationPrevRef = useRef<HTMLButtonElement>(null);
-  const navigationNextRef = useRef<HTMLButtonElement>(null);
+
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
 
-  // Check if mobile
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Fetch cultos data
-  useEffect(() => {
-    const fetchCultos = async () => {
+    (async () => {
       try {
-        const response = await fetch('/api/cultos');
-        if (!response.ok) {
-          throw new Error('Failed to fetch cultos');
-        }
-        const data = await response.json();
-
-        // Transform the API data to match our component requirements
-        const formattedCultos = data.map((culto: any) => ({
-          id: culto.id,
-          titulo: culto.titulo,
-          diasemana: culto.diasemana,
-          data: culto.data,
-          hora: culto.hora,
-          arte: culto.arte,
-          corDestaque: culto.cordestaque,
-          orador: {
-            id: culto.orador.id,
-            nome: culto.orador.nome,
-            foto: culto.orador.foto
-          }
-        }));
-
-        setCultos(formattedCultos);
-      } catch (error) {
-        console.error('Error fetching cultos:', error);
+        const res = await fetch('/api/cultos');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
+        setCultos(
+          data.map((c: any) => ({
+            id: c.id,
+            titulo: c.titulo,
+            diasemana: c.diasemana,
+            data: c.data,
+            hora: c.hora,
+            arte: c.arte,
+            corDestaque: c.cordestaque,
+            orador: { id: c.orador.id, nome: c.orador.nome, foto: c.orador.foto },
+          }))
+        );
+      } catch (e) {
+        console.error(e);
       } finally {
         setIsLoading(false);
       }
-    };
-
-    fetchCultos();
+    })();
   }, []);
 
-  // Set the current date on component mount
-  useEffect(() => {
-    const today = new Date();
-    const options: Intl.DateTimeFormatOptions = {
-      weekday: "long",
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    };
-    setCurrentDate(today.toLocaleDateString("pt-BR", options));
-  }, []);
-
-  // If loading, show a loading state
-  if (isLoading) {
+  if (isLoading)
     return (
-      <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 border-b border-blue-500/30 pb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-white">
-            BOLETIM INFORMATIVO
-          </h1>
-          <p className="text-sm md:text-base text-white/80 mt-2 sm:mt-0">{currentDate}</p>
-        </div>
-        <SectionHeader title='PRÓXIMOS CULTOS' />
-        <div className="h-[60vh] flex items-center justify-center">
-          <div className="animate-pulse text-white">Carregando cultos...</div>
-        </div>
+      <section className="py-10 text-center text-sm text-[var(--color-text-muted)]">
+        Carregando cultos...
       </section>
     );
-  }
 
-  // If no cultos data, show a message
-  if (cultos.length === 0) {
+  if (!cultos.length)
     return (
-      <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 border-b border-blue-500/30 pb-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-white">
-            BOLETIM INFORMATIVO
-          </h1>
-          <p className="text-sm md:text-base text-white/80 mt-2 sm:mt-0">{currentDate}</p>
-        </div>
-        <SectionHeader title='PRÓXIMOS CULTOS' />
-        <div className="h-[40vh] flex items-center justify-center">
-          <p className="text-white/70 text-center">Nenhum culto programado no momento.</p>
-        </div>
+      <section className="py-10 text-center text-sm text-[var(--color-text-muted)]">
+        Nenhum culto programado no momento.
       </section>
     );
-  }
+
+  const hasMany = cultos.length > 1;
 
   return (
-    <section className="relative max-w-6xl mx-auto py-6 px-4 bg-blue-950">
-      {/* Subtle background element */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-gradient-to-br from-blue-500/5 to-purple-500/5 blur-3xl"></div>
-      </div>
+    <section>
+      <SectionHeader title="PRÓXIMOS CULTOS" />
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-8 border-b border-blue-500/30 pb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-white">
-          BOLETIM INFORMATIVO
-        </h1>
-        <p className="text-sm md:text-base text-white/80 mt-2 sm:mt-0">{currentDate}</p>
-      </div>
-
-      {/* Title with subtle underline */}
-      <SectionHeader title='PRÓXIMOS CULTOS' />
-
-      {/* Swiper Component - Layout Unificado */}
-      <div className="relative">
+      <div className="relative px-5 sm:px-6">
         <Swiper
-          modules={[Navigation, Pagination, Autoplay, EffectFade]}
-          spaceBetween={20}
+          modules={[Navigation, Autoplay, EffectFade]}
           slidesPerView={1}
-          centeredSlides={true}
-          loop={true}
+          loop
           effect="fade"
-          fadeEffect={{
-            crossFade: true
-          }}
-          speed={800}
-          autoplay={{
-            delay: 10000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }}
-          pagination={false} // Removido as bolinhas automáticas do Swiper
-          navigation={{
-            prevEl: navigationPrevRef.current,
-            nextEl: navigationNextRef.current,
-          }}
+          fadeEffect={{ crossFade: true }}
+          speed={600}
+          autoplay={{ delay: 8000, disableOnInteraction: false, pauseOnMouseEnter: true }}
+          navigation={{ prevEl: prevRef.current, nextEl: nextRef.current }}
           onBeforeInit={(swiper) => {
             swiperRef.current = swiper;
-            if (swiper.params.navigation && typeof swiper.params.navigation !== 'boolean') {
-              swiper.params.navigation.prevEl = navigationPrevRef.current;
-              swiper.params.navigation.nextEl = navigationNextRef.current;
+            const nav = swiper.params.navigation;
+            if (nav && typeof nav !== 'boolean') {
+              nav.prevEl = prevRef.current;
+              nav.nextEl = nextRef.current;
             }
           }}
-          onSlideChange={(swiper) => {
-            setActiveIndex(swiper.realIndex);
-          }}
-          className="cultos-swiper rounded-2xl overflow-hidden shadow-2xl mb-4"
+          onSlideChange={(s) => setActiveIndex(s.realIndex)}
         >
-          {cultos.map((culto) => {
-            const colorClasses = themeColors[culto.cordestaque as keyof typeof themeColors] || themeColors.primary;
-
-            return (
-              <SwiperSlide key={culto.id}>
-                <div className="relative bg-gradient-to-br from-blue-900/40 to-blue-950/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/10">
-                  
-                  {/* Header Section - Unificado para mobile e desktop */}
-                  <div className="relative z-20 bg-gradient-to-b from-blue-950/95 via-blue-950/80 to-transparent p-4 md:p-6 border-b border-white/10">
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-3">
-                      <div>
-                        <span className={`text-xl md:text-2xl font-black tracking-wider ${colorClasses.text}`}>
-                          {culto.diasemana}
-                        </span>
-                        <h3 className="text-white text-base md:text-lg font-semibold opacity-90 mt-1">
-                          {culto.titulo}
-                        </h3>
-                      </div>
-
-                      {/* Date and Time - Layout flexível */}
-                      <div className="flex gap-2 md:gap-3">
-                        <div className={`flex items-center ${colorClasses.bgLight} backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2 rounded-lg border ${colorClasses.border}/30`}>
-                          <CalendarDays size={isMobile ? 14 : 16} className={`${colorClasses.text} mr-1.5 md:mr-2`} />
-                          <span className="text-white font-medium text-sm md:text-base">{formatDateForDisplay(culto.data)}</span>
-                        </div>
-                        <div className={`flex items-center ${colorClasses.bgLight} backdrop-blur-sm px-3 py-1.5 md:px-4 md:py-2 rounded-lg border ${colorClasses.border}/30`}>
-                          <Clock size={isMobile ? 14 : 16} className={`${colorClasses.text} mr-1.5 md:mr-2`} />
-                          <span className="text-white font-medium text-sm md:text-base">{culto.hora}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Image Section - Altura reduzida e padronizada */}
-                  <div className="relative h-[35vh] md:h-[40vh] overflow-hidden">
-                    <Image
-                      src={culto.arte}
-                      alt={culto.titulo}
-                      fill
-                      priority
-                      className="object-contain object-center transition-transform duration-700 hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-transparent to-transparent md:bg-gradient-to-b md:from-transparent md:via-transparent md:to-blue-950/10"></div>
-                  </div>
-
-                  {/* Speaker Info Section - Layout unificado */}
-                  <div className="relative z-20 bg-gradient-to-t from-blue-950/95 to-blue-950/80 md:bg-gradient-to-r md:from-blue-900/30 md:to-blue-800/30 backdrop-blur-sm border-t border-white/10 p-4 md:p-6">
-                    <div className="flex items-center space-x-3 md:justify-center">
-                      <div className={`relative w-12 h-12 md:w-16 md:h-16 rounded-full overflow-hidden border-2 md:border-3 ${colorClasses.border} shadow-lg md:shadow-xl md:ring-2 md:ring-white/20`}>
-                        <Image
-                          src={culto.orador.foto}
-                          alt={culto.orador.nome}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="md:ml-2">
-                        <p className={`text-xs md:text-sm ${colorClasses.text} uppercase tracking-wider font-medium md:font-semibold mb-1 md:mb-2 flex items-center md:justify-center`}>
-                          <User size={isMobile ? 14 : 16} className={`${colorClasses.text} mr-1.5 md:mr-2`} />
-                          Orador
-                        </p>
-                        <p className="text-white font-semibold md:font-bold text-base md:text-xl md:text-center">{culto.orador.nome}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </SwiperSlide>
-            );
-          })}
+          {cultos.map((culto) => (
+            <SwiperSlide key={culto.id}>
+              <CultoCard culto={culto} />
+            </SwiperSlide>
+          ))}
         </Swiper>
 
-        {/* Navigation Buttons - Apenas para desktop */}
-        {!isMobile && (
-          <div className="absolute left-6 right-6 top-[40%] -translate-y-1/2 z-30 flex justify-between pointer-events-none">
-            <button
-              ref={navigationPrevRef}
-              className="w-12 h-12 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/70 transition-all duration-300 focus:outline-none pointer-events-auto shadow-lg border border-white/20"
-              aria-label="Anterior"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button
-              ref={navigationNextRef}
-              className="w-12 h-12 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/70 transition-all duration-300 focus:outline-none pointer-events-auto shadow-lg border border-white/20"
-              aria-label="Próximo"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        )}
-
-        {/* Custom Navigation Dots - Apenas se houver mais de um culto */}
-        {cultos.length > 1 && (
-          <div className="flex justify-center pt-4">
-            <div className="flex space-x-2">
-              {cultos.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index === activeIndex ? 'bg-white scale-125' : 'bg-white/50'
-                    }`}
-                  onClick={() => swiperRef.current?.slideToLoop(index)}
-                  aria-label={`Ir para slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
+        {hasMany && (
+          <>
+            <NavButton side="left" btnRef={prevRef} label="Anterior" />
+            <NavButton side="right" btnRef={nextRef} label="Próximo" />
+          </>
         )}
       </div>
+
+      {hasMany && (
+        <PaginationDots
+          count={cultos.length}
+          active={activeIndex}
+          onSelect={(i) => swiperRef.current?.slideToLoop(i)}
+        />
+      )}
     </section>
   );
 }

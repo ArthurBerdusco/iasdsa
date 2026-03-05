@@ -1,15 +1,13 @@
-import {auth} from "./auth"
+import { auth } from "./auth"
 import { NextResponse } from "next/server"
 
 export default auth((req) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
   
-  // Rotas protegidas
   const isProtectedRoute = nextUrl.pathname.startsWith('/dashboard') ||
                           nextUrl.pathname.startsWith('/admin')
   
-  // Rotas de auth
   const isAuthRoute = nextUrl.pathname.startsWith('/auth')
   
   if (isProtectedRoute && !isLoggedIn) {
@@ -21,7 +19,7 @@ export default auth((req) => {
   }
   
   return NextResponse.next()
-})
+}) as any
 
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],

@@ -1,150 +1,154 @@
+// app/page.tsx
 "use client";
 import React, { useState, useEffect } from "react";
-import Cultos from "./components/HeroSection";
+import { Element } from "react-scroll";
+import { ComponenteConfig, UseComponentConfigReturn, ApiResponse } from "@/types/components";
+
+// Componentes
+import NavBar from "./components/NavBar";
+import HeroSection from "./components/HeroSection";
 import ProgramacaoCultos from "./components/ProgramacaoSection";
 import AnunciosSection from "./components/AnunciosSection";
 import PedidoOracao from "./components/PedidoOracao";
 import DizimoSection from "./components/DizimoSection";
 import FotosBlob from "./components/FotosBlob";
-import Footer from "./components/Footer";
-import NavBar from "./components/NavBar";
 import FotosDaSemana from "./components/FotosDaSemana";
+import Footer from "./components/Footer";
 import RedesSociais from "./components/CultosSemana";
 import MensagemPastoral from "./components/MensagemPastoral";
-import { Element } from "react-scroll";
-import { ComponenteConfig, UseComponentConfigReturn, ApiResponse } from "@/types/components";
 
+// ─── Hook de config ────────────────────────────────────────────────
+const DEFAULT_CONFIG: ComponenteConfig = {
+  cultos: true,
+  mensagem_pastoral: false,
+  programacao_cultos: true,
+  anuncios: true,
+  pedido_oracao: true,
+  fotos_blob: false,
+  fotos_semana: false,
+  dizimo: true,
+  redes_sociais: true,
+};
 
-// Hook personalizado para carregar configurações
-const useComponentConfig = (): UseComponentConfigReturn => {
-  const [config, setConfig] = useState<ComponenteConfig>({
-    cultos: true,
-    mensagem_pastoral: false,
-    programacao_cultos: true,
-    anuncios: true,
-    pedido_oracao: true,
-    fotos_blob: false,
-    fotos_semana: false,
-    dizimo: true,
-    redes_sociais: true,
-  });
-  const [loading, setLoading] = useState<boolean>(true);
+function useComponentConfig(): UseComponentConfigReturn {
+  const [config, setConfig] = useState<ComponenteConfig>(DEFAULT_CONFIG);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchConfig = async (): Promise<void> => {
+    (async () => {
       try {
-        setLoading(true);
-        const response = await fetch('/api/componentes-config');
-
-        if (!response.ok) {
-          throw new Error(`Erro HTTP: ${response.status}`);
-        }
-
-        const data: ApiResponse<ComponenteConfig> = await response.json();
-
-        if (data.error) {
-          throw new Error(data.error);
-        }
-
-        if (data.config) {
-          setConfig(data.config);
-        }
+        const res = await fetch("/api/componentes-config");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data: ApiResponse<ComponenteConfig> = await res.json();
+        if (data.error) throw new Error(data.error);
+        if (data.config) setConfig(data.config);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
-        console.error('Erro ao carregar configurações:', errorMessage);
-        setError(errorMessage);
-        // Mantém as configurações padrão em caso de erro
+        setError(err instanceof Error ? err.message : "Erro desconhecido");
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchConfig();
+    })();
   }, []);
 
   return { config, loading, error };
-};
+}
 
-const LoadingSpinner: React.FC = () => (
-  <div className="min-h-screen bg-blue-950 flex items-center justify-center">
-    <div className="text-white text-xl flex items-center space-x-3">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-      <span>Carregando...</span>
+// ─── Loading ───────────────────────────────────────────────────────
+function LoadingSpinner() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
+      <div className="flex items-center gap-3 text-[var(--color-text)]">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current" />
+        <span className="text-xl">Carregando...</span>
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
-const Home: React.FC = () => {
+// ─── Seção padronizada ─────────────────────────────────────────────
+// Wrapper que garante espaçamento e largura consistentes em todos os componentes
+function Section({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <Element name={id}>
+      <section className="w-full px-4 py-12 sm:px-6 lg:px-8 xl:py-8">
+        <div className="mx-auto max-w-6xl">
+          {children}
+        </div>
+      </section>
+    </Element>
+  );
+}
+
+// ─── Page ──────────────────────────────────────────────────────────
+export default function Home() {
   const { config, loading, error } = useComponentConfig();
 
-  // Mostra um loader enquanto carrega as configurações
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  // Em caso de erro, mostra mensagem mas continua com configurações padrão
-  if (error) {
-    console.warn('Usando configurações padrão devido ao erro:', error);
-  }
+  if (loading) return <LoadingSpinner />;
+  if (error) console.warn("Config padrão em uso. Erro:", error);
 
   return (
-    <div className="min-h-screen bg-blue-950">
+    // bg usa a CSS var injetada pelo layout — sem duplicar o tema aqui
+    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)]">
       <NavBar />
 
-      {config.cultos && (
-        <Element name="cultos">
-          <Cultos />
-        </Element>
-      )}
+      <main>
+        {config.cultos && (
+          <Section id="cultos">
+            <HeroSection />
+          </Section>
+        )}
 
-      {config.mensagem_pastoral && (
-        <Element name="mensagem">
-          <MensagemPastoral />
-        </Element>
-      )}
+        {config.mensagem_pastoral && (
+          <Section id="mensagem">
+            <MensagemPastoral />
+          </Section>
+        )}
 
-      {config.programacao_cultos && (
-        <Element name="programacao">
-          <ProgramacaoCultos />
-        </Element>
-      )}
+        {config.programacao_cultos && (
+          <Section id="programacao">
+            <ProgramacaoCultos />
+          </Section>
+        )}
 
-      {config.anuncios && (
-        <Element name="anuncios">
-          <AnunciosSection />
-        </Element>
-      )}
+        {config.anuncios && (
+          <Section id="anuncios">
+            <AnunciosSection />
+          </Section>
+        )}
 
-      {config.pedido_oracao && (
-        <Element name="oracao">
-          <PedidoOracao />
-        </Element>
-      )}
+        {config.pedido_oracao && (
+          <Section id="oracao">
+            <PedidoOracao />
+          </Section>
+        )}
 
-      {config.fotos_semana && (
-        <Element name="fotos">
-          <FotosDaSemana />
-        </Element>
-      )}
+        {config.fotos_semana && (
+          <Section id="fotos">
+            <FotosDaSemana />
+          </Section>
+        )}
 
-      {config.fotos_blob && (
-        <Element name="blob">
-          <FotosBlob />
-        </Element>
-      )}
+        {config.fotos_blob && (
+          <Section id="blob">
+            <FotosBlob />
+          </Section>
+        )}
 
-      {config.dizimo && (
-        <Element name="dizimo">
-          <DizimoSection />
-        </Element>
-      )}
+        {config.dizimo && (
+          <Section id="dizimo">
+            <DizimoSection />
+          </Section>
+        )}
 
-      {config.redes_sociais && <RedesSociais />}
+        {config.redes_sociais && (
+          <Section id="redes">
+            <RedesSociais />
+          </Section>
+        )}
+      </main>
 
       <Footer />
     </div>
   );
-};
-
-export default Home;
+}
