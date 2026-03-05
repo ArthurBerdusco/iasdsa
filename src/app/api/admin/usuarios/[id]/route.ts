@@ -9,12 +9,13 @@ const sql = neon(process.env.DATABASE_URL!)
 // ─── PUT /api/admin/users/[id] — atualizar usuário completo ──────────────────
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
   if (!session?.user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
 
-  const id = Number(params.id)
+  const { id: rawId } = await params
+  const id = Number(rawId)
   const body = await req.json()
   const { name, email, role, permissions, active, password } = body
 
@@ -68,12 +69,13 @@ export async function PUT(
 // ─── PATCH /api/admin/users/[id] — atualização parcial (ex: toggle active) ───
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
   if (!session?.user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
 
-  const id = Number(params.id)
+  const { id: rawId } = await params
+  const id = Number(rawId)
   const body = await req.json()
 
   if (typeof body.active === "boolean") {
@@ -90,12 +92,13 @@ export async function PATCH(
 // ─── DELETE /api/admin/users/[id] ────────────────────────────────────────────
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth()
   if (!session?.user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
 
-  const id = Number(params.id)
+  const { id: rawId } = await params
+  const id = Number(rawId)
 
   // Remove relacionamentos primeiro
   await sql`DELETE FROM sessions WHERE "userId" = ${id}`
