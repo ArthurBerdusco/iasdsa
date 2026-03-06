@@ -11,6 +11,13 @@ export default auth((req) => {
   const isAdminRoute = pathname.startsWith('/admin')
   const isAuthRoute = pathname.startsWith('/auth')
 
+  const isSignInRoute = pathname === '/auth/signin'
+
+  // Permite acessar login sempre
+  if (isSignInRoute) {
+    return NextResponse.next()
+  }
+
   console.log(isAdminRoute)
   console.log(isAuthRoute)
 
