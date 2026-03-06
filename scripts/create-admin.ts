@@ -8,7 +8,7 @@ dotenv.config({ path: ".env.local" })
 const sql = neon(process.env.DATABASE_URL!)
 
 async function main() {
-  const password = "Admin@123456" // troque depois
+  const password = "Admin@123456"
   const hash = await bcrypt.hash(password, 12)
 
   const [user] = await sql`
@@ -29,7 +29,6 @@ async function main() {
       active      = true
     RETURNING id, email, role
   `
-
   console.log("✅ Admin criado:", user)
   process.exit(0)
 }
