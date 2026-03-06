@@ -1,15 +1,9 @@
 import NextAuth from "next-auth"
-import NeonAdapter from "@auth/neon-adapter"
-import { Pool } from "@neondatabase/serverless"
 import Google from "next-auth/providers/google"
-import Credentials from "next-auth/providers/credentials"
-import bcrypt from "bcryptjs"
 import type { NextAuthConfig } from "next-auth"
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-
 export const authConfig = {
-  adapter: NeonAdapter(pool),
+  //adapter: NeonAdapter(pool),
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
