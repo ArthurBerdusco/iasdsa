@@ -33,21 +33,29 @@ type FormData = Partial<User> & {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const ROLE_CONFIG: Record<Role, { label: string; color: string; bg: string; defaultPerms: Permission[] }> = {
+const ROLE_CONFIG: Record<Role, { label: string; colorVar: string; bgClass: string; defaultPerms: Permission[] }> = {
   admin: {
-    label: "Admin", color: "text-red-400", bg: "bg-red-400/10 border-red-400/30",
+    label: "Admin",
+    colorVar: "var(--color-danger, #f87171)",
+    bgClass: "role-admin",
     defaultPerms: ["users:read","users:write","users:delete","content:read","content:write","content:delete","settings:read","settings:write","reports:read","reports:export"],
   },
   moderator: {
-    label: "Moderador", color: "text-amber-400", bg: "bg-amber-400/10 border-amber-400/30",
+    label: "Moderador",
+    colorVar: "var(--color-warning, #fbbf24)",
+    bgClass: "role-moderator",
     defaultPerms: ["users:read","content:read","content:write","content:delete","reports:read"],
   },
   editor: {
-    label: "Editor", color: "text-blue-400", bg: "bg-blue-400/10 border-blue-400/30",
+    label: "Editor",
+    colorVar: "var(--color-primary)",
+    bgClass: "role-editor",
     defaultPerms: ["content:read","content:write","reports:read"],
   },
   viewer: {
-    label: "Visualizador", color: "text-slate-400", bg: "bg-slate-400/10 border-slate-400/30",
+    label: "Visualizador",
+    colorVar: "var(--color-text-muted)",
+    bgClass: "role-viewer",
     defaultPerms: ["content:read","reports:read"],
   },
 }
@@ -64,30 +72,78 @@ const PERMISSION_GROUPS = [
 function getPasswordStrength(pwd: string) {
   if (!pwd) return { score: 0, label: "", color: "" }
   let s = 0
-  if (pwd.length >= 8)        s++
-  if (pwd.length >= 12)       s++
-  if (/[A-Z]/.test(pwd))      s++
-  if (/[0-9]/.test(pwd))      s++
-  if (/[^A-Za-z0-9]/.test(pwd)) s++
-  if (s <= 1) return { score: s, label: "Muito fraca",  color: "bg-red-500" }
-  if (s <= 2) return { score: s, label: "Fraca",        color: "bg-orange-500" }
-  if (s <= 3) return { score: s, label: "Média",        color: "bg-yellow-500" }
-  if (s <= 4) return { score: s, label: "Forte",        color: "bg-blue-500" }
-  return         { score: s, label: "Muito forte",  color: "bg-emerald-500" }
+  if (pwd.length >= 8)              s++
+  if (pwd.length >= 12)             s++
+  if (/[A-Z]/.test(pwd))            s++
+  if (/[0-9]/.test(pwd))            s++
+  if (/[^A-Za-z0-9]/.test(pwd))    s++
+  if (s <= 1) return { score: s, label: "Muito fraca",  color: "var(--color-danger, #f87171)" }
+  if (s <= 2) return { score: s, label: "Fraca",        color: "var(--color-warning, #fb923c)" }
+  if (s <= 3) return { score: s, label: "Média",        color: "var(--color-accent)" }
+  if (s <= 4) return { score: s, label: "Forte",        color: "var(--color-primary)" }
+  return         { score: s, label: "Muito forte",  color: "var(--color-success, #34d399)" }
 }
 
 function Avatar({ name, size = "md" }: { name: string; size?: "sm" | "md" }) {
   const initials = name.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase()
-  const colors = ["bg-violet-500","bg-blue-500","bg-emerald-500","bg-rose-500","bg-amber-500","bg-cyan-500"]
-  const color = colors[name.charCodeAt(0) % colors.length]
-  const sz = size === "sm" ? "w-7 h-7 text-xs" : "w-9 h-9 text-sm"
-  return <div className={`${sz} ${color} rounded-full flex items-center justify-center font-bold text-white flex-shrink-0`}>{initials}</div>
+  const palettes = [
+    "var(--color-primary)",
+    "var(--color-secondary)",
+    "var(--color-accent)",
+    "#e11d48",
+    "#d97706",
+    "#0891b2",
+  ]
+  const bg = palettes[name.charCodeAt(0) % palettes.length]
+  const sz = size === "sm" ? { width: 28, height: 28, fontSize: 11 } : { width: 36, height: 36, fontSize: 13 }
+  return (
+    <div style={{
+      ...sz,
+      background: bg,
+      borderRadius: "var(--border-radius)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontWeight: 700,
+      color: "var(--color-text-inverse)",
+      flexShrink: 0,
+      fontFamily: "var(--font-body)",
+    }}>
+      {initials}
+    </div>
+  )
 }
 
 function Toggle({ value, onChange }: { value: boolean; onChange: () => void }) {
   return (
-    <button onClick={onChange} className={`relative rounded-full transition-colors flex-shrink-0 ${value ? "bg-violet-500" : "bg-white/15"}`} style={{ width: 40, height: 22 }}>
-      <span className="absolute top-0.5 bg-white rounded-full shadow transition-transform" style={{ width: 18, height: 18, left: 2, transform: value ? "translateX(18px)" : "translateX(0)" }} />
+    <button
+      onClick={onChange}
+      style={{
+        position: "relative",
+        borderRadius: 999,
+        width: 40,
+        height: 22,
+        background: value ? "var(--color-primary)" : "rgba(255,255,255,0.12)",
+        border: "none",
+        cursor: "pointer",
+        transition: "background 0.2s",
+        flexShrink: 0,
+        padding: 0,
+      }}
+    >
+      <span style={{
+        position: "absolute",
+        top: 2,
+        left: 2,
+        width: 18,
+        height: 18,
+        background: "var(--color-text-inverse)",
+        borderRadius: "50%",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+        transition: "transform 0.2s",
+        transform: value ? "translateX(18px)" : "translateX(0)",
+        display: "block",
+      }} />
     </button>
   )
 }
@@ -95,9 +151,24 @@ function Toggle({ value, onChange }: { value: boolean; onChange: () => void }) {
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="text-white/50 text-xs font-medium mb-1.5 block">{label}</label>
+      <label style={{
+        color: "var(--color-text-muted)",
+        fontSize: 11,
+        fontWeight: 500,
+        marginBottom: 6,
+        display: "block",
+        fontFamily: "var(--font-body)",
+        textTransform: "uppercase",
+        letterSpacing: "0.06em",
+      }}>
+        {label}
+      </label>
       {children}
-      {error && <p className="text-red-400 text-xs mt-1">{error}</p>}
+      {error && (
+        <p style={{ color: "var(--color-danger, #f87171)", fontSize: 11, marginTop: 4 }}>
+          {error}
+        </p>
+      )}
     </div>
   )
 }
@@ -139,9 +210,9 @@ function UserModal({ user, onClose, onSave, saving }: {
     if (!form.email?.trim()) e.email = "E-mail obrigatório"
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "E-mail inválido"
     if (needsPwd) {
-      if (!form.password)             e.password = "Senha obrigatória"
+      if (!form.password)               e.password = "Senha obrigatória"
       else if (form.password.length < 8) e.password = "Mínimo 8 caracteres"
-      else if (strength.score < 2)    e.password = "Senha muito fraca"
+      else if (strength.score < 2)      e.password = "Senha muito fraca"
       if (form.password !== form.confirmPassword) e.confirmPassword = "Senhas não coincidem"
     }
     setErrors(e)
@@ -157,8 +228,19 @@ function UserModal({ user, onClose, onSave, saving }: {
     await onSave(form)
   }
 
-  const inputCls = (err?: string) =>
-    `w-full bg-white/5 border rounded-lg px-3 py-2 text-white text-sm placeholder-white/20 focus:outline-none transition-colors ${err ? "border-red-500/60" : "border-white/10 focus:border-violet-500/60"}`
+  const inputStyle = (hasError?: string): React.CSSProperties => ({
+    width: "100%",
+    background: "rgba(255,255,255,0.04)",
+    border: `1px solid ${hasError ? "var(--color-danger, #f87171)" : "var(--color-border)"}`,
+    borderRadius: "var(--border-radius)",
+    padding: "8px 12px",
+    color: "var(--color-text)",
+    fontSize: "var(--font-size-base)",
+    fontFamily: "var(--font-body)",
+    outline: "none",
+    transition: "border-color 0.2s",
+    boxSizing: "border-box" as const,
+  })
 
   const tabs = [
     { key: "info",  label: "📋 Informações" },
@@ -167,72 +249,112 @@ function UserModal({ user, onClose, onSave, saving }: {
   ] as const
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#0f1117] border border-white/10 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+    <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
+      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)" }} onClick={onClose} />
+      <div style={{
+        position: "relative",
+        background: "var(--color-surface)",
+        border: `1px solid var(--color-border)`,
+        borderRadius: `calc(var(--border-radius) * 2)`,
+        width: "100%",
+        maxWidth: 520,
+        boxShadow: "0 25px 60px rgba(0,0,0,0.5)",
+        overflow: "hidden",
+        fontFamily: "var(--font-body)",
+      }}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08]">
-          <div className="flex items-center gap-3">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: `1px solid var(--color-border)` }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {form.name
               ? <Avatar name={form.name} />
-              : <div className="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/30">?</div>
+              : <div style={{ width: 36, height: 36, borderRadius: "var(--border-radius)", background: "rgba(255,255,255,0.04)", border: `1px solid var(--color-border)`, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-muted)", fontSize: 18 }}>?</div>
             }
             <div>
-              <h2 className="text-white font-semibold text-sm">{isNew ? "Novo usuário" : "Editar usuário"}</h2>
-              <p className="text-white/40 text-xs">{isNew ? "Preencha os dados abaixo" : form.email}</p>
+              <h2 style={{ color: "var(--color-text)", fontWeight: 600, fontSize: "var(--font-size-base)", margin: 0, fontFamily: "var(--font-heading)" }}>
+                {isNew ? "Novo usuário" : "Editar usuário"}
+              </h2>
+              <p style={{ color: "var(--color-text-muted)", fontSize: 11, margin: 0 }}>
+                {isNew ? "Preencha os dados abaixo" : form.email}
+              </p>
             </div>
           </div>
-          <button onClick={onClose} className="text-white/30 hover:text-white/70 text-xl leading-none transition-colors">×</button>
+          <button onClick={onClose} style={{ color: "var(--color-text-muted)", background: "none", border: "none", fontSize: 22, cursor: "pointer", lineHeight: 1, padding: 4, transition: "color 0.2s" }}>×</button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-white/[0.08]">
+        <div style={{ display: "flex", borderBottom: `1px solid var(--color-border)` }}>
           {tabs.map(t => (
-            <button key={t.key} onClick={() => setTab(t.key)}
-              className={`flex-1 py-2.5 text-xs font-medium transition-colors relative ${tab === t.key ? "text-white" : "text-white/40 hover:text-white/60"}`}>
+            <button key={t.key} onClick={() => setTab(t.key)} style={{
+              flex: 1,
+              padding: "10px 0",
+              fontSize: 11,
+              fontWeight: 500,
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              color: tab === t.key ? "var(--color-text)" : "var(--color-text-muted)",
+              position: "relative",
+              transition: "color 0.2s",
+              fontFamily: "var(--font-body)",
+            }}>
               {t.label}
-              {tab === t.key && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-500 rounded-t" />}
+              {tab === t.key && (
+                <span style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, background: "var(--color-primary)", borderRadius: "2px 2px 0 0" }} />
+              )}
             </button>
           ))}
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-4 max-h-[58vh] overflow-y-auto">
+        <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 16, maxHeight: "58vh", overflowY: "auto" }}>
 
           {tab === "info" && <>
             <Field label="Nome completo" error={errors.name}>
               <input type="text" value={form.name ?? ""} onChange={e => set("name", e.target.value)}
-                placeholder="Ex: João Silva" className={inputCls(errors.name)} />
+                placeholder="Ex: João Silva" style={inputStyle(errors.name)} />
             </Field>
 
             <Field label="E-mail" error={errors.email}>
               <input type="email" value={form.email ?? ""} onChange={e => set("email", e.target.value)}
-                placeholder="joao@empresa.com" className={inputCls(errors.email)} />
+                placeholder="joao@empresa.com" style={inputStyle(errors.email)} />
             </Field>
 
             <Field label="Função">
-              <div className="grid grid-cols-2 gap-2">
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {(Object.keys(ROLE_CONFIG) as Role[]).map(role => {
                   const cfg = ROLE_CONFIG[role]
                   const selected = form.role === role
                   return (
-                    <button key={role} onClick={() => setRole(role)}
-                      className={`px-3 py-2 rounded-lg border text-xs font-medium transition-all text-left ${
-                        selected ? `${cfg.bg} ${cfg.color} border-current` : "bg-white/3 border-white/8 text-white/40 hover:bg-white/6"
-                      }`}>
-                      <div className="font-semibold">{cfg.label}</div>
-                      <div className="opacity-60 text-[10px] mt-0.5">{cfg.defaultPerms.length} permissões padrão</div>
+                    <button key={role} onClick={() => setRole(role)} style={{
+                      padding: "8px 12px",
+                      borderRadius: "var(--border-radius)",
+                      border: `1px solid ${selected ? cfg.colorVar : "var(--color-border)"}`,
+                      background: selected ? `color-mix(in srgb, ${cfg.colorVar} 12%, transparent)` : "rgba(255,255,255,0.02)",
+                      color: selected ? cfg.colorVar : "var(--color-text-muted)",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      transition: "all 0.2s",
+                      fontFamily: "var(--font-body)",
+                    }}>
+                      <div style={{ fontWeight: 600, fontSize: 12 }}>{cfg.label}</div>
+                      <div style={{ fontSize: 10, opacity: 0.6, marginTop: 2 }}>{cfg.defaultPerms.length} permissões padrão</div>
                     </button>
                   )
                 })}
               </div>
             </Field>
 
-            <div className="flex items-center justify-between bg-white/3 border border-white/[0.08] rounded-xl px-4 py-3">
+            <div style={{
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              background: "rgba(255,255,255,0.02)",
+              border: `1px solid var(--color-border)`,
+              borderRadius: "var(--border-radius)",
+              padding: "12px 16px",
+            }}>
               <div>
-                <p className="text-white/70 text-sm font-medium">Conta ativa</p>
-                <p className="text-white/30 text-xs">Usuário pode fazer login</p>
+                <p style={{ color: "var(--color-text)", fontSize: 13, fontWeight: 500, margin: 0 }}>Conta ativa</p>
+                <p style={{ color: "var(--color-text-muted)", fontSize: 11, margin: 0 }}>Usuário pode fazer login</p>
               </div>
               <Toggle value={form.active ?? true} onChange={() => set("active", !form.active)} />
             </div>
@@ -240,10 +362,16 @@ function UserModal({ user, onClose, onSave, saving }: {
 
           {tab === "senha" && <>
             {!isNew && (
-              <div className="flex items-center justify-between bg-white/3 border border-white/[0.08] rounded-xl px-4 py-3">
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                background: "rgba(255,255,255,0.02)",
+                border: `1px solid var(--color-border)`,
+                borderRadius: "var(--border-radius)",
+                padding: "12px 16px",
+              }}>
                 <div>
-                  <p className="text-white/70 text-sm font-medium">Alterar senha</p>
-                  <p className="text-white/30 text-xs">
+                  <p style={{ color: "var(--color-text)", fontSize: 13, fontWeight: 500, margin: 0 }}>Alterar senha</p>
+                  <p style={{ color: "var(--color-text-muted)", fontSize: 11, margin: 0 }}>
                     {user?.hasPassword ? "Possui senha — deseja redefinir?" : "Sem senha (somente OAuth)"}
                   </p>
                 </div>
@@ -253,83 +381,111 @@ function UserModal({ user, onClose, onSave, saving }: {
 
             {needsPwd ? <>
               <Field label={isNew ? "Senha" : "Nova senha"} error={errors.password}>
-                <div className="relative">
+                <div style={{ position: "relative" }}>
                   <input type={showPwd ? "text" : "password"} value={form.password ?? ""}
                     onChange={e => set("password", e.target.value)} placeholder="Mínimo 8 caracteres"
-                    className={inputCls(errors.password) + " pr-10"} />
-                  <button onClick={() => setShowPwd(!showPwd)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 text-xs transition-colors">
+                    style={{ ...inputStyle(errors.password), paddingRight: 40 }} />
+                  <button onClick={() => setShowPwd(!showPwd)} style={{
+                    position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+                    background: "none", border: "none", cursor: "pointer",
+                    color: "var(--color-text-muted)", fontSize: 13, padding: 0,
+                  }}>
                     {showPwd ? "🙈" : "👁"}
                   </button>
                 </div>
 
                 {form.password && (
-                  <div className="mt-2">
-                    <div className="flex gap-1 mb-1">
+                  <div style={{ marginTop: 8 }}>
+                    <div style={{ display: "flex", gap: 4, marginBottom: 4 }}>
                       {[1,2,3,4,5].map(i => (
-                        <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i <= strength.score ? strength.color : "bg-white/10"}`} />
+                        <div key={i} style={{
+                          height: 3,
+                          flex: 1,
+                          borderRadius: 999,
+                          transition: "background 0.3s",
+                          background: i <= strength.score ? strength.color : "rgba(255,255,255,0.08)",
+                        }} />
                       ))}
                     </div>
-                    <p className={`text-xs ${strength.score <= 2 ? "text-red-400" : strength.score <= 3 ? "text-yellow-400" : "text-emerald-400"}`}>
-                      {strength.label}
-                    </p>
+                    <p style={{ fontSize: 11, color: strength.color, margin: 0 }}>{strength.label}</p>
                   </div>
                 )}
               </Field>
 
               <Field label="Confirmar senha" error={errors.confirmPassword}>
-                <div className="relative">
+                <div style={{ position: "relative" }}>
                   <input type={showCfm ? "text" : "password"} value={form.confirmPassword ?? ""}
                     onChange={e => set("confirmPassword", e.target.value)} placeholder="Repita a senha"
-                    className={inputCls(errors.confirmPassword) + " pr-10"} />
-                  <button onClick={() => setShowCfm(!showCfm)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 text-xs transition-colors">
+                    style={{ ...inputStyle(errors.confirmPassword), paddingRight: 40 }} />
+                  <button onClick={() => setShowCfm(!showCfm)} style={{
+                    position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+                    background: "none", border: "none", cursor: "pointer",
+                    color: "var(--color-text-muted)", fontSize: 13, padding: 0,
+                  }}>
                     {showCfm ? "🙈" : "👁"}
                   </button>
                 </div>
                 {form.confirmPassword && form.password === form.confirmPassword && !errors.confirmPassword && (
-                  <p className="text-emerald-400 text-xs mt-1">✓ Senhas coincidem</p>
+                  <p style={{ color: "var(--color-success, #34d399)", fontSize: 11, marginTop: 4 }}>✓ Senhas coincidem</p>
                 )}
               </Field>
 
-              <div className="bg-white/3 border border-white/[0.08] rounded-xl p-3">
-                <p className="text-white/40 text-xs font-semibold mb-2">Requisitos:</p>
+              <div style={{
+                background: "rgba(255,255,255,0.02)",
+                border: `1px solid var(--color-border)`,
+                borderRadius: "var(--border-radius)",
+                padding: 12,
+              }}>
+                <p style={{ color: "var(--color-text-muted)", fontSize: 11, fontWeight: 600, marginBottom: 8, margin: "0 0 8px 0" }}>Requisitos:</p>
                 {[
                   { label: "Mínimo 8 caracteres",      ok: (form.password?.length ?? 0) >= 8 },
                   { label: "Letra maiúscula (A-Z)",     ok: /[A-Z]/.test(form.password ?? "") },
                   { label: "Número (0-9)",              ok: /[0-9]/.test(form.password ?? "") },
                   { label: "Caractere especial (!@#$)", ok: /[^A-Za-z0-9]/.test(form.password ?? "") },
                 ].map(r => (
-                  <div key={r.label} className="flex items-center gap-2 mb-1">
-                    <span className={`text-xs ${r.ok ? "text-emerald-400" : "text-white/20"}`}>{r.ok ? "✓" : "○"}</span>
-                    <span className={`text-xs ${r.ok ? "text-white/60" : "text-white/25"}`}>{r.label}</span>
+                  <div key={r.label} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontSize: 11, color: r.ok ? "var(--color-success, #34d399)" : "rgba(255,255,255,0.2)" }}>{r.ok ? "✓" : "○"}</span>
+                    <span style={{ fontSize: 11, color: r.ok ? "var(--color-text)" : "var(--color-text-muted)" }}>{r.label}</span>
                   </div>
                 ))}
               </div>
             </> : (
-              <div className="flex flex-col items-center justify-center py-10 text-white/25">
-                <span className="text-4xl mb-3">🔒</span>
-                <p className="text-sm">Ative "Alterar senha" para redefinir</p>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 0", color: "var(--color-text-muted)" }}>
+                <span style={{ fontSize: 40, marginBottom: 12 }}>🔒</span>
+                <p style={{ fontSize: 13, margin: 0 }}>Ative "Alterar senha" para redefinir</p>
               </div>
             )}
           </>}
 
           {tab === "perms" && <>
-            <p className="text-white/40 text-xs mb-3">
-              Permissões de <span className="text-white/70">{form.name || "este usuário"}</span>.
+            <p style={{ color: "var(--color-text-muted)", fontSize: 11, margin: "0 0 4px 0" }}>
+              Permissões de <span style={{ color: "var(--color-text)" }}>{form.name || "este usuário"}</span>.
               Trocar a função redefine para o padrão.
             </p>
             {PERMISSION_GROUPS.map(group => (
-              <div key={group.group} className="bg-white/3 border border-white/[0.08] rounded-xl p-3">
-                <p className="text-white/60 text-xs font-semibold mb-2">{group.icon} {group.group}</p>
-                <div className="grid grid-cols-3 gap-2">
+              <div key={group.group} style={{
+                background: "rgba(255,255,255,0.02)",
+                border: `1px solid var(--color-border)`,
+                borderRadius: "var(--border-radius)",
+                padding: 12,
+              }}>
+                <p style={{ color: "var(--color-text-muted)", fontSize: 11, fontWeight: 600, margin: "0 0 8px 0" }}>{group.icon} {group.group}</p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
                   {group.perms.map(({ key, label }) => {
                     const on = form.permissions?.includes(key) ?? false
                     return (
-                      <button key={key} onClick={() => togglePerm(key)}
-                        className={`px-2 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                          on ? "bg-violet-500/20 border-violet-500/40 text-violet-300" : "bg-white/3 border-white/8 text-white/30 hover:bg-white/6"
-                        }`}>
+                      <button key={key} onClick={() => togglePerm(key)} style={{
+                        padding: "6px 8px",
+                        borderRadius: "var(--border-radius)",
+                        border: `1px solid ${on ? "var(--color-primary)" : "var(--color-border)"}`,
+                        background: on ? `color-mix(in srgb, var(--color-primary) 15%, transparent)` : "rgba(255,255,255,0.02)",
+                        color: on ? "var(--color-primary)" : "var(--color-text-muted)",
+                        cursor: "pointer",
+                        fontSize: 11,
+                        fontWeight: 500,
+                        transition: "all 0.2s",
+                        fontFamily: "var(--font-body)",
+                      }}>
                         {on ? "✓ " : ""}{label}
                       </button>
                     )
@@ -341,14 +497,36 @@ function UserModal({ user, onClose, onSave, saving }: {
         </div>
 
         {/* Footer */}
-        <div className="flex gap-2 px-6 py-4 border-t border-white/[0.08]">
-          <button onClick={onClose} className="flex-1 py-2 text-sm text-white/50 hover:text-white/70 border border-white/10 rounded-lg transition-colors">
+        <div style={{ display: "flex", gap: 8, padding: "16px 24px", borderTop: `1px solid var(--color-border)` }}>
+          <button onClick={onClose} style={{
+            flex: 1, padding: "8px 0", fontSize: 13,
+            color: "var(--color-text-muted)",
+            background: "none",
+            border: `1px solid var(--color-border)`,
+            borderRadius: "var(--border-radius)",
+            cursor: "pointer",
+            transition: "all 0.2s",
+            fontFamily: "var(--font-body)",
+          }}>
             Cancelar
           </button>
-          <button onClick={handleSave} disabled={saving}
-            className="flex-1 py-2 text-sm font-semibold bg-violet-600 hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center justify-center gap-2">
+          <button onClick={handleSave} disabled={saving} style={{
+            flex: 1, padding: "8px 0", fontSize: 13, fontWeight: 600,
+            background: saving ? "rgba(255,255,255,0.08)" : "var(--color-primary)",
+            color: saving ? "var(--color-text-muted)" : "var(--color-text-inverse)",
+            border: "none",
+            borderRadius: "var(--border-radius)",
+            cursor: saving ? "not-allowed" : "pointer",
+            opacity: saving ? 0.7 : 1,
+            transition: "all 0.2s",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            fontFamily: "var(--font-body)",
+          }}>
             {saving
-              ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />Salvando…</>
+              ? <><span className="theme-spinner" />Salvando…</>
               : isNew ? "Criar usuário" : "Salvar alterações"}
           </button>
         </div>
@@ -369,62 +547,141 @@ function UserRow({ user, onEdit, onDelete, onToggle }: {
   const [menu, setMenu] = useState(false)
 
   return (
-    <tr className="border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
-      <td className="px-4 py-3">
-        <div className="flex items-center gap-3">
+    <tr className="users-table-row" style={{ borderBottom: `1px solid var(--color-border)` }}>
+      <td style={{ padding: "12px 16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <Avatar name={user.name} size="sm" />
           <div>
-            <p className="text-white/90 text-sm font-medium">{user.name}</p>
-            <p className="text-white/35 text-xs">{user.email}</p>
+            <p style={{ color: "var(--color-text)", fontSize: 13, fontWeight: 500, margin: 0, fontFamily: "var(--font-body)" }}>{user.name}</p>
+            <p style={{ color: "var(--color-text-muted)", fontSize: 11, margin: 0 }}>{user.email}</p>
           </div>
         </div>
       </td>
-      <td className="px-4 py-3">
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md border text-xs font-medium ${role.bg} ${role.color}`}>
+      <td style={{ padding: "12px 16px" }}>
+        <span style={{
+          display: "inline-flex",
+          alignItems: "center",
+          padding: "2px 8px",
+          borderRadius: "var(--border-radius)",
+          border: `1px solid ${role.colorVar}`,
+          background: `color-mix(in srgb, ${role.colorVar} 12%, transparent)`,
+          color: role.colorVar,
+          fontSize: 11,
+          fontWeight: 500,
+          fontFamily: "var(--font-body)",
+        }}>
           {role.label}
         </span>
       </td>
-      <td className="px-4 py-3">
-        <div className="flex flex-wrap gap-1">
+      <td style={{ padding: "12px 16px" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
           {user.permissions.slice(0, 3).map(p => (
-            <span key={p} className="px-1.5 py-0.5 bg-white/5 border border-white/8 text-white/40 text-[10px] rounded">{p}</span>
+            <span key={p} style={{
+              padding: "2px 6px",
+              background: "rgba(255,255,255,0.04)",
+              border: `1px solid var(--color-border)`,
+              color: "var(--color-text-muted)",
+              fontSize: 10,
+              borderRadius: "calc(var(--border-radius) / 2)",
+              fontFamily: "var(--font-body)",
+            }}>{p}</span>
           ))}
           {user.permissions.length > 3 && (
-            <span className="px-1.5 py-0.5 bg-white/5 border border-white/8 text-white/40 text-[10px] rounded">+{user.permissions.length - 3}</span>
+            <span style={{
+              padding: "2px 6px",
+              background: "rgba(255,255,255,0.04)",
+              border: `1px solid var(--color-border)`,
+              color: "var(--color-text-muted)",
+              fontSize: 10,
+              borderRadius: "calc(var(--border-radius) / 2)",
+            }}>+{user.permissions.length - 3}</span>
           )}
         </div>
       </td>
-      <td className="px-4 py-3">
-        <span className={`inline-flex items-center gap-1 text-xs font-medium ${user.active ? "text-emerald-400" : "text-white/30"}`}>
-          <span className={`w-1.5 h-1.5 rounded-full ${user.active ? "bg-emerald-400" : "bg-white/20"}`} />
+      <td style={{ padding: "12px 16px" }}>
+        <span style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 5,
+          fontSize: 11,
+          fontWeight: 500,
+          color: user.active ? "var(--color-success, #34d399)" : "var(--color-text-muted)",
+        }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: "50%",
+            background: user.active ? "var(--color-success, #34d399)" : "rgba(255,255,255,0.2)",
+          }} />
           {user.active ? "Ativo" : "Inativo"}
         </span>
       </td>
-      <td className="px-4 py-3 text-xs">
+      <td style={{ padding: "12px 16px", fontSize: 11 }}>
         {user.emailVerified
-          ? <span className="text-emerald-400/70">✓ Verificado</span>
-          : <span className="text-amber-400/60">⚠ Pendente</span>}
+          ? <span style={{ color: "var(--color-success, #34d399)" }}>✓ Verificado</span>
+          : <span style={{ color: "var(--color-warning, #fbbf24)" }}>⚠ Pendente</span>}
       </td>
-      <td className="px-4 py-3 text-center">
-        <span className={`text-sm ${user.hasPassword ? "opacity-70" : "opacity-20"}`} title={user.hasPassword ? "Tem senha" : "Sem senha"}>
-          🔑
-        </span>
+      <td style={{ padding: "12px 16px", textAlign: "center" }}>
+        <span style={{ fontSize: 16, opacity: user.hasPassword ? 0.7 : 0.2 }} title={user.hasPassword ? "Tem senha" : "Sem senha"}>🔑</span>
       </td>
-      <td className="px-4 py-3">
-        <div className="relative flex justify-end">
-          <button onClick={() => setMenu(!menu)}
-            className="opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center text-white/40 hover:text-white/80 hover:bg-white/8 rounded-lg transition-all text-lg">
+      <td style={{ padding: "12px 16px" }}>
+        <div style={{ position: "relative", display: "flex", justifyContent: "flex-end" }}>
+          <button
+            onClick={() => setMenu(!menu)}
+            className="users-row-menu-btn"
+            style={{
+              width: 28, height: 28,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "var(--color-text-muted)",
+              background: "none",
+              border: "none",
+              borderRadius: "var(--border-radius)",
+              cursor: "pointer",
+              fontSize: 18,
+              transition: "all 0.2s",
+            }}>
             ⋯
           </button>
           {menu && <>
-            <div className="fixed inset-0 z-10" onClick={() => setMenu(false)} />
-            <div className="absolute right-0 top-8 z-20 bg-[#1a1d27] border border-white/10 rounded-xl shadow-2xl py-1 min-w-[160px]">
-              <button onClick={() => { onEdit(user); setMenu(false) }} className="w-full px-3 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">✏️ Editar</button>
-              <button onClick={() => { onToggle(user.id); setMenu(false) }} className="w-full px-3 py-2 text-left text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-                {user.active ? "🚫 Desativar" : "✅ Ativar"}
+            <div style={{ position: "fixed", inset: 0, zIndex: 10 }} onClick={() => setMenu(false)} />
+            <div style={{
+              position: "absolute", right: 0, top: 32, zIndex: 20,
+              background: "var(--color-surface)",
+              border: `1px solid var(--color-border)`,
+              borderRadius: `calc(var(--border-radius) * 1.5)`,
+              boxShadow: "0 8px 30px rgba(0,0,0,0.4)",
+              padding: "4px 0",
+              minWidth: 160,
+              fontFamily: "var(--font-body)",
+            }}>
+              {[
+                { icon: "✏️", label: "Editar",     action: () => { onEdit(user); setMenu(false) }, danger: false },
+                { icon: user.active ? "🚫" : "✅", label: user.active ? "Desativar" : "Ativar", action: () => { onToggle(user.id); setMenu(false) }, danger: false },
+              ].map(item => (
+                <button key={item.label} onClick={item.action} style={{
+                  width: "100%", padding: "8px 12px", textAlign: "left",
+                  fontSize: 13,
+                  color: "var(--color-text-muted)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                  fontFamily: "var(--font-body)",
+                }}>
+                  {item.icon} {item.label}
+                </button>
+              ))}
+              <div style={{ margin: "4px 0", borderTop: `1px solid var(--color-border)` }} />
+              <button onClick={() => { onDelete(user.id); setMenu(false) }} style={{
+                width: "100%", padding: "8px 12px", textAlign: "left",
+                fontSize: 13,
+                color: "var(--color-danger, #f87171)",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                transition: "all 0.15s",
+                fontFamily: "var(--font-body)",
+              }}>
+                🗑 Excluir
               </button>
-              <div className="my-1 border-t border-white/8" />
-              <button onClick={() => { onDelete(user.id); setMenu(false) }} className="w-full px-3 py-2 text-left text-sm text-red-400/80 hover:text-red-400 hover:bg-red-400/5 transition-colors">🗑 Excluir</button>
             </div>
           </>}
         </div>
@@ -539,21 +796,79 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080a0f] text-white">
+    <div style={{
+      minHeight: "100vh",
+      background: "var(--color-background)",
+      color: "var(--color-text)",
+      fontFamily: "var(--font-body)",
+    }}>
+      {/*
+        ─────────────────────────────────────────────────────────
+        Scoped styles: apenas animações e hover states que não
+        podem ser feitos inline. Todas as cores vêm das CSS vars
+        geradas por generateCSSVariables() no theme-repository.
+        ─────────────────────────────────────────────────────────
+      */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-        * { font-family: 'DM Sans', sans-serif; box-sizing: border-box; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
+        @keyframes theme-spin { to { transform: rotate(360deg); } }
+
+        .theme-spinner {
+          display: inline-block;
+          width: 14px; height: 14px;
+          border: 2px solid rgba(255,255,255,0.25);
+          border-top-color: var(--color-text-inverse);
+          border-radius: 50%;
+          animation: theme-spin 0.7s linear infinite;
+        }
+
+        .users-table-row {
+          transition: background 0.15s;
+        }
+        .users-table-row:hover {
+          background: rgba(255,255,255,0.015);
+        }
+        .users-table-row:hover .users-row-menu-btn {
+          opacity: 1 !important;
+        }
+        .users-row-menu-btn {
+          opacity: 0;
+        }
+        .users-row-menu-btn:hover {
+          background: rgba(255,255,255,0.06) !important;
+          color: var(--color-text) !important;
+        }
+
+        input:focus {
+          border-color: var(--color-primary) !important;
+        }
+        input::placeholder {
+          color: var(--color-text-muted);
+          opacity: 0.5;
+        }
+
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .animate-spin { animation: spin 0.7s linear infinite; }
+        ::-webkit-scrollbar-thumb {
+          background: var(--color-border);
+          border-radius: 2px;
+        }
       `}</style>
 
+      {/* Toast */}
       {toast && (
-        <div className={`fixed top-4 right-4 z-50 border text-sm px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 ${
-          toast.type === "ok" ? "bg-[#1a1d27] border-white/10 text-white/80" : "bg-red-950/80 border-red-500/30 text-red-300"
-        }`}>
+        <div style={{
+          position: "fixed", top: 16, right: 16, zIndex: 60,
+          border: `1px solid ${toast.type === "ok" ? "var(--color-border)" : "rgba(248,113,113,0.35)"}`,
+          background: toast.type === "ok" ? "var(--color-surface)" : "rgba(127,29,29,0.8)",
+          color: toast.type === "ok" ? "var(--color-text)" : "#fca5a5",
+          fontSize: 13,
+          padding: "10px 16px",
+          borderRadius: "var(--border-radius)",
+          boxShadow: "0 8px 30px rgba(0,0,0,0.4)",
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          fontFamily: "var(--font-body)",
+        }}>
           <span>{toast.type === "ok" ? "✓" : "✕"}</span> {toast.msg}
         </div>
       )}
@@ -562,75 +877,173 @@ export default function UsersPage() {
         <UserModal user={modal.user} onClose={() => setModal({ open: false, user: null })} onSave={handleSave} saving={saving} />
       )}
 
-      <div className="max-w-6xl mx-auto px-6 py-10">
-        <div className="flex items-start justify-between mb-8">
+      <div style={{ maxWidth: "var(--container-width)", margin: "0 auto", padding: "40px 24px" }}>
+
+        {/* Page header */}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 32 }}>
           <div>
-            <p className="text-white/30 text-xs mono mb-1 tracking-widest uppercase">Auth.js · Neon DB</p>
-            <h1 className="text-2xl font-bold text-white">Gerenciamento de Usuários</h1>
-            <p className="text-white/40 text-sm mt-1">Cadastre, edite e gerencie permissões do sistema</p>
+            <p style={{
+              color: "var(--color-text-muted)",
+              fontSize: 10,
+              fontFamily: "var(--font-body)",
+              marginBottom: 4,
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+              margin: "0 0 4px 0",
+            }}>
+              Auth.js · Neon DB
+            </p>
+            <h1 style={{
+              fontFamily: "var(--font-heading)",
+              fontSize: "var(--font-size-h2)",
+              fontWeight: "var(--heading-weight)" as React.CSSProperties["fontWeight"],
+              color: "var(--color-text)",
+              margin: "0 0 4px 0",
+              letterSpacing: "var(--letter-spacing)",
+              lineHeight: "var(--line-height)",
+            }}>
+              Gerenciamento de Usuários
+            </h1>
+            <p style={{ color: "var(--color-text-muted)", fontSize: 13, margin: 0 }}>
+              Cadastre, edite e gerencie permissões do sistema
+            </p>
           </div>
-          <button onClick={() => setModal({ open: true, user: null })}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors shadow-lg shadow-violet-500/20">
-            <span className="text-base leading-none">+</span> Novo usuário
+          <button
+            onClick={() => setModal({ open: true, user: null })}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              background: "var(--color-primary)",
+              color: "var(--color-text-inverse)",
+              fontSize: 13,
+              fontWeight: 600,
+              padding: "9px 18px",
+              borderRadius: "var(--border-radius)",
+              border: "none",
+              cursor: "pointer",
+              transition: "opacity 0.2s, transform 0.15s",
+              fontFamily: "var(--font-body)",
+              boxShadow: `0 4px 16px color-mix(in srgb, var(--color-primary) 35%, transparent)`,
+            }}
+            onMouseEnter={e => (e.currentTarget.style.opacity = "0.88")}
+            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+          >
+            <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Novo usuário
           </button>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 24 }}>
           {[
-            { label: "Total",           value: stats.total,      icon: "👥", color: "text-white/80" },
-            { label: "Ativos",          value: stats.active,     icon: "✅", color: "text-emerald-400" },
-            { label: "Admins",          value: stats.admins,     icon: "🛡", color: "text-red-400" },
-            { label: "Não verificados", value: stats.unverified, icon: "⚠️", color: "text-amber-400" },
+            { label: "Total",           value: stats.total,      icon: "👥", color: "var(--color-text)" },
+            { label: "Ativos",          value: stats.active,     icon: "✅", color: "var(--color-success, #34d399)" },
+            { label: "Admins",          value: stats.admins,     icon: "🛡",  color: "var(--color-danger, #f87171)" },
+            { label: "Não verificados", value: stats.unverified, icon: "⚠️", color: "var(--color-warning, #fbbf24)" },
           ].map(s => (
-            <div key={s.label} className="bg-white/3 border border-white/[0.08] rounded-xl p-4">
-              <div className="flex items-center justify-between mb-1">
-                <p className="text-white/40 text-xs">{s.label}</p>
-                <span className="text-sm">{s.icon}</span>
+            <div key={s.label} style={{
+              background: "var(--color-surface)",
+              border: `1px solid var(--color-border)`,
+              borderRadius: "var(--border-radius)",
+              padding: 16,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                <p style={{ color: "var(--color-text-muted)", fontSize: 11, margin: 0, textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.label}</p>
+                <span style={{ fontSize: 14 }}>{s.icon}</span>
               </div>
-              <p className={`text-2xl font-bold ${s.color}`}>{loading ? "—" : s.value}</p>
+              <p style={{ fontSize: 26, fontWeight: 700, color: s.color, margin: 0, fontFamily: "var(--font-heading)", lineHeight: 1 }}>
+                {loading ? "—" : s.value}
+              </p>
             </div>
           ))}
         </div>
 
         {/* Filters */}
-        <div className="flex gap-3 mb-4">
-          <div className="relative flex-1 max-w-sm">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-white/25 text-sm">🔍</span>
-            <input type="text" placeholder="Buscar por nome ou e-mail…" value={search} onChange={e => setSearch(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-white placeholder-white/20 focus:outline-none focus:border-violet-500/60 transition-colors" />
+        <div style={{ display: "flex", gap: 12, marginBottom: 16, alignItems: "center" }}>
+          <div style={{ position: "relative", flex: 1, maxWidth: 340 }}>
+            <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--color-text-muted)", fontSize: 13 }}>🔍</span>
+            <input
+              type="text"
+              placeholder="Buscar por nome ou e-mail…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{
+                width: "100%",
+                background: "var(--color-surface)",
+                border: `1px solid var(--color-border)`,
+                borderRadius: "var(--border-radius)",
+                padding: "8px 16px 8px 36px",
+                fontSize: 13,
+                color: "var(--color-text)",
+                outline: "none",
+                transition: "border-color 0.2s",
+                fontFamily: "var(--font-body)",
+                boxSizing: "border-box",
+              }}
+            />
           </div>
-          <div className="flex gap-1.5">
-            {(["all", ...Object.keys(ROLE_CONFIG)] as (Role | "all")[]).map(r => (
-              <button key={r} onClick={() => setFilterRole(r)}
-                className={`px-3 py-2 rounded-xl text-xs font-medium border transition-all ${
-                  filterRole === r ? "bg-violet-600 border-violet-500 text-white" : "bg-white/3 border-white/8 text-white/40 hover:bg-white/6"
-                }`}>
-                {r === "all" ? "Todos" : ROLE_CONFIG[r].label}
-              </button>
-            ))}
+          <div style={{ display: "flex", gap: 6 }}>
+            {(["all", ...Object.keys(ROLE_CONFIG)] as (Role | "all")[]).map(r => {
+              const isActive = filterRole === r
+              return (
+                <button key={r} onClick={() => setFilterRole(r)} style={{
+                  padding: "7px 14px",
+                  borderRadius: "var(--border-radius)",
+                  border: `1px solid ${isActive ? "var(--color-primary)" : "var(--color-border)"}`,
+                  background: isActive ? "var(--color-primary)" : "var(--color-surface)",
+                  color: isActive ? "var(--color-text-inverse)" : "var(--color-text-muted)",
+                  fontSize: 11,
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  fontFamily: "var(--font-body)",
+                }}>
+                  {r === "all" ? "Todos" : ROLE_CONFIG[r].label}
+                </button>
+              )
+            })}
           </div>
         </div>
 
         {/* Table */}
-        <div className="bg-white/2 border border-white/[0.08] rounded-2xl overflow-hidden">
+        <div style={{
+          background: "var(--color-surface)",
+          border: `1px solid var(--color-border)`,
+          borderRadius: `calc(var(--border-radius) * 2)`,
+          overflow: "hidden",
+        }}>
           {loading ? (
-            <div className="flex items-center justify-center py-16 gap-2 text-white/30 text-sm">
-              <span className="w-4 h-4 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "64px 0", gap: 10, color: "var(--color-text-muted)", fontSize: 13 }}>
+              <span className="theme-spinner" />
               Carregando usuários…
             </div>
           ) : (
-            <table className="w-full">
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
-                <tr className="border-b border-white/[0.08]">
+                <tr style={{ borderBottom: `1px solid var(--color-border)` }}>
                   {["Usuário","Função","Permissões","Status","E-mail","Senha",""].map(h => (
-                    <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-white/30 uppercase tracking-wider">{h}</th>
+                    <th key={h} style={{
+                      padding: "12px 16px",
+                      textAlign: "left",
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: "var(--color-text-muted)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      fontFamily: "var(--font-body)",
+                    }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0
-                  ? <tr><td colSpan={7} className="px-4 py-12 text-center text-white/25 text-sm">Nenhum usuário encontrado</td></tr>
+                  ? (
+                    <tr>
+                      <td colSpan={7} style={{ padding: "48px 16px", textAlign: "center", color: "var(--color-text-muted)", fontSize: 13 }}>
+                        Nenhum usuário encontrado
+                      </td>
+                    </tr>
+                  )
                   : filtered.map(user => (
                     <UserRow key={user.id} user={user}
                       onEdit={u => setModal({ open: true, user: u })}
@@ -642,9 +1055,19 @@ export default function UsersPage() {
               </tbody>
             </table>
           )}
-          <div className="px-4 py-3 border-t border-white/5 flex items-center justify-between">
-            <p className="text-white/25 text-xs">Mostrando {filtered.length} de {users.length} usuários</p>
-            <p className="text-white/20 text-xs mono">users · accounts · sessions</p>
+          <div style={{
+            padding: "12px 16px",
+            borderTop: `1px solid var(--color-border)`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}>
+            <p style={{ color: "var(--color-text-muted)", fontSize: 11, margin: 0 }}>
+              Mostrando {filtered.length} de {users.length} usuários
+            </p>
+            <p style={{ color: "var(--color-text-muted)", fontSize: 11, margin: 0, opacity: 0.5, fontFamily: "var(--font-body)" }}>
+              users · accounts · sessions
+            </p>
           </div>
         </div>
       </div>
