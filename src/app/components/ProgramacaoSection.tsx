@@ -1,5 +1,5 @@
-// components/ProgramacaoSection.tsx
-import React from "react";
+'use client'
+
 import { Sunrise } from "lucide-react";
 import { FaPrayingHands } from "react-icons/fa";
 import Image from "next/image";

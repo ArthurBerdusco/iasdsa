@@ -117,7 +117,7 @@ function AnuncioCard({ anuncio, variant = "mobile" }: { anuncio: Anuncio; varian
             alt={anuncio.titulo}
             className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
           />
-          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[var(--color-surface)] to-transparent" />
+          
         </div>
 
         {/* Hover border */}

@@ -135,7 +135,7 @@ export default function SignIn() {
         .photo-panel { animation: fadeIn 1.2s ease both; }
         .church-photo { animation: panPhoto 18s ease-in-out infinite; }
 
-        .btn-primary:not(:disabled):hover { background: #174024 !important; box-shadow: 0 6px 24px rgba(30,80,45,0.38) !important; }
+        .btn-primary:not(:disabled):hover { background: #262263 !important; box-shadow: 0 6px 24px rgba(30,80,45,0.38) !important; }
         .btn-primary:not(:disabled):hover .shimmer-layer {
           animation: shimmerMove 0.75s ease forwards;
         }
@@ -147,7 +147,7 @@ export default function SignIn() {
       ══════════════════════════════════════ */}
       <div
         className="photo-panel hidden lg:flex lg:w-[52%] xl:w-[55%] relative flex-col overflow-hidden"
-        style={{ background: "#12211a" }}
+        style={{ background: "#3b4873" }}
       >
 
 
@@ -164,8 +164,8 @@ export default function SignIn() {
 
         {/* Vignette + gradient overlays */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.45) 100%)" }} />
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to top, rgba(10,20,14,0.97) 0%, rgba(10,20,14,0.5) 45%, rgba(10,20,14,0.15) 100%)" }} />
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(10,20,14,0.7) 0%, transparent 25%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to top, rgba(10, 17, 20, 0.97) 0%, rgba(10, 13, 20, 0.5) 45%, rgba(13, 106, 255, 0.15) 100%)" }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(10, 12, 20, 0.7) 0%, transparent 25%)" }} />
 
         {/* ── Top: LOGO area ── */}
         <div className="relative z-10 p-8 pb-0">
@@ -251,14 +251,14 @@ export default function SignIn() {
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.028]"
           style={{
-            backgroundImage: "radial-gradient(circle, #4a6a3a 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, #3a4b6a 1px, transparent 1px)",
             backgroundSize: "24px 24px",
           }}
         />
         {/* Top gold line */}
         <div
           className="absolute top-0 left-0 right-0 h-[3px] lg:hidden"
-          style={{ background: "linear-gradient(90deg, #1e502d, #c8a96e, #1e502d)" }}
+          style={{ background: "linear-gradient(90deg, #1e0bd0, #c8a96e, #1e0bd0)" }}
         />
 
         <div
@@ -273,7 +273,7 @@ export default function SignIn() {
           <div className="lg:hidden flex items-center gap-3 mb-8 stagger-1">
             <div
               className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: "#1e502d" }}
+              style={{ background: "#1e0bd0" }}
             >
               <svg width="16" height="16" viewBox="0 0 32 32" fill="none">
                 <rect x="13.5" y="2" width="5" height="28" rx="2.5" fill="white" />
@@ -281,7 +281,7 @@ export default function SignIn() {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-bold" style={{ color: "#1e502d", fontFamily: "'Lato', sans-serif" }}>
+              <p className="text-sm font-bold" style={{ color: "#1e0bd0", fontFamily: "'Lato', sans-serif" }}>
                 Igreja Adventista do Sétimo Dia
               </p>
               <p className="text-xs" style={{ color: "#8a8070" }}>Santo Amaro</p>
@@ -365,7 +365,7 @@ export default function SignIn() {
               <label
                 className="block text-xs font-bold mb-2 tracking-widest uppercase"
                 style={{
-                  color: focused === "email" ? "#1e502d" : "#5c5850",
+                  color: focused === "email" ? "#1e0bd0" : "#5c5850",
                   fontFamily: "'Lato', sans-serif",
                   transition: "color 0.15s",
                 }}
@@ -375,7 +375,7 @@ export default function SignIn() {
               <div className="relative">
                 <span
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-150"
-                  style={{ color: focused === "email" ? "#1e502d" : "#a09c94" }}
+                  style={{ color: focused === "email" ? "#1e0bd0" : "#a09c94" }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -395,7 +395,7 @@ export default function SignIn() {
                   style={{
                     background: isLocked ? "#f2f0eb" : "#ffffff",
                     border: focused === "email"
-                      ? "2px solid #1e502d"
+                      ? "2px solid #1e0bd0"
                       : "2px solid #c8c3ba",
                     color: "#1a1a1a",
                     fontFamily: "'Lato', sans-serif",
@@ -413,7 +413,7 @@ export default function SignIn() {
               <label
                 className="block text-xs font-bold mb-2 tracking-widest uppercase"
                 style={{
-                  color: focused === "password" ? "#1e502d" : "#5c5850",
+                  color: focused === "password" ? "#1e0bd0" : "#5c5850",
                   fontFamily: "'Lato', sans-serif",
                   transition: "color 0.15s",
                 }}
@@ -423,7 +423,7 @@ export default function SignIn() {
               <div className="relative">
                 <span
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-150"
-                  style={{ color: focused === "password" ? "#1e502d" : "#a09c94" }}
+                  style={{ color: focused === "password" ? "#1e0bd0" : "#a09c94" }}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
@@ -443,7 +443,7 @@ export default function SignIn() {
                   style={{
                     background: isLocked ? "#f2f0eb" : "#ffffff",
                     border: focused === "password"
-                      ? "2px solid #1e502d"
+                      ? "2px solid #1e0bd0"
                       : "2px solid #c8c3ba",
                     color: "#1a1a1a",
                     fontFamily: "'Lato', sans-serif",
@@ -482,7 +482,7 @@ export default function SignIn() {
                 disabled={loading || isLocked}
                 className="btn-primary relative w-full py-3.5 rounded-xl text-sm font-bold tracking-wider uppercase overflow-hidden transition-all duration-200 active:scale-[0.985] disabled:cursor-not-allowed"
                 style={{
-                  background: isLocked ? "#c8c3ba" : "#1e502d",
+                  background: isLocked ? "#c8c3ba" : "#2a2176",
                   color: "#fff",
                   fontFamily: "'Lato', sans-serif",
                   letterSpacing: "0.1em",

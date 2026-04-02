@@ -1,8 +1,9 @@
 // app/page.tsx
-"use client";
-import React, { useState, useEffect } from "react";
-import { Element } from "react-scroll";
-import { ComponenteConfig, UseComponentConfigReturn, ApiResponse } from "@/types/components";
+// ─── SERVER COMPONENT — sem "use client", sem useState, sem useEffect ───────
+// A config é buscada no servidor durante o render, eliminando o spinner de loading.
+
+import { ComponenteConfig } from "@/types/components";
+import ScrollSection from "./components/ScrollSection";
 
 // Componentes
 import NavBar from "./components/NavBar";
@@ -17,7 +18,7 @@ import Footer from "./components/Footer";
 import RedesSociais from "./components/CultosSemana";
 import MensagemPastoral from "./components/MensagemPastoral";
 
-// ─── Hook de config ────────────────────────────────────────────────
+// ─── Config padrão (fallback se a API falhar) ──────────────────────
 const DEFAULT_CONFIG: ComponenteConfig = {
   cultos: true,
   mensagem_pastoral: false,
@@ -30,121 +31,98 @@ const DEFAULT_CONFIG: ComponenteConfig = {
   redes_sociais: true,
 };
 
-function useComponentConfig(): UseComponentConfigReturn {
-  const [config, setConfig] = useState<ComponenteConfig>(DEFAULT_CONFIG);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+// ─── Busca no servidor (zero latência no cliente) ──────────────────
+// Roda em tempo de build (SSG) ou a cada requisição (SSR).
+// Para SSG com revalidação periódica, adicione: { next: { revalidate: 60 } }
+async function getComponentConfig(): Promise<ComponenteConfig> {
+  try {
+    // Em Server Components, use a URL absoluta ou a env var da base URL.
+    // process.env.NEXT_PUBLIC_BASE_URL deve estar configurada no .env
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch("/api/componentes-config");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data: ApiResponse<ComponenteConfig> = await res.json();
-        if (data.error) throw new Error(data.error);
-        if (data.config) setConfig(data.config);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Erro desconhecido");
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
+    const res = await fetch(`${baseUrl}/api/componentes-config`, {
+      // Revalida a config a cada 60 segundos (ISR).
+      // Troque por cache: "no-store" se precisar sempre do valor mais recente.
+      next: { revalidate: 60 },
+    });
 
-  return { config, loading, error };
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    return data.config ?? DEFAULT_CONFIG;
+  } catch (err) {
+    // API indisponível: usa config padrão silenciosamente.
+    // Em produção, considere logar no servidor: console.error(err)
+    console.warn("[page] Usando config padrão. Erro:", err);
+    return DEFAULT_CONFIG;
+  }
 }
 
-// ─── Loading ───────────────────────────────────────────────────────
-function LoadingSpinner() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
-      <div className="flex items-center gap-3 text-[var(--color-text)]">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-current" />
-        <span className="text-xl">Carregando...</span>
-      </div>
-    </div>
-  );
-}
-
-// ─── Seção padronizada ─────────────────────────────────────────────
-// Wrapper que garante espaçamento e largura consistentes em todos os componentes
-function Section({ id, children }: { id: string; children: React.ReactNode }) {
-  return (
-    <Element name={id}>
-      <section className="w-full px-4 py-12 sm:px-6 lg:px-8 xl:py-8">
-        <div className="mx-auto max-w-6xl">
-          {children}
-        </div>
-      </section>
-    </Element>
-  );
-}
-
-// ─── Page ──────────────────────────────────────────────────────────
-export default function Home() {
-  const { config, loading, error } = useComponentConfig();
-
-  if (loading) return <LoadingSpinner />;
-  if (error) console.warn("Config padrão em uso. Erro:", error);
+// ─── Page (Server Component) ───────────────────────────────────────
+export default async function Home() {
+  const config = await getComponentConfig();
 
   return (
-    // bg usa a CSS var injetada pelo layout — sem duplicar o tema aqui
     <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)]">
       <NavBar />
 
       <main>
         {config.cultos && (
-          <Section id="cultos">
+          <ScrollSection id="cultos">
             <HeroSection />
-          </Section>
+          </ScrollSection>
         )}
 
         {config.mensagem_pastoral && (
-          <Section id="mensagem">
+          <ScrollSection id="mensagem">
             <MensagemPastoral />
-          </Section>
+          </ScrollSection>
         )}
 
         {config.programacao_cultos && (
-          <Section id="programacao">
+          <ScrollSection id="programacao">
             <ProgramacaoCultos />
-          </Section>
+          </ScrollSection>
         )}
 
         {config.anuncios && (
-          <Section id="anuncios">
+          <ScrollSection id="anuncios">
             <AnunciosSection />
-          </Section>
+          </ScrollSection>
         )}
 
         {config.pedido_oracao && (
-          <Section id="oracao">
+          <ScrollSection id="oracao">
             <PedidoOracao />
-          </Section>
+          </ScrollSection>
         )}
 
         {config.fotos_semana && (
-          <Section id="fotos">
+          <ScrollSection id="fotos">
             <FotosDaSemana />
-          </Section>
+          </ScrollSection>
         )}
 
         {config.fotos_blob && (
-          <Section id="blob">
+          <ScrollSection id="blob">
             <FotosBlob />
-          </Section>
+          </ScrollSection>
         )}
 
         {config.dizimo && (
-          <Section id="dizimo">
+          <ScrollSection id="dizimo">
             <DizimoSection />
-          </Section>
+          </ScrollSection>
         )}
 
         {config.redes_sociais && (
-          <Section id="redes">
+          <ScrollSection id="redes">
             <RedesSociais />
-          </Section>
+          </ScrollSection>
         )}
       </main>
 
