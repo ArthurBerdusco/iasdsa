@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { neon } from '@neondatabase/serverless';
-import { writeFile } from "fs/promises";
-import { join } from "path";
+import { neon } from "@neondatabase/serverless";
+import { put } from "@vercel/blob";
+import { v4 as uuidv4 } from "uuid";
 
 export async function GET() {
   try {
-    // Connect to the database using neon
     const sql = neon(process.env.DATABASE_URL as string);
 
-    // Query all mensagens pastorais
     const rows = await sql`
       SELECT * FROM mensagem_pastoral
       ORDER BY id DESC
@@ -26,14 +24,12 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse form data from request
     const formData = await request.formData();
 
-    // Extract mensagem pastoral data
     const titulo = formData.get("titulo") as string;
     const mensagem = formData.get("mensagem") as string;
+    const foto = formData.get("foto") as File | null;
 
-    // Validate required data
     if (!mensagem || mensagem.trim() === "") {
       return NextResponse.json(
         { error: "Mensagem é obrigatória" },
@@ -41,46 +37,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Connect to database using neon
-    const sql = neon(process.env.DATABASE_URL as string);
+    let fotoUrl = "/images/mensagem-pastoral/sem-imagem.jpg";
 
-    // Get current date for data_publicacao (optional)
-    const dataPublicacao = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-
-
-    // FOTO DA MENSAGEM
-
-    // Get file upload data
-    const foto = formData.get("foto") as File;
-
-    // Initialize image paths
-    let mensagemPastoralImagemPath = "/images/mensagem-pastoral/sem-imagem.jpg";
-
-    // Handle orador image upload if provided
-    if (foto) {
-      const fotoBytes = await foto.arrayBuffer();
-      const buffer = Buffer.from(fotoBytes);
-
-      // Create pastores folder if it doesn't exist
-      const uploadDir = join(process.cwd(), "public", "/images/mensagem-pastoral");
-      await ensureDir(uploadDir);
-
-      // Generate unique filename
+    if (foto && foto.size > 0) {
       const extension = foto.name.split(".").pop();
-      const filename = `mensagem-pastoral.${extension}`;
+      const filename = `mensagem-pastoral/${uuidv4().slice(0, 8)}.${extension}`;
 
-      // Save file
-      await writeFile(join(uploadDir, filename), buffer);
-
-      // Update orador image path for database
-      mensagemPastoralImagemPath = `/images/mensagem-pastoral/${filename}`;
+      const blob = await put(filename, foto, { access: "public" });
+      fotoUrl = blob.url;
     }
 
-    // Insert new mensagem pastoral into database
+    const sql = neon(process.env.DATABASE_URL as string);
+    const dataPublicacao = new Date().toISOString().split("T")[0];
+
     const newMensagem = await sql`
-      INSERT INTO mensagem_pastoral
-      (titulo, mensagem, foto,data_publicacao)
-      VALUES (${titulo}, ${mensagem}, ${mensagemPastoralImagemPath}, ${dataPublicacao})
+      INSERT INTO mensagem_pastoral (titulo, mensagem, foto, data_publicacao)
+      VALUES (${titulo}, ${mensagem}, ${fotoUrl}, ${dataPublicacao})
       RETURNING *
     `;
 
@@ -91,17 +63,5 @@ export async function POST(request: NextRequest) {
       { error: "Falha ao criar mensagem pastoral" },
       { status: 500 }
     );
-  }
-}
-
-// Helper function to ensure directory exists
-async function ensureDir(dirPath: string) {
-  try {
-    const { mkdir } = require("fs/promises");
-    await mkdir(dirPath, { recursive: true });
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
-      throw error;
-    }
   }
 }

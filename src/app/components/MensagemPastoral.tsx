@@ -9,10 +9,8 @@ import { MensagemPastor } from '@/types/mensagemPastoral';
 import { formatDateForDisplay } from '@/utils/formatoData';
 
 const MensagemPastoral = () => {
-
   const [mensagem, setMensagem] = useState<MensagemPastor>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
 
   useEffect(() => {
     fetchMensagemPastoral();
@@ -21,15 +19,10 @@ const MensagemPastoral = () => {
   const fetchMensagemPastoral = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/mensagem-pastoral");
-      if (!response.ok) {
-        throw new Error("Falha ao carregar mensagem pastoral");
-      }
+      const response = await fetch('/api/mensagem-pastoral');
+      if (!response.ok) throw new Error('Falha ao carregar mensagem pastoral');
       const data = await response.json();
-
-      // Pegamos apenas a primeira mensagem, já que é única
       setMensagem(data.length > 0 ? data[0] : null);
-
     } catch (error) {
       console.error(error);
     } finally {
@@ -39,99 +32,162 @@ const MensagemPastoral = () => {
 
   if (isLoading || !mensagem) {
     return (
-      <>Carregando Mensagem Pastoral</>
+      <section className="py-10 text-center text-sm text-[var(--color-text-muted)]">
+        Carregando Mensagem Pastoral...
+      </section>
     );
   }
 
   return (
-    <section className="bg-blue-950 text-white">
-      <div className="max-w-6xl mx-auto py-12 px-4">
-        {/* Header com ícone */}
-        <SectionHeader title='MENSAGEM PASTORAL' />
+    <div className="mx-auto max-w-6xl px-4 py-12">
+      <SectionHeader title="MENSAGEM PASTORAL" />
 
-        {/* Container principal com flexbox */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden">
-          <div className="flex flex-col lg:flex-row">
-            {/* Imagem à esquerda (2/5) */}
-            <div className="w-full lg:w-2/5 relative">
-              <div className="relative h-64 lg:h-full min-h-[320px]">
-                <Image
-                  src={mensagem.foto}
-                  alt="Mensagem Pastoral"
-                  fill
-                  className="object-cover"
-                  style={{ objectPosition: 'center' }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-blue-950/50 hidden lg:block"></div>
-                <div className="absolute bottom-0 left-0 p-4">
-                  <span className="inline-block px-4 py-1.5 bg-white/90 text-blue-800 font-medium rounded-full text-sm tracking-wide shadow-lg">
-                    Reflexão Semanal
-                  </span>
-                </div>
-              </div>
+      {/* Container principal — layout em coluna no mobile, linha no desktop */}
+      <div className="overflow-hidden rounded-[var(--border-radius)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-2xl">
+        <div className="flex flex-col lg:flex-row lg:items-stretch">
+
+          {/* ── Coluna da imagem ─────────────────────────────────────────
+              Estratégia: next/image com width+height reais e object-contain
+              dentro de um wrapper que limita a altura máxima.
+              - Mobile: largura 100%, altura se adapta à proporção da imagem
+              - Desktop: largura fixa 2/5, imagem centralizada e contida
+          ──────────────────────────────────────────────────────────────── */}
+          <div className="relative flex w-full shrink-0 items-center justify-center bg-[var(--color-background-alt)] lg:w-2/5 lg:max-h-[560px]">
+
+            {/* 
+              Usamos `img` nativo com object-contain para garantir que a imagem
+              nunca seja cortada e o wrapper encolha para o tamanho dela.
+              max-h limita para não ficar gigante em telas grandes.
+            */}
+            <div className="relative w-full">
+              <Image
+                src={mensagem.foto}
+                alt="Mensagem Pastoral"
+                width={0}
+                height={0}
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="h-auto w-full object-contain"
+                style={{ maxHeight: '560px' }}
+                priority
+              />
+
+              {/* Overlay lateral — visível apenas no desktop */}
+              <div className="absolute inset-0 hidden bg-gradient-to-r from-transparent to-[var(--color-surface)]/60 lg:block" />
             </div>
 
-            {/* Divisor vertical no meio */}
-            <div className="hidden lg:block w-px bg-gradient-to-b from-blue-400/20 via-blue-300/50 to-blue-400/20 self-stretch"></div>
-
-            {/* Conteúdo à direita em formato de card */}
-            <div className="w-full lg:w-3/5 p-6 lg:p-8 flex flex-col">
-              {/* Título da mensagem */}
-              <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent mb-6">
-                {mensagem.titulo}
-              </h3>
-
-              {/* Texto da mensagem */}
-              <div className="bg-white/10 p-6 rounded-xl border-l-4 border-blue-500 mb-8 flex-grow">
-
-                <div className="space-y-4">
-
-                  {mensagem.mensagem.split('\n').map((paragraph, index) => (
-
-                    <p key={index} className="text-white leading-relaxed">
-                      {paragraph}
-                    </p>
-
-                  ))}
-                </div>
-
-              </div>
-
-              {/* Informações do pastor e botão */}
-              <div className="flex flex-wrap items-center justify-between gap-6 mt-auto pt-4 border-t border-blue-700/30">
-                {/* Informações do pastor */}
-                <div className="flex items-center space-x-4">
-                  <div className="w-14 h-14 rounded-full border-2 border-blue-400 p-0.5 shadow-lg">
-                    <div className="relative w-full h-full rounded-full overflow-hidden">
-                      <Image
-                        src="/images/pastores/mauro-dias.jpg"
-                        alt="Pastor Mauro Dias"
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-white">Pastor Mauro Dias</p>
-                    <p className="text-sm text-blue-200">{formatDateForDisplay(mensagem.data_publicacao ? mensagem.data_publicacao : "2025/05/05")}</p>
-                  </div>
-                </div>
-
-                {/* Botão "Ler Mais" */}
-                <Link
-                  href="https://sites.google.com/view/mensagempastoral/in%C3%ADcio"
-                  target="_blank"
-                  className="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-medium rounded-lg shadow-lg transition-all duration-300 group"
-                >
-                  <span>Ler Mais</span>
-                  <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </div>
+            {/* Badge "Reflexão Semanal" fixado no canto inferior esquerdo */}
+            <div className="absolute bottom-0 left-0 p-4">
+              <span
+                className="inline-block rounded-full px-4 py-1.5 text-sm font-medium tracking-wide shadow-lg"
+                style={{
+                  background: 'var(--color-surface)',
+                  color: 'var(--color-primary)',
+                  border: '1px solid var(--color-border)',
+                }}
+              >
+                Reflexão Semanal
+              </span>
             </div>
           </div>
+
+          {/* ── Divisor vertical (apenas desktop) ──────────────────────── */}
+          <div
+            className="hidden w-px shrink-0 self-stretch lg:block"
+            style={{
+              background:
+                'linear-gradient(to bottom, transparent, var(--color-accent), transparent)',
+              opacity: 0.4,
+            }}
+          />
+
+          {/* ── Coluna do conteúdo ──────────────────────────────────────── */}
+          <div className="flex w-full flex-col p-6 lg:w-3/5 lg:p-8">
+
+            {/* Título da mensagem */}
+            <h3
+              className="mb-6 text-2xl font-bold sm:text-3xl"
+              style={{ color: 'var(--color-text)' }}
+            >
+              {mensagem.titulo}
+            </h3>
+
+            {/* Corpo da mensagem */}
+            <div
+              className="mb-8 flex-grow space-y-4 overflow-y-auto rounded-[var(--border-radius)] p-6"
+              style={{
+                background: 'var(--color-background-alt)',
+                borderLeft: '4px solid var(--color-accent)',
+                maxHeight: '340px',
+              }}
+            >
+              {mensagem.mensagem.split('\n').map((paragraph, index) => (
+                <p
+                  key={index}
+                  className="leading-relaxed"
+                  style={{
+                    color: 'var(--color-text)',
+                    lineHeight: 'var(--line-height, 1.75)',
+                  }}
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            {/* ── Rodapé: pastor + botão ───────────────────────────────── */}
+            <div
+              className="mt-auto flex flex-wrap items-center justify-between gap-6 border-t pt-4"
+              style={{ borderColor: 'var(--color-border)' }}
+            >
+              {/* Info do pastor */}
+              <div className="flex items-center gap-4">
+                <div
+                  className="size-14 shrink-0 overflow-hidden rounded-full p-0.5 shadow-lg"
+                  style={{ border: '2px solid var(--color-accent)' }}
+                >
+                  <div className="relative size-full overflow-hidden rounded-full">
+                    <Image
+                      src="/images/pastores/mauro-dias.jpg"
+                      alt="Pastor Mauro Dias"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <p className="font-semibold" style={{ color: 'var(--color-text)' }}>
+                    Pastor Mauro Dias
+                  </p>
+                  <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                    {formatDateForDisplay(
+                      mensagem.data_publicacao ? mensagem.data_publicacao : '2025/05/05'
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {/* Botão "Ler Mais" */}
+              <Link
+                href="https://sites.google.com/view/mensagempastoral/in%C3%ADcio"
+                target="_blank"
+                className="group inline-flex items-center gap-2 rounded-[var(--border-radius)] px-5 py-2.5 text-sm font-medium shadow-lg transition-all duration-300"
+                style={{
+                  background: 'var(--color-primary)',
+                  color: 'var(--color-text-inverse)',
+                }}
+              >
+                <span>Ler Mais</span>
+                <ArrowRight
+                  size={16}
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </Link>
+            </div>
+          </div>
+
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
