@@ -96,7 +96,7 @@ const RECENT: RecentItem[] = [
 
 const COMPONENTS: ComponentVisibility[] = [
   { name: "Seção de Cultos", key: "cultos", visible: true },
-  { name: "Mensagem Pastoral", key: "mensagem_pastoral", visible: false },
+  { name: "Mensagem Pastoral", key: "mensagem_pastoral", visible: true },
   { name: "Programação", key: "programacao_cultos", visible: true },
   { name: "Anúncios", key: "anuncios", visible: true },
   { name: "Pedido de Oração", key: "pedido_oracao", visible: true },

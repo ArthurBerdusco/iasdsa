@@ -211,7 +211,7 @@ function Pagination({
 
 const ITEMS_PER_PAGE = 6;
 
-const Anuncios = async ({anuncios} : Props) => {
+const Anuncios = ({anuncios} : Props) => {
 
   const [filtro, setFiltro] = useState("");
   const [pagina, setPagina] = useState(1);

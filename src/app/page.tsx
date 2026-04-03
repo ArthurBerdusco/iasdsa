@@ -20,12 +20,12 @@ import MensagemPastoral from "./components/MensagemPastoral";
 import { Suspense } from "react";
 import { MensagemPastoralSkeleton } from "./components/skeletons/MensagemPastoralSkeleton";
 
-import { getCultos } from "./components/lib/cultos";
+import { getCultos } from "./lib/db/cultos";
 import ProgramacaoCultosSkeleton from "./components/skeletons/ProgramacaoCultosSkeleton";
-import { getAnuncios } from "./components/lib/anuncios";
+import { getAnuncios } from "./lib/db/anuncios";
 import CultosSkeleton from "./components/skeletons/HeroSectionSkeleton";
 import { AnunciosSkeleton } from "./components/skeletons/AnunciosSectionSkeleton";
-import { getMensagemPastoral } from "./components/lib/mensagemPastoral";
+import { getMensagemPastoral } from "./lib/db/mensagemPastoral";
 
 // ─── Config padrão (fallback se a API falhar) ──────────────────────
 const DEFAULT_CONFIG: ComponenteConfig = {
@@ -95,25 +95,25 @@ export default async function Home() {
         {config.mensagem_pastoral && (
           <ScrollSection id="mensagem">
             <Suspense fallback={<MensagemPastoralSkeleton />}>
-              <MensagemPastoral mensagem={mensagem}/>
+              <MensagemPastoral mensagem={mensagem} />
             </Suspense>
           </ScrollSection>
         )}
 
         {config.programacao_cultos && (
           <ScrollSection id="programacao">
-            <Suspense fallback={<ProgramacaoCultosSkeleton/>}>
+            <Suspense fallback={<ProgramacaoCultosSkeleton />}>
               <ProgramacaoCultos />
             </Suspense>
           </ScrollSection>
         )}
 
-        
+
         {config.anuncios && (
           <ScrollSection id="anuncios">
-            <Suspense fallback={<AnunciosSkeleton/>}>
-              <AnunciosSection anuncios={anuncios}/>
-              </Suspense>
+            <Suspense fallback={<AnunciosSkeleton />}>
+              <AnunciosSection anuncios={anuncios} />
+            </Suspense>
           </ScrollSection>
         )}
 
@@ -147,7 +147,7 @@ export default async function Home() {
             <RedesSociais />
           </ScrollSection>
         )}
-        
+
       </main>
 
       <Footer />

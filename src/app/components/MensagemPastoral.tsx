@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import SectionHeader from './SectionHeader';
-import { getMensagemPastoral } from './lib/mensagemPastoral';
+import { getMensagemPastoral } from '../lib/db/mensagemPastoral';
 import { formatDateForDisplay } from '@/utils/formatoData';
 import { MensagemPastor } from '@/types/mensagemPastoral';
 
@@ -12,7 +12,7 @@ type Props = {
 };
 
 
-const MensagemPastoral = ({mensagem}: Props) => {
+const MensagemPastoral = ({ mensagem }: Props) => {
 
   if (!mensagem) return null; // Suspense já cuidou do loading; aqui é só erro/vazio
 
