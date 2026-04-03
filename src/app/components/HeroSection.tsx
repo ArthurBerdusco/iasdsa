@@ -35,8 +35,8 @@ function CultoBadge({ icon, label }: Badge) {
 
 function OradorFooter({ orador }: { orador: Culto['orador'] }) {
   return (
-    <div className="flex rounded-[var(--border-radius)] items-center gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-alt)] px-5 py-3">
-      <div className="relative size-10 shrink-0 overflow-hidden rounded-full"
+    <div className="flex items-center gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-alt)] px-5 py-3">
+      <div className="relative size-15 shrink-0 overflow-hidden rounded-full"
         style={{ outline: '2px solid var(--color-accent)' }}>
         <Image src={orador.foto} alt={orador.nome} fill className="object-cover" />
       </div>
@@ -112,7 +112,7 @@ function CultoCard({ culto }: { culto: Culto }) {
   ];
 
   return (
-    <div className="overflow-hidden rounded-[var(--border-radius)] border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xl">
+    <div className="overflow-hidden rounded-[var(--border-radius)] border border-[var(--color-border)] ">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-[var(--color-background-alt)] px-5 py-4">
         <div>
@@ -165,7 +165,7 @@ const CultosSwiper = ({ cultos }: Props) => {
     <section className='mx-auto max-w-6xl px-4 py-12'>
       <SectionHeader title="PRÓXIMOS CULTOS" />
 
-      <div className="relative">
+      <div className="relative h-fit">
         <Swiper
           modules={[Navigation, Autoplay, EffectFade]}
           slidesPerView={1}

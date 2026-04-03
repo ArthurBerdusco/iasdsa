@@ -4,12 +4,11 @@ export const formatDateForDisplay = (dateInput: string | Date) => {
     if (!dateInput) return "";
     
     try {
-        // Garante que temos uma string ISO
         const dateString = dateInput instanceof Date 
             ? dateInput.toISOString() 
             : String(dateInput);
         
-        const datePart = dateString.split('T')[0]; // "2026-04-02"
+        const datePart = dateString.split('T')[0];
         const [year, month, day] = datePart.split('-');
         
         if (!year || !month || !day) return "";
@@ -24,6 +23,6 @@ export const formatDateForDisplay = (dateInput: string | Date) => {
 // Format date for input fields (YYYY-MM-DD)
 export const formatDateForInput = (dateString: string) => {
     if (!dateString) return "";
-    const date = new Date(dateString);
+    const date = parseISO(dateString);
     return date.toISOString().split('T')[0];
 };
