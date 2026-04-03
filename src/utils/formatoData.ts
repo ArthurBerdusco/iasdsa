@@ -1,19 +1,22 @@
 import { parseISO } from 'date-fns';
 
-export const formatDateForDisplay = (dateString: string) => {
-    if (!dateString) return "";
+export const formatDateForDisplay = (dateInput: string | Date) => {
+    if (!dateInput) return "";
     
     try {
-        // Parse direto da string ISO, ignora timezone
-        const date = parseISO(dateString);
+        // Garante que temos uma string ISO
+        const dateString = dateInput instanceof Date 
+            ? dateInput.toISOString() 
+            : String(dateInput);
         
-        // Pega só a parte da data em UTC e formata
-        const year = date.getUTCFullYear();
-        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-        const day = String(date.getUTCDate()).padStart(2, '0');
+        const datePart = dateString.split('T')[0]; // "2026-04-02"
+        const [year, month, day] = datePart.split('-');
+        
+        if (!year || !month || !day) return "";
         
         return `${day}/${month}/${year}`;
     } catch (error) {
+        console.error('Erro ao formatar data:', error, dateInput);
         return "";
     }
 };

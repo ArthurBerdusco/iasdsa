@@ -35,7 +35,7 @@ function CultoBadge({ icon, label }: Badge) {
 
 function OradorFooter({ orador }: { orador: Culto['orador'] }) {
   return (
-    <div className="flex items-center gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-alt)] px-5 py-3">
+    <div className="flex rounded-[var(--border-radius)] items-center gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-alt)] px-5 py-3">
       <div className="relative size-10 shrink-0 overflow-hidden rounded-full"
         style={{ outline: '2px solid var(--color-accent)' }}>
         <Image src={orador.foto} alt={orador.nome} fill className="object-cover" />
@@ -63,13 +63,15 @@ function NavButton({
   const posClass = side === 'left' ? '-left-4 sm:-left-5' : '-right-4 sm:-right-5';
   const Icon = side === 'left' ? ChevronLeft : ChevronRight;
   return (
+ 
     <button
       ref={btnRef}
       aria-label={label}
       className={`absolute top-[42%] z-10 ${posClass} -translate-y-1/2 flex size-8 sm:size-10 items-center justify-center rounded-full border border-[var(--color-border)] bg-[var(--color-background)] text-[var(--color-text)] backdrop-blur-sm transition hover:bg-[var(--color-accent)] hover:text-[var(--color-text-inverse)]`}
     >
       <Icon size={16} />
-    </button>
+      </button>
+    
   );
 }
 
@@ -160,10 +162,10 @@ const CultosSwiper = ({ cultos }: Props) => {
   const hasMany = cultos.length > 1;
 
   return (
-    <section>
+    <section className='mx-auto max-w-6xl px-4 py-12'>
       <SectionHeader title="PRÓXIMOS CULTOS" />
 
-      <div className="relative px-5 sm:px-6">
+      <div className="relative">
         <Swiper
           modules={[Navigation, Autoplay, EffectFade]}
           slidesPerView={1}
