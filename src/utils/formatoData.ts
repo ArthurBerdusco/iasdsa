@@ -21,8 +21,13 @@ export const formatDateForDisplay = (dateInput: string | Date) => {
 };
 
 // Format date for input fields (YYYY-MM-DD)
-export const formatDateForInput = (dateString: string) => {
-    if (!dateString) return "";
+export const formatDateForInput = (dateInput: string | Date) => {
+    if (!dateInput) return "";
+    
+    const dateString = dateInput instanceof Date 
+        ? dateInput.toISOString() 
+        : String(dateInput);
+    
     const date = parseISO(dateString);
     return date.toISOString().split('T')[0];
 };
