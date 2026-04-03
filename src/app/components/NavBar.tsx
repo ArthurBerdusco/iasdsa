@@ -1,11 +1,34 @@
 "use client";
-
+// hooks/useScrollDirection.ts
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 import { Link as ScrollLink } from "react-scroll";
 
+export function useScrollDirection() {
+  const [scrollDir, setScrollDir] = useState<"up" | "down">("up");
+  const [isAtTop, setIsAtTop] = useState(true);
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+
+    const handler = () => {
+      const currentY = window.scrollY;
+      setIsAtTop(currentY < 10);
+      setScrollDir(currentY > lastY ? "down" : "up");
+      lastY = currentY;
+    };
+
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
+  return { scrollDir, isAtTop };
+}
+
 export default function NavBar() {
+const { scrollDir, isAtTop } = useScrollDirection();
+
   const logo = "/images/logo_2.png";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
@@ -13,7 +36,14 @@ export default function NavBar() {
   const closeMenu = () => setIsMenuOpen(false); // Fecha o menu ao clicar em um link
   
   return (
-    <nav className="bg-white shadow-md border-gray-200 sticky top-0 z-50">
+    <nav
+      className={`
+        bg-white border-gray-200 fixed top-0 w-full z-50
+        transition-transform duration-300 ease-in-out
+        ${!isAtTop && "shadow-md"}
+        ${scrollDir === "down" && !isAtTop ? "-translate-y-full" : "translate-y-0"}
+      `}
+    >
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image

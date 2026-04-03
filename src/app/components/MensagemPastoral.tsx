@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import SectionHeader from './SectionHeader';
-import { getMensagemPastoral } from '../lib/db/mensagemPastoral';
 import { formatDateForDisplay } from '@/utils/formatoData';
 import { MensagemPastor } from '@/types/mensagemPastoral';
 
@@ -11,10 +10,8 @@ type Props = {
   mensagem: MensagemPastor;
 };
 
-
 const MensagemPastoral = ({ mensagem }: Props) => {
-
-  if (!mensagem) return null; // Suspense já cuidou do loading; aqui é só erro/vazio
+  if (!mensagem) return null;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
@@ -62,41 +59,56 @@ const MensagemPastoral = ({ mensagem }: Props) => {
             }}
           />
 
-          {/* Coluna do conteúdo */}
-          <div className="flex w-full flex-col p-6 lg:w-3/5 lg:p-8">
+          {/* Coluna do conteúdo — padding menor no mobile */}
+          <div className="flex w-full flex-col p-4 sm:p-6 lg:w-3/5 lg:p-8">
+
+            {/* Título — tamanho reduzido no mobile */}
             <h3
-              className="mb-6 text-2xl font-bold sm:text-3xl"
+              className="mb-4 text-xl font-bold sm:text-2xl lg:text-3xl"
               style={{ color: 'var(--color-text)' }}
             >
               {mensagem.titulo}
             </h3>
 
+            {/*
+              Área de texto:
+              - Mobile: sem altura máxima fixa, cresce livremente com o conteúdo
+              - Desktop (lg+): altura máxima de 340px com scroll interno
+              Isso evita a janelinha pequena no celular que força scroll curto
+            */}
             <div
-              className="mb-8 flex-grow space-y-4 overflow-y-auto rounded-[var(--border-radius)] p-6"
+              className="mb-6 flex-grow space-y-4 rounded-[var(--border-radius)] p-4 sm:p-6 lg:overflow-y-auto"
               style={{
                 background: 'var(--color-background-alt)',
                 borderLeft: '4px solid var(--color-accent)',
-                maxHeight: '340px',
               }}
             >
-              {mensagem.mensagem.split('\n').map((paragraph, index) => (
-                <p
-                  key={index}
-                  className="leading-relaxed"
-                  style={{ color: 'var(--color-text)', lineHeight: 'var(--line-height, 1.75)' }}
-                >
-                  {paragraph}
-                </p>
-              ))}
+              {/* maxHeight só entra no desktop via style condicional ou classe */}
+              <style>{`
+                @media (min-width: 1024px) {
+                  .mensagem-texto { max-height: 340px; overflow-y: auto; }
+                }
+              `}</style>
+              <div className="mensagem-texto space-y-4">
+                {mensagem.mensagem.split('\n').map((paragraph, index) => (
+                  <p
+                    key={index}
+                    className="text-sm leading-relaxed sm:text-base"
+                    style={{ color: 'var(--color-text)', lineHeight: '1.75' }}
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
 
             <div
-              className="mt-auto flex flex-wrap items-center justify-between gap-6 border-t pt-4"
+              className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t pt-4"
               style={{ borderColor: 'var(--color-border)' }}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <div
-                  className="size-14 shrink-0 overflow-hidden rounded-full p-0.5 shadow-lg"
+                  className="size-12 shrink-0 overflow-hidden rounded-full p-0.5 shadow-lg"
                   style={{ border: '2px solid var(--color-accent)' }}
                 >
                   <div className="relative size-full overflow-hidden rounded-full">
@@ -109,10 +121,10 @@ const MensagemPastoral = ({ mensagem }: Props) => {
                   </div>
                 </div>
                 <div>
-                  <p className="font-semibold" style={{ color: 'var(--color-text)' }}>
+                  <p className="text-sm font-semibold sm:text-base" style={{ color: 'var(--color-text)' }}>
                     Pastor Mauro Dias
                   </p>
-                  <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                  <p className="text-xs sm:text-sm" style={{ color: 'var(--color-text-muted)' }}>
                     {formatDateForDisplay(mensagem.data_publicacao ?? '2025/05/05')}
                   </p>
                 </div>
