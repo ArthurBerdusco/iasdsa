@@ -10,7 +10,7 @@ const mensagemVazia: MensagemPastor = {
 
 export async function getMensagemPastoral(): Promise<MensagemPastor> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/mensagem-pastoral`, {
+    const res = await fetch(`/api/mensagem-pastoral`, {
       next: { revalidate: 60 },
     });
 

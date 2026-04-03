@@ -1,7 +1,7 @@
 import { Culto } from '@/types/cultos';
 
 export async function getCultos(): Promise<Culto[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cultos`, {
+  const res = await fetch(`/api/cultos`, {
     next: { revalidate: 60 },
   });
 

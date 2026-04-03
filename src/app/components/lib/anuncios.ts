@@ -10,7 +10,7 @@ function isAnuncioArray(data: any): data is Anuncio[] {
 
 export async function getAnuncios(): Promise<Anuncio[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/anuncios`, {
+    const res = await fetch(`/api/anuncios`, {
       next: { revalidate: 60 },
     });
 
