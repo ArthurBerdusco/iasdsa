@@ -17,6 +17,15 @@ import FotosDaSemana from "./components/FotosDaSemana";
 import Footer from "./components/Footer";
 import RedesSociais from "./components/CultosSemana";
 import MensagemPastoral from "./components/MensagemPastoral";
+import { Suspense } from "react";
+import { MensagemPastoralSkeleton } from "./components/skeletons/MensagemPastoralSkeleton";
+
+import { getCultos } from "./components/lib/cultos";
+import ProgramacaoCultosSkeleton from "./components/skeletons/ProgramacaoCultosSkeleton";
+import { getAnuncios } from "./components/lib/anuncios";
+import CultosSkeleton from "./components/skeletons/HeroSectionSkeleton";
+import { AnunciosSkeleton } from "./components/skeletons/AnunciosSectionSkeleton";
+import { getMensagemPastoral } from "./components/lib/mensagemPastoral";
 
 // ─── Config padrão (fallback se a API falhar) ──────────────────────
 const DEFAULT_CONFIG: ComponenteConfig = {
@@ -66,6 +75,10 @@ async function getComponentConfig(): Promise<ComponenteConfig> {
 export default async function Home() {
   const config = await getComponentConfig();
 
+  const cultos = await getCultos();
+  const mensagem = await getMensagemPastoral();
+  const anuncios = await getAnuncios();
+
   return (
     <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)]">
       <NavBar />
@@ -73,27 +86,37 @@ export default async function Home() {
       <main>
         {config.cultos && (
           <ScrollSection id="cultos">
-            <HeroSection />
+            <Suspense fallback={<CultosSkeleton />}>
+              <HeroSection cultos={cultos} />
+            </Suspense>
           </ScrollSection>
         )}
 
         {config.mensagem_pastoral && (
           <ScrollSection id="mensagem">
-            <MensagemPastoral />
+            <Suspense fallback={<MensagemPastoralSkeleton />}>
+              <MensagemPastoral mensagem={mensagem}/>
+            </Suspense>
           </ScrollSection>
         )}
 
         {config.programacao_cultos && (
           <ScrollSection id="programacao">
-            <ProgramacaoCultos />
+            <Suspense fallback={<ProgramacaoCultosSkeleton/>}>
+              <ProgramacaoCultos />
+            </Suspense>
           </ScrollSection>
         )}
 
+        
         {config.anuncios && (
           <ScrollSection id="anuncios">
-            <AnunciosSection />
+            <Suspense fallback={<AnunciosSkeleton/>}>
+              <AnunciosSection anuncios={anuncios}/>
+              </Suspense>
           </ScrollSection>
         )}
+
 
         {config.pedido_oracao && (
           <ScrollSection id="oracao">
@@ -124,6 +147,7 @@ export default async function Home() {
             <RedesSociais />
           </ScrollSection>
         )}
+        
       </main>
 
       <Footer />

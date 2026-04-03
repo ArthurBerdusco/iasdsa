@@ -5,7 +5,6 @@ import { FaPrayingHands } from "react-icons/fa";
 import Image from "next/image";
 import SectionHeader from "./SectionHeader";
 
-// Cada culto tem apenas dados e um ícone — sem cor hardcoded
 const cultos = [
   {
     id: 1,
@@ -29,7 +28,6 @@ const cultos = [
     icone: (
       <Sunrise
         size={48}
-        // CSS var via style — o único caso aceitável para ícones SVG
         style={{ color: "var(--color-accent)" }}
       />
     ),

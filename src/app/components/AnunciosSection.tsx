@@ -4,19 +4,9 @@ import React, { useState, useEffect } from "react";
 import { Search, ChevronLeft, ChevronRight, ExternalLink, Star, Calendar } from "lucide-react";
 import Link from "next/link";
 import SectionHeader from "./SectionHeader";
+import { Anuncio } from "@/types/anuncios";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-interface Anuncio {
-  id: string;
-  titulo: string;
-  texto: string;
-  arte: string;
-  dataEvento: string;
-  ativo: boolean;
-  destaque: boolean;
-  links?: Array<{ tipo_link: string; url: string; textoBotao?: string }>;
-}
 
 interface GrupoMensal {
   mes: string;
@@ -33,6 +23,10 @@ enum TipoLink {
   FACEBOOK = "facebook",
   WEBSITE = "website",
 }
+
+type Props = {
+  anuncios: Anuncio[];
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -217,31 +211,11 @@ function Pagination({
 
 const ITEMS_PER_PAGE = 6;
 
-export default function Anuncios() {
-  const [anuncios, setAnuncios] = useState<Anuncio[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const Anuncios = async ({anuncios} : Props) => {
+
   const [filtro, setFiltro] = useState("");
   const [pagina, setPagina] = useState(1);
 
-  const fetchAnuncios = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/anuncios");
-      if (!res.ok) throw new Error("Falha ao carregar anúncios");
-      setAnuncios(await res.json());
-    } catch (e) {
-      setError("Não foi possível carregar os anúncios. Tente novamente.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => { fetchAnuncios(); }, []);
-
-  if (isLoading) return <LoadingState />;
-  if (error) return <ErrorState message={error} onRetry={fetchAnuncios} />;
 
   // ── Derived data ───────────────────────────────────────────────────────────
 
@@ -366,3 +340,5 @@ export default function Anuncios() {
     </div>
   );
 }
+
+export default Anuncios

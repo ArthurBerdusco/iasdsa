@@ -5,7 +5,7 @@ import 'swiper/css/effect-fade';
 
 import Image from 'next/image';
 import { CalendarDays, Clock, User, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay, EffectFade } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
@@ -13,6 +13,10 @@ import type { Swiper as SwiperType } from 'swiper';
 import { Culto } from '@/types/cultos';
 import { formatDateForDisplay } from '@/utils/formatoData';
 import SectionHeader from './SectionHeader';
+
+type Props = {
+  cultos: Culto[];
+};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -145,54 +149,13 @@ function CultoCard({ culto }: { culto: Culto }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function CultosSwiper() {
-  const [cultos, setCultos] = useState<Culto[]>([]);
+const CultosSwiper = ({ cultos }: Props) => {
+  
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
 
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
   const swiperRef = useRef<SwiperType | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch('/api/cultos');
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        setCultos(
-          data.map((c: any) => ({
-            id: c.id,
-            titulo: c.titulo,
-            diasemana: c.diasemana,
-            data: c.data,
-            hora: c.hora,
-            arte: c.arte,
-            corDestaque: c.cordestaque,
-            orador: { id: c.orador.id, nome: c.orador.nome, foto: c.orador.foto },
-          }))
-        );
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
-  }, []);
-
-  if (isLoading)
-    return (
-      <section className="py-10 text-center text-sm text-[var(--color-text-muted)]">
-        Carregando cultos...
-      </section>
-    );
-
-  if (!cultos.length)
-    return (
-      <section className="py-10 text-center text-sm text-[var(--color-text-muted)]">
-        Nenhum culto programado no momento.
-      </section>
-    );
 
   const hasMany = cultos.length > 1;
 
@@ -245,3 +208,5 @@ export default function CultosSwiper() {
     </section>
   );
 }
+
+export default CultosSwiper
