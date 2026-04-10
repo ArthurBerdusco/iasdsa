@@ -31,6 +31,8 @@ import { getComponenteConfig } from "./lib/db/config";
 
 // ─── Page (Server Component) ───────────────────────────────────────
 export default async function Home() {
+
+  console.log("ENV TEST:", process.env.DATABASE_URL);
   const config = await getComponenteConfig();
   const cultos = await getCultos();
   const mensagem = await getMensagemPastoral();
