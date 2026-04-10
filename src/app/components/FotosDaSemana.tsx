@@ -191,6 +191,7 @@ export default function FotosDaSemana() {
           <div className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px]">
             {fotos.length > 0 && (
               <Image
+                unoptimized  
                 src={fotos[safeIndex].foto}
                 alt={fotos[safeIndex].titulo}
                 fill
@@ -275,6 +276,7 @@ export default function FotosDaSemana() {
               >
                 <div className="relative w-28 h-20">
                   <Image
+                    unoptimized  
                     src={image.foto}
                     alt={image.titulo}
                     fill

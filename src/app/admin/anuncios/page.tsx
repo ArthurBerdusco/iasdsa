@@ -407,6 +407,7 @@ export default function AnunciosAdmin() {
                   <div className="mt-3 flex items-center">
                     <div className="relative h-32 w-64 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                       <Image
+                        unoptimized  
                         src={currentAnuncio.arte}
                         alt="Arte do anúncio"
                         fill
@@ -597,6 +598,7 @@ export default function AnunciosAdmin() {
                         {anuncio.arte && (
                           <div className="h-16 w-24 rounded-md overflow-hidden border border-gray-200 bg-gray-50 relative">
                             <Image
+                              unoptimized  
                               src={anuncio.arte}
                               alt={anuncio.titulo}
                               fill

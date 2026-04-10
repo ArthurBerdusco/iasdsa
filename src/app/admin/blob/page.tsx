@@ -310,6 +310,7 @@ export default function FotosRecentesAdmin() {
                 <div className="mt-3 flex items-center">
                   <div className="relative h-32 w-64 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                     <Image
+                      unoptimized  
                       src={currentFoto.foto}
                       alt={currentFoto.titulo}
                       fill
@@ -399,6 +400,7 @@ export default function FotosRecentesAdmin() {
                       {foto.foto && (
                         <div className="h-16 w-24 rounded-md overflow-hidden border border-gray-200 bg-gray-50 relative">
                           <Image
+                            unoptimized  
                             src={foto.foto}
                             alt={foto.titulo}
                             fill

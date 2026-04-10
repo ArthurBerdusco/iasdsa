@@ -47,6 +47,7 @@ const { scrollDir, isAtTop } = useScrollDirection();
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
         <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
           <Image
+            unoptimized  
             src={logo}
             alt="Logo Igreja Adventista do Sétimo Dia"
             width={150}

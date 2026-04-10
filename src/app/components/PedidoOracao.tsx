@@ -19,6 +19,7 @@ export default function PedidoOracao() {
 
         {/* Banner */}
         <Image
+          unoptimized  
           src="/images/lugar-oracao.png"
           alt="Lugar de Oração - Igreja Adventista de Santo Amaro"
           width={1600}

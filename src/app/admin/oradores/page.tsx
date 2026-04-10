@@ -300,6 +300,7 @@ export default function OradoresAdmin() {
                       {currentOrador.foto && !foto && (
                         <div className="ml-3 h-14 w-14 rounded-full overflow-hidden border border-gray-200 relative">
                           <Image
+                            unoptimized  
                             src={currentOrador.foto}
                             alt={currentOrador.nome}
                             fill
@@ -375,6 +376,7 @@ export default function OradoresAdmin() {
                           {orador.foto && (
                             <div className="h-12 w-12 rounded-full overflow-hidden border border-gray-200 bg-gray-100 relative">
                               <Image
+                                unoptimized  
                                 src={orador.foto}
                                 alt={orador.nome}
                                 fill

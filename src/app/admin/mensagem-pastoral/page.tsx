@@ -263,6 +263,7 @@ export default function MensagemPastoralAdmin() {
                   <div className="mt-3 flex items-center">
                     <div className="relative h-32 w-64 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                       <Image
+                        unoptimized  
                         src={currentMensagem.foto}
                         alt="Imagem do orador"
                         fill
@@ -355,6 +356,7 @@ export default function MensagemPastoralAdmin() {
                 <div className="md:w-1/3 p-6 flex justify-center items-start">
                   <div className="relative w-full h-64 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                     <Image
+                      unoptimized  
                       src={mensagem.foto}
                       alt={`Foto de ${mensagem.titulo}`}
                       fill

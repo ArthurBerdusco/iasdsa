@@ -38,7 +38,7 @@ function OradorFooter({ orador }: { orador: Culto['orador'] }) {
     <div className="flex items-center gap-3 border-t border-[var(--color-border)] bg-[var(--color-background-alt)] px-5 py-3">
       <div className="relative size-15 shrink-0 overflow-hidden rounded-full"
         style={{ outline: '2px solid var(--color-accent)' }}>
-        <Image src={orador.foto} alt={orador.nome} fill className="object-cover" />
+        <Image unoptimized src={orador.foto} alt={orador.nome} fill className="object-cover" />
       </div>
       <div>
         <p className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest"
@@ -133,11 +133,12 @@ function CultoCard({ culto }: { culto: Culto }) {
 
       {/* Art Image */}
       <div className="relative aspect-video w-full bg-[var(--color-background)]">
-        <Image
+        <Image  
           src={culto.arte}
           alt={culto.titulo}
           fill
           priority
+          unoptimized
           className="object-contain object-center"
         />
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[var(--color-surface)] to-transparent" />

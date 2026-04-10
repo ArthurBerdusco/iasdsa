@@ -418,6 +418,7 @@ export default function CultosAdmin() {
                     <div className="mt-3 flex items-center">
                       <div className="relative h-32 w-64 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
                         <Image
+                          unoptimized  
                           src={currentCulto.arte}
                           alt="Arte do culto"
                           fill
@@ -508,6 +509,7 @@ export default function CultosAdmin() {
                         {culto.arte && (
                           <div className="h-16 w-24 rounded-md overflow-hidden border border-gray-200 bg-gray-50 relative">
                             <Image
+                              unoptimized  
                               src={culto.arte}
                               alt={culto.titulo}
                               fill
@@ -521,6 +523,7 @@ export default function CultosAdmin() {
                         {culto.orador && (
                           <div className="relative h-16 w-16 rounded-full overflow-hidden border border-gray-200">
                             <Image
+                              unoptimized  
                               src={culto.orador.foto}
                               alt="Orador"
                               fill

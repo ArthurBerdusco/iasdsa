@@ -24,6 +24,7 @@ const MensagemPastoral = ({ mensagem }: Props) => {
           <div className="relative flex w-full shrink-0 items-center justify-center bg-[var(--color-background-alt)] lg:w-2/5 lg:max-h-[560px]">
             <div className="relative w-full">
               <Image
+                unoptimized  
                 src={mensagem.foto}
                 alt="Mensagem Pastoral"
                 width={0}
@@ -108,11 +109,12 @@ const MensagemPastoral = ({ mensagem }: Props) => {
             >
               <div className="flex items-center gap-3">
                 <div
-                  className="size-12 shrink-0 overflow-hidden rounded-full p-0.5 shadow-lg"
-                  style={{ border: '2px solid var(--color-accent)' }}
+                  className="size-16 shrink-0 overflow-hidden rounded-full shadow-lg"
+                  style={{ border: '2px solid var(--color-primary)' }}
                 >
                   <div className="relative size-full overflow-hidden rounded-full">
                     <Image
+                      unoptimized  
                       src="/images/pastores/mauro-dias.jpg"
                       alt="Pastor Mauro Dias"
                       fill
