@@ -1,6 +1,7 @@
 // app/page.tsx
 // ─── SERVER COMPONENT — sem "use client", sem useState, sem useEffect ───────
 // A config é buscada no servidor durante o render, eliminando o spinner de loading.
+import { unstable_noStore as noStore } from "next/cache";
 
 import ScrollSection from "./components/ScrollSection";
 
@@ -32,7 +33,8 @@ import { getComponenteConfig } from "./lib/db/config";
 // ─── Page (Server Component) ───────────────────────────────────────
 export default async function Home() {
 
-  console.log("ENV TEST:", process.env.DATABASE_URL);
+  noStore();
+
   const config = await getComponenteConfig();
   const cultos = await getCultos();
   const mensagem = await getMensagemPastoral();
