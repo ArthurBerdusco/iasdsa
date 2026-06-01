@@ -133,7 +133,7 @@ const MensagemPastoral = ({ mensagem }: Props) => {
               </div>
 
               <Link
-                href="https://sites.google.com/view/mensagempastoral/in%C3%ADcio"
+                href="https://sites.google.com/view/mensagempastoral"
                 target="_blank"
                 className="group inline-flex items-center gap-2 rounded-[var(--border-radius)] px-5 py-2.5 text-sm font-medium shadow-lg transition-all duration-300"
                 style={{
