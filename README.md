@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Boletim IASD Santo Amaro
 
-## Getting Started
+Boletim informativo semanal da Igreja Adventista do Sétimo Dia de Santo Amaro — Next.js (App Router) + Neon Postgres + Vercel Blob + NextAuth.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, Turbopack)
+- **Neon Postgres** — banco de dados serverless
+- **Vercel Blob** — armazenamento de imagens, artes e vídeos
+- **NextAuth v5** — autenticação do admin (credenciais + Google, opcional)
+- **Tailwind CSS v4** — estilização via tokens de tema (CSS variables)
+- **Framer Motion / Swiper** — animações e carrosséis
+
+## Como rodar localmente
 
 ```bash
+npm install
+cp .env.example .env.local   # preencha com suas credenciais reais
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Banco de dados
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Este projeto não tinha um schema versionado — agora existe em `db/schema.sql`
+(idempotente, pode rodar em qualquer ambiente):
 
-## Learn More
+```bash
+psql "$DATABASE_URL" -f db/schema.sql
+```
 
-To learn more about Next.js, take a look at the following resources:
+Para um banco de produção já existente, rode apenas a migração incremental
+com as tabelas novas (arquivo histórico de boletins + configurações do site):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+psql "$DATABASE_URL" -f db/migrations/001_boletins_e_configuracoes_site.sql
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Estrutura do projeto
 
-## Deploy on Vercel
+```
+src/app/
+  components/
+    ui/              -> Kit de UI público (Container, Button, Badge, Card, SectionHeader)
+    admin/ui/         -> Kit de UI do admin (AdminPageHeader, AdminCard, ToggleSwitch, EmptyState)
+  lib/db/            -> Camada de acesso a dados (uma função por entidade, sem ORM)
+  api/               -> Rotas de API (App Router route handlers)
+  admin/             -> Telas do backoffice (protegidas por middleware + NextAuth)
+  boletins/          -> Páginas públicas do arquivo histórico de boletins
+db/
+  schema.sql         -> Schema completo do banco
+  migrations/        -> Migrações incrementais
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Registro semanal (boletins anteriores)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A home (`/`) sempre reflete os dados **atuais** de cultos, anúncios e mensagem
+pastoral — são tabelas que o admin sobrescreve a cada semana. Antes de
+sobrescrever, o conteúdo pode (e deve) ser arquivado:
+
+- **Manualmente**: painel `/admin/boletins` → botão "Arquivar semana atual".
+- **Automaticamente**: um Vercel Cron (`vercel.json`) chama
+  `/api/boletins/auto-archive` toda segunda-feira de madrugada, arquivando a
+  semana que acabou de terminar. Esse endpoint é protegido pela variável de
+  ambiente `CRON_SECRET`.
+
+O conteúdo arquivado fica salvo como um snapshot (JSON) em
+`boletins_semanais` e pode ser consultado publicamente em `/boletins`
+(lista) e `/boletins/[semana]` (detalhe de uma semana específica).
+
+## Vídeo institucional
+
+Configurável em `/admin/hero`: upload do vídeo (mp4) e de uma imagem de capa
+(poster), ambos salvos no Vercel Blob. Enquanto nenhum vídeo for cadastrado,
+a home exibe um gradiente com o título/subtítulo configurados, sem quebrar o
+layout.
+
+## Variáveis de ambiente
+
+Veja `.env.example` para a lista completa e comentada. Resumo:
+
+| Variável | Uso |
+|---|---|
+| `DATABASE_URL` | Conexão com o Neon Postgres |
+| `NEXTAUTH_SECRET` / `NEXTAUTH_URL` | NextAuth |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Login social (opcional) |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob (upload de arquivos) |
+| `YOUTUBE_API_KEY` / `YOUTUBE_CHANNEL_ID` | Sincronização das últimas lives |
+| `CRON_SECRET` | Protege o endpoint de arquivamento automático |
+
+## Deploy
+
+Projeto pronto para deploy direto na [Vercel](https://vercel.com/new). Configure
+todas as variáveis de ambiente acima no painel do projeto antes do primeiro deploy.

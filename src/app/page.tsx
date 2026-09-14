@@ -7,6 +7,7 @@ import ScrollSection from "./components/ScrollSection";
 
 // Componentes
 import NavBar from "./components/NavBar";
+import HeroVideoInstitucional from "./components/HeroVideoInstitucional";
 import HeroSection from "./components/HeroSection";
 import ProgramacaoCultos from "./components/ProgramacaoSection";
 import AnunciosSection from "./components/AnunciosSection";
@@ -27,6 +28,7 @@ import CultosSkeleton from "./components/skeletons/HeroSectionSkeleton";
 import { AnunciosSkeleton } from "./components/skeletons/AnunciosSectionSkeleton";
 import { getMensagemPastoral } from "./lib/db/mensagemPastoral";
 import { getComponenteConfig } from "./lib/db/config";
+import { getSiteSettings } from "./lib/db/site-settings";
 
 
 
@@ -35,14 +37,24 @@ export default async function Home() {
 
   noStore();
 
-  const config = await getComponenteConfig();
-  const cultos = await getCultos();
-  const mensagem = await getMensagemPastoral();
-  const anuncios = await getAnuncios();
+  const [config, cultos, mensagem, anuncios, siteSettings] = await Promise.all([
+    getComponenteConfig(),
+    getCultos(),
+    getMensagemPastoral(),
+    getAnuncios(),
+    getSiteSettings(),
+  ]);
 
   return (
     <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-text)]">
       <NavBar />
+
+      <HeroVideoInstitucional
+        videoUrl={siteSettings.video_institucional_url}
+        posterUrl={siteSettings.video_institucional_poster}
+        titulo={siteSettings.video_institucional_titulo}
+        subtitulo={siteSettings.video_institucional_subtitulo}
+      />
 
       <main>
         {config.cultos && (

@@ -24,6 +24,8 @@ import {
   Church,
   Database,
   Home,
+  Clapperboard,
+  History,
 } from 'lucide-react';
 
 import { Dispatch, SetStateAction } from 'react';
@@ -150,10 +152,27 @@ export function SideNav({
           description: 'Cores, logo e estilo'
         },
         {
+          name: 'Vídeo Institucional',
+          icon: <Clapperboard className="w-[18px] h-[18px]" />,
+          href: '/admin/hero',
+          description: 'Vídeo de topo da home'
+        },
+        {
           name: 'Configurações',
           icon: <Settings className="w-[18px] h-[18px]" />,
           href: '/admin/configuracoes',
           description: 'Visibilidade e sistema'
+        },
+      ]
+    },
+    {
+      label: 'Histórico',
+      items: [
+        {
+          name: 'Boletins Anteriores',
+          icon: <History className="w-[18px] h-[18px]" />,
+          href: '/admin/boletins',
+          description: 'Arquivo semanal da igreja'
         },
       ]
     },

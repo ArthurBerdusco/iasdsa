@@ -1,12 +1,8 @@
 {
-    "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/next"
-      }
-    ],
-    "env": {
-      "NEXT_PUBLIC_API_URL": "your-api-url"
+  "crons": [
+    {
+      "path": "/api/boletins/auto-archive",
+      "schedule": "0 3 * * 1"
     }
-  }
-  
+  ]
+}

@@ -40,8 +40,10 @@ export function isoToTime(iso: string): string {
 
 // ─── YouTube API ─────────────────────────────────────────────────────────────
 
-const YT_API_KEY = 'AIzaSyB9BI4dDqjC3AKHQ587lebtM27FMM9lKPc';
-const CHANNEL_ID = 'UCqApucuBUJSqZs1SnhWyCow'; // ex: UCxxxxxxx
+// ⚠️ Antes hardcoded no código-fonte (visível em qualquer clone do repo).
+// Agora lidas de variáveis de ambiente — ver .env.example.
+const YT_API_KEY = process.env.YOUTUBE_API_KEY as string;
+const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID as string;
 
 export interface YoutubeVideoInfo {
     videoId: string;
@@ -61,6 +63,12 @@ export interface YoutubeVideoInfo {
 export async function fetchLatestLivesFromYoutube(
     maxResults = 6
 ): Promise<YoutubeVideoInfo[]> {
+    if (!YT_API_KEY || !CHANNEL_ID) {
+        throw new Error(
+            'YOUTUBE_API_KEY e/ou YOUTUBE_CHANNEL_ID não configurados nas variáveis de ambiente.'
+        );
+    }
+
     // 1. Busca os IDs das lives mais recentes do canal
     const searchUrl = new URL('https://www.googleapis.com/youtube/v3/search');
     searchUrl.searchParams.set('part', 'id,snippet');
